@@ -1,7 +1,8 @@
 // API privada de MI SML — Netlify Functions. Ruta pública: GET /api/mi-sml/me (ver netlify.toml). Lógica en server/miSml.js.
-// Valida la sesión de Auth0 y identifica a la persona por su token. Todavía SIN fuente de datos (PASO 4): no hay Airtable aquí.
+// Valida la sesión de Auth0 y identifica a la persona por su token. Consulta Airtable en servidor; el navegador nunca recibe la credencial.
 import { atender, cabeceras } from '../../server/miSml.js';
 import { configurado, crearVerificador } from '../../server/miSmlAuth.js';
+import * as airtable from '../../server/miSmlAirtable.js';
 
 let verify = null; // una sola instancia por contenedor (conserva el JWKS en caché)
 
@@ -16,7 +17,7 @@ export default async (req) => {
     verify ||= crearVerificador();
     return responder(await atender(
       { method: req.method, pathname: new URL(req.url).pathname, authorization: req.headers.get('authorization') },
-      { verify },
+      { verify, fuente: { obtener: airtable.obtener } },
     ));
   } catch (err) {
     console.error('mi-sml: error interno', err?.name || 'desconocido');
