@@ -1,15 +1,15 @@
 // MI SML · CAPA DE DATOS Y SESIÓN DEL CLIENTE — la ÚNICA interfaz que el frontend usa para saber quién es la persona y obtener sus datos.
 //
-//   CLIENTE (navegador)  →  AUTENTICACIÓN (Auth0)  →  este archivo  →  GET /api/mi-sml/me (PASO 3, netlify/functions/mi-sml-me.mjs)  →  [PASO 4] AIRTABLE
+//   CLIENTE (navegador)  →  AUTENTICACIÓN (Auth0)  →  este archivo  →  /api/mi-sml/* (netlify/functions/mi-sml-me.mjs)  →  AIRTABLE (solo en el servidor)
 //
 // ESTE ARCHIVO SOLO HABLA CON LA API PRIVADA PROPIA (API_BASE). No importa Airtable, no conoce bases ni tablas, no lleva tokens de datos y no puede
-// saltarse la API: no hay otra ruta hacia los datos privados desde el navegador. La API valida el token en servidor e identifica a la persona por él.
+// saltarse la API: no hay otra ruta hacia los datos privados desde el navegador. (Airtable lo consulta solo server/miSmlAirtable.js, en la función de Netlify.) La API valida el token en servidor e identifica a la persona por él.
 //
 // PROVEEDOR: Auth0 (Universal Login, flujo Authorization Code + PKCE, SDK @auth0/auth0-spa-js).
 //  · Las contraseñas y los usuarios viven en Auth0, nunca en este proyecto. El acceso (contraseña, enlace por email, etc.) se configura en el tenant.
 //  · La sesión la gestiona el SDK con tokens EN MEMORIA (cacheLocation: 'memory'): nada de localStorage ni sessionStorage con credenciales o tokens.
 //    Para restaurar la sesión al recargar, el SDK pregunta a Auth0 en silencio (checkSession) usando la cookie de sesión de Auth0.
-//  · Airtable NO interviene en la autenticación. Aquí no hay ninguna llamada a Airtable ni datos de ejemplo.
+//  · Airtable NO interviene en la autenticación y este archivo no lo llama: solo habla con /api/mi-sml/*. No hay datos de ejemplo.
 //
 // CONFIGURACIÓN (variables PÚBLICAS; Vite solo expone las que empiezan por VITE_). Ninguna es un secreto: un SPA no lleva «client secret».
 //   VITE_AUTH0_DOMAIN     dominio del tenant de Auth0 (p. ej. el de «Settings → Domain», o el dominio propio si se configura uno)
@@ -151,4 +151,32 @@ export async function getCurrentClient() {
   if (body?.session !== 'valid') throw new ClientApiError('request-failed');
   if (body.data === 'connected' && body.client) return body.client; // PASO 4: los datos de ESTA persona, tal como los entrega la API
   throw new ClientApiError('not-connected'); // la API reconoce la sesión, pero todavía no hay fuente de datos
+}
+
+export async function getAdminClients() {
+  const token = await getAccessToken();
+  let res;
+  try { res = await fetch(`${API_BASE}/admin/clients`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' }, cache: 'no-store', credentials: 'omit' }); }
+  catch { throw new ClientApiError('request-failed'); }
+  if (res.status === 401) throw new ClientApiError('unauthenticated');
+  if (res.status === 403) throw new ClientApiError('forbidden');
+  if (!res.ok) throw new ClientApiError('request-failed');
+  const body = await res.json().catch(() => null);
+  if (body?.data !== 'admin') throw new ClientApiError('request-failed');
+  return body.clients || [];
+}
+
+export async function getAdminClient(contactoId) {
+  if (!contactoId) throw new ClientApiError('request-failed');
+  const token = await getAccessToken();
+  let res;
+  try { res = await fetch(`${API_BASE}/admin/clients/${encodeURIComponent(contactoId)}`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' }, cache: 'no-store', credentials: 'omit' }); }
+  catch { throw new ClientApiError('request-failed'); }
+  if (res.status === 401) throw new ClientApiError('unauthenticated');
+  if (res.status === 403) throw new ClientApiError('forbidden');
+  if (res.status === 404) throw new ClientApiError('not-found');
+  if (!res.ok) throw new ClientApiError('request-failed');
+  const body = await res.json().catch(() => null);
+  if (body?.data !== 'connected' || !body.client) throw new ClientApiError('request-failed');
+  return body.client;
 }

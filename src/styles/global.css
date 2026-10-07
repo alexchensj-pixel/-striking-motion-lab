@@ -7,16 +7,6 @@
   --display: "Unbounded", var(--sans);
   --pad-l: clamp(3.75rem, 9vw, 7rem);
 }
-nav.nav li[data-id="mi-sml"] { margin-top: .35rem; }
-nav.nav li[data-id="mi-sml"] a {
-  display: flex; align-items: center; min-height: 2.75rem; padding: 0 .25rem;
-  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
-  color: var(--dim); opacity: .4; text-decoration: none; text-shadow: 0 1px 2px rgba(0, 0, 0, .9); transition: opacity .2s ease, color .2s ease;
-}
-@media (hover: hover) and (pointer: fine) { nav.nav li[data-id="mi-sml"] a:hover { opacity: 1; color: var(--fg); } }
-nav.nav li[data-id="mi-sml"] a:focus-visible { opacity: 1; color: var(--fg); outline: 1px solid var(--accent); outline-offset: 2px; }
-@media (max-width: 900px) { nav.nav li[data-id="mi-sml"] a { font-size: .8125rem; width: 100%; } }
-
 /* =====================================================================================================
    SISTEMA TIPOGRÁFICO Y ESPACIAL COMÚN — FASE 1 (solo lógica; ninguna regla de componente usa aún estos tokens de
    tamaño/espacio). Lo único que ya se consume son los ALIAS de familia y color de más abajo, de valor idéntico al

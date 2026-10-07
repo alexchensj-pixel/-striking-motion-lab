@@ -69,10 +69,6 @@ export default function Navigation() {
             {ACTION.label}
           </button>
         </li>
-        <li data-id="mi-sml">
-  <a href="/mi-sml" onClick={() => setOpen(false)}>Mi SML</a>
-</li>
-
       </ul>
     </nav>
   );

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { agregar, registrar } from './server/demand.js';
 import { atender, cabeceras } from './server/miSml.js';
 import { configurado, crearVerificador } from './server/miSmlAuth.js';
+import * as airtable from './server/miSmlAirtable.js';
 
 // Solo `npm run dev`: API de demanda EN MEMORIA con la misma lógica que la función de Netlify (server/demand.js).
 // Empieza vacía y se pierde al reiniciar. No carga datos de ejemplo. En producción se usa netlify/functions/grupos.mjs.
@@ -31,13 +32,17 @@ const devGrupos = () => {
 
 // Solo `npm run dev`: la API privada de MI SML (GET /api/mi-sml/me) con EXACTAMENTE la misma lógica que la función de Netlify
 // (server/miSml.js + server/miSmlAuth.js). Lee AUTH0_DOMAIN / AUTH0_AUDIENCE de .env.local (variables del servidor, sin prefijo VITE_).
-// Sin fuente de datos (PASO 4) y sin Airtable. Los errores internos devuelven 500 genérico.
+// Usa Airtable (variables de servidor de .env.local) y el rol de administrador (ADMIN_AUTH0_SUB), igual que producción. Los errores internos devuelven 500 genérico.
 const devMiSml = () => {
   let env = {};
   let verify = null;
   return {
     name: 'sml-dev-mi-sml',
-    configResolved(config) { env = loadEnv(config.mode, config.root, ''); },
+    configResolved(config) {
+      env = loadEnv(config.mode, config.root, '');
+      // server/miSmlAirtable.js lee process.env: en desarrollo se vuelcan ahí (solo si no estaban ya definidas) las variables de servidor de .env.local.
+      for (const k of ['AIRTABLE_BASE_ID', 'AIRTABLE_TOKEN', 'AIRTABLE_AUTH0_FIELD']) { if (env[k] && !process.env[k]) process.env[k] = env[k]; }
+    },
     configureServer(server) {
       server.middlewares.use('/api/mi-sml', async (req, res) => {
         const send = (r) => { res.statusCode = r.status; Object.entries(cabeceras(r.headers)).forEach(([k, v]) => res.setHeader(k, v)); res.end(JSON.stringify(r.body)); };
@@ -45,7 +50,7 @@ const devMiSml = () => {
           if (!configurado(env)) { console.error('mi-sml: faltan AUTH0_DOMAIN / AUTH0_AUDIENCE (.env.local)'); return send({ status: 500, body: { error: 'internal' } }); }
           verify ||= crearVerificador(env);
           const pathname = `/api/mi-sml${(req.url || '/').split('?')[0]}`;
-          send(await atender({ method: req.method, pathname, authorization: req.headers.authorization }, { verify }));
+          send(await atender({ method: req.method, pathname, authorization: req.headers.authorization }, { verify, adminSub: env.ADMIN_AUTH0_SUB, fuente: { obtener: airtable.obtener, listarClientes: airtable.listarClientes, obtenerPorContactoId: airtable.obtenerPorContactoId } }));
         } catch (err) {
           console.error('mi-sml: error interno', err?.name || 'desconocido');
           send({ status: 500, body: { error: 'internal' } });

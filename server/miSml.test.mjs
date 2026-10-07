@@ -87,3 +87,32 @@ test('tokenDe: solo «Bearer <token>» bien formado', () => {
 test('sin fuente de datos (hoy) → «not-connected», nunca datos inventados', async () => {
   assert.deepEqual(await sinFuenteDeDatos.obtener({ sub: 'x' }), { estado: 'not-connected' });
 });
+
+
+test('ADMIN: solo el sub configurado puede listar clientes', async () => {
+  const calls = [];
+  const fuente = {
+    async listarClientes() { calls.push('list'); return { clients: [{ id: 'rec1', nombre: 'Ana' }] }; },
+    async obtener() { throw new Error('no debe llamarse'); },
+    async obtenerPorContactoId() { return { estado: 'not-found' }; },
+  };
+  const verify = async () => ({ sub: 'auth0|ADMIN' });
+  const r = await atender({method:'GET', pathname:'/api/mi-sml/admin/clients', authorization:'Bearer abc'}, {verify, fuente, adminSub:'auth0|ADMIN'});
+  assert.equal(r.status, 200);
+  assert.equal(r.body.data, 'admin');
+  assert.equal(r.body.clients[0].nombre, 'Ana');
+  assert.deepEqual(calls, ['list']);
+});
+
+test('ADMIN: un cliente no puede listar clientes ni pedir una ficha ajena', async () => {
+  const fuente = {
+    async listarClientes() { throw new Error('no debe llamarse'); },
+    async obtener() { return { estado:'connected', client:{nombre:'Cliente'} }; },
+    async obtenerPorContactoId() { throw new Error('no debe llamarse'); },
+  };
+  const verify = async () => ({ sub: 'auth0|CLIENT' });
+  const a = await atender({method:'GET', pathname:'/api/mi-sml/admin/clients', authorization:'Bearer abc'}, {verify, fuente, adminSub:'auth0|ADMIN'});
+  const b = await atender({method:'GET', pathname:'/api/mi-sml/admin/clients/recOTHER', authorization:'Bearer abc'}, {verify, fuente, adminSub:'auth0|ADMIN'});
+  assert.equal(a.status, 403);
+  assert.equal(b.status, 403);
+});

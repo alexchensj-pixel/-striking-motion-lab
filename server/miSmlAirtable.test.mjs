@@ -32,3 +32,56 @@ test('Airtable: sin correspondencia no devuelve datos', async () => {
   const fake = async () => ({records: []});
   assert.deepEqual(await obtener({sub:'auth0|NO'}, {fetchTable:fake}), {estado:'forbidden'});
 });
+
+// ── V29.1 · seguridad de campos y de fichas ajenas ──
+import { obtenerPorContactoId, listarClientes } from './miSmlAirtable.js';
+
+const contactoFake = { id: 'recAAAAAAAAAAAAAA', fields: { Nombre: 'Ana', Teléfono: '600', Estado: 'Activo', Zona: 'Centro', 'Auth0 ID': 'auth0|A', 'SML — Movement Analysis': [{ id: 'recM1' }] } };
+const fakeCompleto = async (table) => {
+  if (table === 'Contactos') return { records: [contactoFake] };
+  if (table === 'SML — Movement Analysis') return { records: [{ id: 'recM1', fields: {
+    'Análisis': 'X', 'Visible al cliente': true, 'Disciplina': 'Boxeo',
+    'Interpretación': 'INTERNO', 'Hipótesis entrenador': 'INTERNO', 'Evidencia': 'INTERNO', 'Observación': 'INTERNO',
+    'Texto cliente — Observación': 'Para el cliente',
+  } }] };
+  return { records: [] };
+};
+
+test('Cliente: /me NO incluye _admin, _meta ni campos internos del análisis', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const r = await obtener({ sub: 'auth0|A' }, { fetchTable: fakeCompleto });
+  assert.equal(r.client._admin, undefined);
+  assert.equal(r.client._meta, undefined);
+  const texto = JSON.stringify(r.client);
+  assert.ok(!texto.includes('INTERNO'));
+  assert.ok(!texto.includes('600'));
+  assert.equal(r.client.movementAnalysis[0]['Texto cliente — Observación'], 'Para el cliente');
+});
+
+test('Airtable: a Airtable ni se le piden los campos internos del análisis', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const consultas = [];
+  await obtener({ sub: 'auth0|A' }, { fetchTable: async (t, q) => { consultas.push({ t, q }); return fakeCompleto(t); } });
+  const q = decodeURIComponent(consultas.find(c => c.t === 'SML — Movement Analysis').q);
+  assert.ok(!q.includes('Interpretación') && !q.includes('Hipótesis') && !q.includes('Evidencia'));
+});
+
+test('Admin: la ficha por ID sí incluye _admin; un ID mal formado → not-found sin llamar a Airtable', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const ok = await obtenerPorContactoId('recAAAAAAAAAAAAAA', { fetchTable: fakeCompleto });
+  assert.equal(ok.client._admin.zona, 'Centro');
+  let llamadas = 0;
+  const r = await obtenerPorContactoId("x') OR ('1'='1", { fetchTable: async () => { llamadas++; return { records: [] }; } });
+  assert.deepEqual(r, { estado: 'not-found' });
+  assert.equal(llamadas, 0);
+});
+
+test('Admin: el listado pagina (más de 100 contactos)', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  let n = 0;
+  const fake = async () => (++n === 1
+    ? { records: [{ id: 'rec1', fields: { Nombre: 'A' } }], offset: 'itrNEXT' }
+    : { records: [{ id: 'rec2', fields: { Nombre: 'B' } }] });
+  const { clients } = await listarClientes({ fetchTable: fake });
+  assert.equal(clients.length, 2);
+});

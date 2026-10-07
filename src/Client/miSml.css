@@ -28,3 +28,4 @@
 .msml__btn:focus-visible, .msml__back:focus-visible, .msml__brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .msml__back { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--dim); text-decoration: underline; text-underline-offset: 3px; font-size: .875rem; }
 .msml__back:hover { color: var(--fg); }
+.msml__admin-list{display:grid;gap:10px;margin:18px 0}.msml__admin-client{display:flex;justify-content:space-between;gap:16px;text-align:left;padding:14px 16px;border:1px solid rgba(255,255,255,.14);background:transparent;color:inherit;border-radius:10px;cursor:pointer}.msml__admin-client span{opacity:.65;font-size:.9em}

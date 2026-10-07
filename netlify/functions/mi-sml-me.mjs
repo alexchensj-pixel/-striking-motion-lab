@@ -1,23 +1,15 @@
-// API privada de MI SML — Netlify Functions. Ruta pública: GET /api/mi-sml/me (ver netlify.toml). Lógica en server/miSml.js.
-// Valida la sesión de Auth0 y identifica a la persona por su token. Consulta Airtable en servidor; el navegador nunca recibe la credencial.
 import { atender, cabeceras } from '../../server/miSml.js';
-import { configurado, crearVerificador } from '../../server/miSmlAuth.js';
+import { configurado as authConfigurado, crearVerificador } from '../../server/miSmlAuth.js';
 import * as airtable from '../../server/miSmlAirtable.js';
-
-let verify = null; // una sola instancia por contenedor (conserva el JWKS en caché)
-
+let verify = null;
 const responder = (r) => new Response(JSON.stringify(r.body), { status: r.status, headers: cabeceras(r.headers) });
-
 export default async (req) => {
   try {
-    if (!configurado()) {
-      console.error('mi-sml: faltan AUTH0_DOMAIN / AUTH0_AUDIENCE en las variables de entorno del servidor');
-      return responder({ status: 500, body: { error: 'internal' } });
-    }
+    if (!authConfigurado()) return responder({ status: 500, body: { error: 'internal' } });
     verify ||= crearVerificador();
     return responder(await atender(
       { method: req.method, pathname: new URL(req.url).pathname, authorization: req.headers.get('authorization') },
-      { verify, fuente: { obtener: airtable.obtener } },
+      { verify, adminSub: process.env.ADMIN_AUTH0_SUB, fuente: { obtener: airtable.obtener, listarClientes: airtable.listarClientes, obtenerPorContactoId: airtable.obtenerPorContactoId } },
     ));
   } catch (err) {
     console.error('mi-sml: error interno', err?.name || 'desconocido');

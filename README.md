@@ -185,17 +185,20 @@ Fuera de esta arquitectura, y sin mezclarse con ella:
 
 ## MI SML · zona privada (`/mi-sml`)
 
-Aplicación independiente de la experiencia pública (`src/Client/`, sin canvas 3D). **Pasos 1–3 = entrada, autenticación y API privada**; todavía no hay Airtable, ni datos, ni dashboard.
+Aplicación independiente de la experiencia pública (`src/Client/`, sin canvas 3D). Autenticación con Auth0, API privada en Netlify Functions y datos en Airtable (solo servidor).
 
 ```
-NAVEGADOR → MI SML → clientApi.js → GET /api/mi-sml/me → valida la sesión (Auth0) → identidad (sub del token) → [PASO 4] fuente de datos
+NAVEGADOR → MI SML → clientApi.js → /api/mi-sml/* → valida la sesión (Auth0) → identidad (sub del token) → Airtable (servidor)
 ```
 
-- **Autenticación** (paso 2): Auth0 (Universal Login, Authorization Code + PKCE, `@auth0/auth0-spa-js`), tokens en memoria. Estados en `MiSML.jsx`: `loading` · `unauthenticated` · `authenticated` · `error`.
-- **API privada** (paso 3): `netlify/functions/mi-sml-me.mjs` (ruta en `netlify.toml`; en desarrollo, el middleware `devMiSml` de `vite.config.js`). Lógica en `server/miSml.js` (autorización e identidad) y `server/miSmlAuth.js` (validación del JWT con `jose` y las claves públicas del tenant, solo RS256, emisor y audiencia comprobados).
-- **Identidad**: sale únicamente del token validado. El endpoint no lee query, cuerpo ni parámetros: no hay forma de pedir «otro cliente». La fuente de datos (paso 4) recibirá solo `{ sub }`.
-- **Respuestas** de `GET /api/mi-sml/me`: `200 {session:'valid', data:'not-connected'}` (hoy) · `401` (`unauthenticated` / `invalid-session` / `session-expired`) · `403` · `404` · `405` · `500 {error:'internal'}`. Nunca tokens, trazas ni datos de otras personas.
-- **Una sola capa en el frontend** (`clientApi.js`): habla solo con `/api/mi-sml/me`, con el token en la cabecera `Authorization` (nunca en la URL).
-- **Variables** (ver `.env.example`): públicas `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`, `VITE_AUTH0_AUDIENCE`; de servidor (sin `VITE_`) `AUTH0_DOMAIN`, `AUTH0_AUDIENCE`. Sin secretos en el navegador.
-- **Auth0 (externo)**: aplicación SPA con *Allowed Callback URLs*, *Allowed Logout URLs* y *Allowed Web Origins* = `https://<dominio>/mi-sml` (y `http://localhost:5173/mi-sml`); una **API** registrada con su *Identifier* (= audiencia) y algoritmo RS256. Recomendado un dominio propio de Auth0 (restauración silenciosa de sesión en Safari/Firefox).
-- **Pruebas**: `npm run test:mi-sml` (lógica de autorización, sin red ni dependencias).
+- **Autenticación**: Auth0 (Universal Login, Authorization Code + PKCE, `@auth0/auth0-spa-js`), tokens en memoria. Estados en `MiSML.jsx`: `loading` · `unauthenticated` · `authenticated` · `error`.
+- **API privada**: `netlify/functions/mi-sml-me.mjs` (rutas en `netlify.toml`; en desarrollo, el middleware `devMiSml` de `vite.config.js`, con la misma lógica). Autorización e identidad en `server/miSml.js`; validación del JWT con `jose` y las claves públicas del tenant en `server/miSmlAuth.js` (solo RS256, emisor y audiencia comprobados); acceso a datos en `server/miSmlAirtable.js`.
+- **Rutas** (todas GET, todas exigen `Authorization: Bearer <token>`):
+  - `/api/mi-sml/me` → datos de **la propia persona** (el contacto de Airtable cuyo campo `Auth0 ID` = `sub` del token). Sin parámetros: no hay forma de pedir «otro cliente».
+  - `/api/mi-sml/admin/clients` → listado de clientes · `/api/mi-sml/admin/clients/<recordId>` → ficha. **Solo** el `sub` configurado en `ADMIN_AUTH0_SUB`; cualquier otro recibe 403.
+- **Qué recibe el navegador**: nombre, plan, pago, clases y, de «SML — Movement Analysis», solo los registros con «Visible al cliente» y solo los campos «Texto cliente — …» y «Fecha evaluación»/«Disciplina» (lista blanca `ANALISIS_CAMPOS_CLIENTE`). Observación, Evidencia, Interpretación e Hipótesis ni siquiera se piden a Airtable. Teléfono y datos de gestión (`_admin`) solo en la ficha de administrador.
+- **Respuestas**: `200` · `401` (`unauthenticated` / `invalid-session` / `session-expired`) · `403` · `404` · `405` · `500 {error:'internal'}`. Nunca tokens, trazas ni datos de otras personas.
+- **Variables** (ver `.env.example`): públicas `VITE_AUTH0_DOMAIN`, `VITE_AUTH0_CLIENT_ID`, `VITE_AUTH0_AUDIENCE`; de servidor (sin `VITE_`) `AUTH0_DOMAIN`, `AUTH0_AUDIENCE`, `AIRTABLE_BASE_ID`, `AIRTABLE_TOKEN`, `AIRTABLE_AUTH0_FIELD`, `ADMIN_AUTH0_SUB`. `AIRTABLE_TOKEN` nunca debe llevar `VITE_`.
+- **Auth0 (externo)**: aplicación SPA con *Allowed Callback URLs*, *Allowed Logout URLs* y *Allowed Web Origins* = `https://<dominio>/mi-sml` (y `http://localhost:5173/mi-sml`); una **API** registrada con su *Identifier* (= audiencia) y algoritmo RS256. Recomendado un dominio propio de Auth0.
+- **Airtable (externo)**: las tablas y campos con nombre exacto que consulta `server/miSmlAirtable.js` deben existir; si falta uno, Airtable responde 422 y la API devuelve 500.
+- **Pruebas**: `npm test` (= `npm run test:mi-sml`): autorización, aislamiento entre clientes, rol de administrador y lista blanca de campos, con Airtable y Auth0 simulados (sin red). La verificación criptográfica real del token solo se puede probar contra un tenant de Auth0 real.
