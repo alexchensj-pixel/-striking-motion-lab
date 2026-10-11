@@ -11,13 +11,39 @@ const EMAIL_FIELD = () => String(process.env.AIRTABLE_EMAIL_FIELD || 'Email Mi S
 const api = (table, params = '') => `https://api.airtable.com/v0/${encodeURIComponent(BASE_ID())}/${encodeURIComponent(table)}${params ? `?${params}` : ''}`;
 
 async function airtableFetch(table, params = '') {
-  const token = TOKEN(); const base = BASE_ID();
-  if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
-  const res = await fetch(api(table, params), { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } });
-  if (!res.ok) throw Object.assign(new Error('Airtable request failed'), { code: `AIRTABLE_HTTP_${res.status}` });
-  return res.json();
-}
+  const token = TOKEN();
+  const base = BASE_ID();
 
+  if (!token || !base) {
+    throw Object.assign(new Error('Airtable no configurado'), {
+      code: 'AIRTABLE_NOT_CONFIGURED',
+    });
+  }
+
+  const res = await fetch(api(table, params), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+    },
+  });
+
+  const body = await res.text();
+
+  if (!res.ok) {
+    // Diagnóstico: nunca registrar el token ni los datos de autenticación.
+    console.error('MI SML Airtable diagnostic:', {
+      status: res.status,
+      table,
+      response: body.slice(0, 1500),
+    });
+
+    throw Object.assign(new Error('Airtable request failed'), {
+      code: `AIRTABLE_HTTP_${res.status}`,
+    });
+  }
+
+  return JSON.parse(body);
+}
 async function airtableUpdate(table, recordId, fields) {
   const token = TOKEN(); const base = BASE_ID();
   if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
