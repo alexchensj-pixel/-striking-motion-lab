@@ -1,0 +1,22 @@
+SML ACADEMY — V42 CURSO PARA PRINCIPIANTES
+
+Premisa del producto
+- Se mantiene el curso: «Aprende Boxeo y Muay Thai desde 0 en Casa — Principiantes».
+- El método SML aparece como elemento que mejora el aprendizaje; no sustituye el producto ni la promesa comercial.
+- Los vídeos siguen pendientes de incorporación por parte de Alex. Se conservan espacios reservados; no se han añadido vídeos ficticios.
+
+Cambios realizados
+1. Portada: mensaje de curso online para principiantes, aprendizaje desde casa, CTA más coherente y texto explícito sobre la futura incorporación de vídeos.
+2. Recorrido: presentación del índice como recorrido recomendado y mejoras de copy para que la formación se entienda como aprendizaje individual en casa.
+3. Lecciones: etapas visibles para comprender, observar, practicar, comprobar e integrar. Se conserva el contenido técnico existente y se identifican honestamente las prácticas específicas aún pendientes.
+4. Seguimiento: registro local de lecciones visitadas, completadas, práctica registrada y autoevaluación; nuevo Movement Passport en el índice.
+5. Diseño: sistema visual v41 ampliado con estilos para el registro, etapas didácticas y controles responsive.
+6. Contenido: descripciones de módulos y la rutina en solitario ajustadas para no depender de clases presenciales.
+
+Limitaciones y validación
+- Los vídeos no se incorporan en esta versión.
+- El registro usa localStorage del navegador; no se sincroniza entre dispositivos ni cuentas.
+- La sintaxis JSX de Academia.jsx se validó mediante TypeScript transpileModule.
+- server/academyContent.mjs superó node --check.
+- No se pudo completar el build de Vite: no hay dependencias instaladas y npm install agotó el tiempo de espera; npm run build devuelve «vite: not found». Por tanto, no se afirma que la compilación completa esté verificada.
+- La progresión pedagógica queda mejor señalizada, pero algunas lecciones (especialmente «Transferencia de fuerza y escalera avanzada») aún requieren una revisión de contenido para asegurar que todos los ejercicios se puedan realizar en casa sin material especializado. Los vídeos y la práctica guiada específica quedan para la siguiente fase de definición.

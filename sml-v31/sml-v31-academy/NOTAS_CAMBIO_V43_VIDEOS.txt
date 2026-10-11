@@ -1,0 +1,20 @@
+SML ACADEMY — V43 VÍDEOS REALES INTEGRADOS
+
+Qué se ha hecho
+- Los 15 vídeos aportados están integrados en las 13 lecciones (jab y cross llevan 2; el resto, 1).
+- Convertidos a MP4 H.264 (máx. 720 px de ancho, sin audio) con póster, en src/Assets/Video/academy y src/Assets/Images/academy.
+- Recortadas las pantallas finales: V01 (CapCut) a 28,4 s; V11 a 11,7 s; V15 a 17,2 s; V02 a 32,9 s (sin la llamada «Sígueme para más tips»). La marca de agua de CapCut que aparece en algunos clips NO se ha tocado: hay que reexportarlos sin marca.
+- Mapa lección → vídeos en src/Academy/lessonVideos.js. Para añadir un vídeo nuevo: copiar MP4 y póster, importarlos ahí y añadirlos a la lista de la lección.
+- Academia.jsx: reproductor real en la etapa «Observa» (sin recuadros vacíos); lista de puntos a comprobar en la etapa «Comprueba»; cifras de lecciones y módulos calculadas desde los datos; textos de «vídeos pendientes» retirados.
+- Textos de las lecciones adaptados a lo que dicen los subtítulos de los vídeos (guardia, desplazamientos, jab, cross, crochet, low kick, middle kick, rodillas, teep, movilidad, rutina).
+- «Flexibilidad y coordinación» pasa a «Movilidad de cadera para patear».
+- La estructura (3 módulos, 13 lecciones, mismo orden) y las claves de progreso NO cambian: el progreso ya guardado sigue válido.
+
+Sin cambios a propósito
+- «Sincronización de apoyos y rotación»: se conserva el texto de los niveles 4 y 5 (crochet / gancho de derecha) hasta confirmar en qué nivel de V01 aparece el gancho.
+- «Transferencia de fuerza y escalera avanzada» sigue en el curso con V13.
+
+Verificación
+- Sintaxis de Academia.jsx y lessonVideos.js: TypeScript transpileModule sin errores. academyContent.mjs: node --check y carga correcta (3 módulos, 13 lecciones, todas con vídeo).
+- Los 15 MP4: ffprobe/ffmpeg confirman H.264 Main yuv420p y decodificación sin errores.
+- NO se pudo ejecutar «npm install» ni «vite build» (el registro de npm está bloqueado en este entorno). No se ha verificado la compilación ni la reproducción en navegador. Ejecutar «npm install && npm run build» antes de publicar.

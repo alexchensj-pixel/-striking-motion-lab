@@ -1,0 +1,7 @@
+SML Academy — V44: dirección visual cómic biomecánico
+
+- Se aplica una capa visual de tinta/cómic al sistema de esquemas biomecánicos: fondo técnico, retícula sutil, acento naranja, jerarquía editorial y etiquetas monoespaciadas.
+- Las figuras de los esquemas ahora incorporan trazos más gruesos, detalles de construcción y puntos articulares destacados.
+- En la vista de lección, el esquema ilustrado pasa a ser la referencia visual principal; los vídeos demostrativos se mantienen en su sección separada.
+- No se han generado ni añadido fotografías, renders 3D ni imágenes realistas nuevas.
+- No se ha cambiado el contenido pedagógico ni la lógica de progreso, práctica o temporizador.

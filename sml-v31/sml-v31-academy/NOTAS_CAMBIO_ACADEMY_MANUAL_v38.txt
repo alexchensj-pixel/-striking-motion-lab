@@ -1,0 +1,20 @@
+SML Academy — v38
+
+Enfoque actualizado: manual práctico para principiantes, sin calendario, ruta por semanas ni sesiones obligatorias.
+
+Cambios:
+- Nombre comercial: “Aprende Boxeo y Muay Thai desde Cero”.
+- Portada y temario presentan Academy como manual de consulta a ritmo propio.
+- Las 13 lecciones se mantienen y siguen agrupadas por temas para facilitar la consulta.
+- Se conservan los textos técnicos existentes y los 15 espacios de vídeo; las lecciones 3 y 5 tienen dos espacios cada una.
+- El texto de cada lección sigue apareciendo antes de los espacios de vídeo.
+- La navegación entre lecciones es opcional; no hay calendario ni secuencia obligatoria.
+- El progreso se etiqueta como lecciones consultadas, no como dominio de la técnica.
+- Temporizador etiquetado como herramienta opcional.
+- Ajustes de diseño para dar más espacio a los temas y mejorar la lectura en móvil.
+
+Pendiente:
+- Añadir los vídeos originales cuando estén disponibles.
+- Completar con el criterio técnico del autor las prácticas detalladas pendientes en movilidad/coordinación y rutina autónoma.
+- La compilación del frontend no se ha podido verificar en este entorno porque las dependencias de npm/Vite no están instaladas.
+- No se ha desplegado ningún cambio.

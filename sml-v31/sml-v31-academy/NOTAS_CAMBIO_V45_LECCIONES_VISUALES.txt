@@ -1,0 +1,11 @@
+SML ACADEMY — V45 · LECCIONES VISUALES
+
+Cambios:
+- Reorganizada la lección para que la demostración en vídeo aparezca tras el encabezado y antes del bloque teórico largo.
+- La explicación inicial queda reducida a la idea clave; el fundamento, los pasos y las llamadas técnicas se pueden desplegar en “Entender la técnica a fondo”.
+- El reproductor utiliza el ancho completo de la columna principal y respeta la proporción intrínseca del vídeo para evitar imponer un formato incorrecto.
+- Ajustes responsive para móvil y escritorio.
+
+Validación:
+- `node --test server/miSml.test.mjs`: 12 pruebas superadas.
+- `npm run build` no se pudo ejecutar porque Vite/node_modules no están instalados en este entorno (vite: not found).

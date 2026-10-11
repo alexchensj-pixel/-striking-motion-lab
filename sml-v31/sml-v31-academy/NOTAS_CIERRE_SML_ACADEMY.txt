@@ -1,0 +1,11 @@
+CIERRE DE TRABAJO — SML ACADEMY
+
+- Lecciones 11, 12 y 13: ilustraciones específicas enlazadas por título.
+- Lección 7 (Middle Kick): selector dirigido al recurso kick.png existente.
+- Lección 8 (Rodillas): se añade rodillas.jpg al directorio de láminas desde el recurso ya existente del curso.
+- Lección 10 (Movilidad de cadera): se añade movilidad.jpg al directorio de láminas desde el recurso ya existente del curso.
+- No se han modificado los vídeos ni el contenido textual del curso en este cierre.
+
+Validación:
+- ZIP comprobado con unzip -t.
+- Build de Vite no confirmado: npm install no terminó dentro del tiempo disponible y vite no estaba instalado en el entorno. No publicar sin ejecutar npm install y npm run build en un entorno con dependencias disponibles.

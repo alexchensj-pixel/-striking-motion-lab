@@ -1,0 +1,13 @@
+SML ACADEMY — REVISIÓN EDITORIAL Y PEDAGÓGICA DE LAS 13 LECCIONES
+
+Qué se ha aplicado en esta versión
+- Revisión del texto de las 13 lecciones para reducir absolutos técnicos, porcentajes de peso presentados como universales y consignas potencialmente confusas.
+- Instrucciones más graduadas para principiantes, con énfasis en equilibrio, control, retorno a guardia y ausencia de dolor.
+- Aclaraciones en movilidad (rango cómodo, alternativas sin barra, dosificación orientativa), rutina individual (calentamiento, volumen inicial, descansos) y transferencia (prerrequisitos y alternativas sin salto/material).
+- Pruebas prácticas y listas de comprobación específicas añadidas a movilidad, sincronización, rutina individual y transferencia.
+- Se mantienen estructura de módulos, nombres de lecciones, identidad visual, imágenes, vídeos y diseño de la web.
+
+Límites de validación
+- No se ha cambiado el montaje de los vídeos ni se han sustituido las personas o imágenes aprobadas.
+- Los consejos técnicos que dependen de la variante concreta mostrada deben contrastarse con el vídeo y con el criterio del instructor; la revisión editorial no certifica biomecánica ni sustituye una evaluación presencial.
+- No se declara compilación ni prueba visual en navegador. Para cerrar la revisión técnica falta instalar dependencias, ejecutar el build y comprobar las 13 lecciones en móvil y escritorio.

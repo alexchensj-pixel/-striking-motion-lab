@@ -1,0 +1,12 @@
+CAMBIO: COPY COMERCIAL DE PORTADA SML ACADEMY
+Fecha: 2026-10-10
+
+Aplicado en src/Academy/Academia.jsx y src/Academy/academia.css.
+
+- Nuevo titular centrado en comprender el movimiento, no solo imitar golpes.
+- Intro orientada a principiantes absolutos y lenguaje técnico explicado con claridad.
+- Sección de contenido ajustada a fundamentos presentes en el curso: guardia, desplazamientos, puños, patadas, rodillas, movilidad de cadera, coordinación de apoyos/rotación e integración técnica.
+- Añadida sección educativa que distingue boxeo y Muay Thai sin afirmar que el curso cubra toda la táctica ni que sustituya práctica supervisada.
+- CTA primario: Explorar el curso / Ver temario. CTA secundario: Solicitar información. No se inventaron precios, credenciales, duración ni resultados garantizados.
+- Actualizado el título del documento para SML Academy.
+- Se conservan navegación, módulos, lecciones, progreso y resto de funcionalidades.
