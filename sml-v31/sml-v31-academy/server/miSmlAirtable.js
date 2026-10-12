@@ -6,8 +6,10 @@ const PLANES = 'Bonos y planes';
 const PAGOS = 'Pagos';
 const SESIONES = 'Sesiones';
 const ANALISIS = 'SML — Movement Analysis';
-const AUTH0_FIELD = () => String(process.env.AIRTABLE_AUTH0_FIELD || 'Auth0 ID').trim();
-const EMAIL_FIELD = () => String(process.env.AIRTABLE_EMAIL_FIELD || 'Email Mi SML').trim();
+const AUTH0_FIELD = () =>
+  String(process.env.AIRTABLE_AUTH0_FIELD || 'Auth0 ID').trim();
+const EMAIL_FIELD = () =>
+  String(process.env.AIRTABLE_EMAIL_FIELD || 'Email Mi SML').trim();
 const api = (table, params = '') =>
   `https://api.airtable.com/v0/${encodeURIComponent(BASE_ID())}/${encodeURIComponent(table)}${params ? `?${params}` : ''}`;
 async function airtableFetch(table, params = '') {
@@ -91,7 +93,9 @@ async function listByIds(table, ids, fields, fetcher = airtableFetch) {
       filterByFormula: formula,
       pageSize: '100',
     });
-    for (const field of fields) params.append('fields[]', field);
+    for (const field of fields) {
+      params.append('fields[]', field);
+    }
     const data = await fetcher(table, params.toString());
     rows.push(...(data.records || []));
   }
@@ -103,48 +107,101 @@ export function configurado(env = process.env) {
     String(env.AIRTABLE_TOKEN || '').trim()
   );
 }
-async function buildClient(contacto, get = airtableFetch, { includeAdmin = false } = {}) {
+async function buildClient(
+  contacto,
+  get = airtableFetch,
+  { includeAdmin = false } = {}
+) {
   const cf = contacto.fields || {};
   const planIds = linkedIds(cf['Bonos y planes']);
   const pagoIds = linkedIds(cf['Pagos']);
   const sesionIds = linkedIds(cf['Sesiones']);
   const analisisIds = linkedIds(cf['SML — Movement Analysis']);
-  const [planes, pagos, sesiones, analisis] = await Promise.all([
+  const [
+    planes,
+    pagos,
+    sesiones,
+    analisis,
+  ] = await Promise.all([
     listByIds(PLANES, planIds, [
-      'Registro', 'Tipo', 'Clases contratadas', 'Clases realizadas',
-      'Precio', 'Estado pago', 'Frecuencia', 'Notas',
-      'Sesiones registradas', 'Sesiones restantes', 'Progreso',
+      'Registro',
+      'Tipo',
+      'Clases contratadas',
+      'Clases realizadas',
+      'Precio',
+      'Estado pago',
+      'Frecuencia',
+      'Notas',
+      'Sesiones registradas (auto)',
+      'Sesiones restantes (auto)',
+      'Progreso (auto)',
     ], get),
     listByIds(PAGOS, pagoIds, [
-      'Pago', 'Fecha', 'Importe', 'Estado', 'Método', 'Concepto', 'Notas',
+      'Pago',
+      'Fecha',
+      'Importe',
+      'Estado',
+      'Método',
+      'Concepto',
+      'Notas',
     ], get),
     listByIds(SESIONES, sesionIds, [
-      'Sesión', 'Fecha', 'Disciplina', 'Formato', 'Precio cobrado',
-      'Notas', 'Plan asociado',
+      'Sesión',
+      'Fecha',
+      'Disciplina',
+      'Formato',
+      'Precio cobrado',
+      'Notas',
+      'Plan asociado',
     ], get),
     listByIds(ANALISIS, analisisIds, [
-      'Análisis', 'Fecha evaluación', 'Disciplina', 'Objetivo del cliente',
-      'Observación', 'Evidencia', 'Interpretación', 'Hipótesis entrenador',
-      'Prioridad', 'Intervención', 'Qué buscamos cambiar', 'Respuesta',
-      'Transferencia', 'Antes', 'Ahora', 'Cambio observado',
-      'Siguiente prueba', 'Visible al cliente',
-      'Texto cliente — Observación', 'Texto cliente — Por qué importa',
-      'Texto cliente — Qué trabajamos', 'Texto cliente — Evolución',
-      'Texto cliente — Siguiente objetivo', 'Estado', 'Fecha revisión',
+      'Análisis',
+      'Fecha evaluación',
+      'Disciplina',
+      'Objetivo del cliente',
+      'Observación',
+      'Evidencia',
+      'Interpretación',
+      'Hipótesis entrenador',
+      'Prioridad',
+      'Intervención',
+      'Qué buscamos cambiar',
+      'Respuesta',
+      'Transferencia',
+      'Antes',
+      'Ahora',
+      'Cambio observado',
+      'Siguiente prueba',
+      'Visible al cliente',
+      'Texto cliente — Observación',
+      'Texto cliente — Por qué importa',
+      'Texto cliente — Qué trabajamos',
+      'Texto cliente — Evolución',
+      'Texto cliente — Siguiente objetivo',
+      'Estado',
+      'Fecha revisión',
     ], get),
   ]);
   const activePlans = planes.filter(record => {
-    const estado = String(record.fields?.['Estado pago'] ?? '').toLowerCase();
+    const estado = String(
+      record.fields?.['Estado pago'] ?? ''
+    ).toLowerCase();
     return estado !== 'cancelado' && estado !== 'finalizado';
   });
   const plan = activePlans[0]?.fields || planes[0]?.fields || {};
-  const realizadas = num(plan['Clases realizadas'] ?? plan['Sesiones registradas']);
+  const realizadas = num(
+    plan['Clases realizadas'] ??
+    plan['Sesiones registradas (auto)']
+  );
   const contratadas = num(plan['Clases contratadas']);
-  const restantes = plan['Sesiones restantes'] != null
-    ? num(plan['Sesiones restantes'])
-    : Math.max(0, contratadas - realizadas);
+  const restantes =
+    plan['Sesiones restantes (auto)'] != null
+      ? num(plan['Sesiones restantes (auto)'])
+      : Math.max(0, contratadas - realizadas);
   const pendingPayments = pagos.filter(record => {
-    const estado = String(record.fields?.['Estado'] ?? '').toLowerCase();
+    const estado = String(
+      record.fields?.['Estado'] ?? ''
+    ).toLowerCase();
     return estado.includes('pend') ||
       estado.includes('adeud') ||
       estado.includes('no pag');
@@ -213,7 +270,9 @@ async function buildClient(contacto, get = airtableFetch, { includeAdmin = false
 }
 export async function obtener(identidad, deps = {}) {
   const sub = String(identidad?.sub || '').trim();
-  if (!sub) return { estado: 'forbidden' };
+  if (!sub) {
+    return { estado: 'forbidden' };
+  }
   const get = deps.fetchTable || airtableFetch;
   const field = AUTH0_FIELD();
   if (!configurado()) {
@@ -237,7 +296,8 @@ export async function obtener(identidad, deps = {}) {
   }
   if (records.length === 0 && identidad.email && identidad.email_verified) {
     const emailField = EMAIL_FIELD();
-    const emailFormula = `LOWER({${emailField}})='${esc(identidad.email)}'`;
+    const emailFormula =
+      `LOWER({${emailField}})='${esc(identidad.email)}'`;
     const byEmail = await get(
       CONTACTOS,
       new URLSearchParams({
@@ -253,11 +313,14 @@ export async function obtener(identidad, deps = {}) {
     }
     if (records.length === 1) {
       const record = records[0];
-      const existingSub = String(record.fields?.[field] ?? '').trim();
+      const existingSub = String(
+        record.fields?.[field] ?? ''
+      ).trim();
       if (existingSub && existingSub !== sub) {
-        throw Object.assign(new Error('Contacto ya vinculado a otra cuenta'), {
-          code: 'AUTH0_ID_CONFLICT',
-        });
+        throw Object.assign(
+          new Error('Contacto ya vinculado a otra cuenta'),
+          { code: 'AUTH0_ID_CONFLICT' }
+        );
       }
       await (deps.updateRecord || airtableUpdate)(
         CONTACTOS,
@@ -270,7 +333,9 @@ export async function obtener(identidad, deps = {}) {
       }];
     }
   }
-  if (records.length === 0) return { estado: 'forbidden' };
+  if (records.length === 0) {
+    return { estado: 'forbidden' };
+  }
   return {
     estado: 'connected',
     client: await buildClient(records[0], get),
@@ -285,8 +350,14 @@ export async function listarClientes(deps = {}) {
   }
   const params = new URLSearchParams({ pageSize: '100' });
   for (const field of [
-    'Nombre', 'Estado', 'Zona', 'Formato', 'Frecuencia',
-    'Bonos y planes', 'Auth0 ID', 'Email Mi SML',
+    'Nombre',
+    'Estado',
+    'Zona',
+    'Formato',
+    'Frecuencia',
+    'Bonos y planes',
+    'Auth0 ID',
+    'Email Mi SML',
   ]) {
     params.append('fields[]', field);
   }
@@ -298,13 +369,17 @@ export async function listarClientes(deps = {}) {
     zona: record.fields?.Zona ?? null,
     formato: record.fields?.Formato ?? null,
     frecuencia: record.fields?.Frecuencia ?? null,
-    tieneCuenta: Boolean(String(record.fields?.['Auth0 ID'] ?? '').trim()),
+    tieneCuenta: Boolean(
+      String(record.fields?.['Auth0 ID'] ?? '').trim()
+    ),
   }));
   return { clients };
 }
 export async function obtenerPorContactoId(contactoId, deps = {}) {
   const id = String(contactoId || '').trim();
-  if (!id) return { estado: 'not-found' };
+  if (!id) {
+    return { estado: 'not-found' };
+  }
   const get = deps.fetchTable || airtableFetch;
   if (!configurado()) {
     throw Object.assign(new Error('Airtable no configurado'), {
@@ -312,14 +387,29 @@ export async function obtenerPorContactoId(contactoId, deps = {}) {
     });
   }
   const rows = await listByIds(CONTACTOS, [id], [
-    'Nombre', 'Teléfono', 'Estado', 'Zona', 'Formato', 'Frecuencia',
-    'Auth0 ID', 'Email Mi SML', 'Bonos y planes', 'Pagos', 'Sesiones',
+    'Nombre',
+    'Teléfono',
+    'Estado',
+    'Zona',
+    'Formato',
+    'Frecuencia',
+    'Auth0 ID',
+    'Email Mi SML',
+    'Bonos y planes',
+    'Pagos',
+    'Sesiones',
     'SML — Movement Analysis',
   ], get);
-  if (!rows.length) return { estado: 'not-found' };
+  if (!rows.length) {
+    return { estado: 'not-found' };
+  }
   return {
     estado: 'connected',
-    client: await buildClient(rows[0], get, { includeAdmin: true }),
+    client: await buildClient(
+      rows[0],
+      get,
+      { includeAdmin: true }
+    ),
   };
 }
 export const _internals = {
