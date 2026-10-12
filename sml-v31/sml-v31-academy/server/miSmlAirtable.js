@@ -45,6 +45,44 @@ async function airtableFetch(table, params = '') {
   return JSON.parse(body);
 }
 async function airtableUpdate(table, recordId, fields) {
+  const token = TOKEN();
+  const base = BASE_ID();
+
+  if (!token || !base) {
+    throw Object.assign(new Error('Airtable no configurado'), {
+      code: 'AIRTABLE_NOT_CONFIGURED',
+    });
+  }
+
+  const res = await fetch(
+    `https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(table)}/${encodeURIComponent(recordId)}`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fields }),
+    }
+  );
+
+  if (!res.ok) {
+    const response = await res.text();
+
+    console.error('MI SML Airtable UPDATE diagnostic:', {
+      status: res.status,
+      table,
+      response: response.slice(0, 1500),
+    });
+
+    throw Object.assign(new Error('Airtable update failed'), {
+      code: `AIRTABLE_HTTP_${res.status}`,
+    });
+  }
+
+  return res.json();
+}
   const token = TOKEN(); const base = BASE_ID();
   if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
   const res = await fetch(`https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(table)}/${encodeURIComponent(recordId)}`, {
