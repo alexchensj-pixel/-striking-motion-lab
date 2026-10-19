@@ -115,7 +115,7 @@ export async function obtenerPorContactoId(contactoId, deps = {}) {
   const id = String(contactoId || '').trim(); if (!ID_CONTACTO.test(id)) return { estado: 'not-found' };
   const get = deps.fetchTable || airtableFetch;
   if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
-  const rows = await listByIds(CONTACTOS, [id], ['Nombre','Teléfono','Estado','Zona','Formato','Frecuencia','Auth0 ID','Bonos y planes','Pagos','Sesiones','SML — Movement Analysis'], get);
+  const rows = await listByIds(CONTACTOS, [id], ['Nombre','Teléfono','Estado','Zona','Formato','Frecuencia','Auth0 ID','Bonos y planes','Pagos','Sesiones','SML — Movement Analysis','Rutinas Mi SML'], get);
   if (!rows.length) return { estado: 'not-found' };
   return { estado: 'connected', client: await buildClient(rows[0], get, { admin: true }) };
 }
