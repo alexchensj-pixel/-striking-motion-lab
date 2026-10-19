@@ -180,3 +180,25 @@ export async function getAdminClient(contactoId) {
   if (body?.data !== 'connected' || !body.client) throw new ClientApiError('request-failed');
   return body.client;
 }
+
+
+export async function generateAdminRoutine(payload) {
+  const token = await getAccessToken();
+  let res;
+  try {
+    res = await fetch(`${API_BASE}/admin/routines/generate`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload), cache: 'no-store', credentials: 'omit',
+    });
+  } catch { throw new ClientApiError('request-failed'); }
+  if (res.status === 401) throw new ClientApiError('unauthenticated');
+  if (res.status === 403) throw new ClientApiError('forbidden');
+  if (res.status === 400) throw new ClientApiError('invalid-input');
+  if (res.status === 404) throw new ClientApiError('not-found');
+  if (res.status === 503) throw new ClientApiError('routine-generator-unavailable');
+  if (!res.ok) throw new ClientApiError('request-failed');
+  const body = await res.json().catch(() => null);
+  if (body?.data !== 'routine-draft-created' || !body.routine) throw new ClientApiError('request-failed');
+  return body.routine;
+}

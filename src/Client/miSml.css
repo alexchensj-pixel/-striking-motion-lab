@@ -29,3 +29,49 @@
 .msml__back { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--dim); text-decoration: underline; text-underline-offset: 3px; font-size: .875rem; }
 .msml__back:hover { color: var(--fg); }
 .msml__admin-list{display:grid;gap:10px;margin:18px 0}.msml__admin-client{display:flex;justify-content:space-between;gap:16px;text-align:left;padding:14px 16px;border:1px solid rgba(255,255,255,.14);background:transparent;color:inherit;border-radius:10px;cursor:pointer}.msml__admin-client span{opacity:.65;font-size:.9em}
+
+
+/* Mi SML dashboard: client-safe overview and movement analysis */
+.msml__overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%;margin:8px 0 28px}
+.msml__metric{min-width:0;display:flex;flex-direction:column;gap:10px;padding:18px;border:1px solid var(--line,rgba(255,255,255,.12));border-radius:14px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015))}
+.msml__eyebrow{color:var(--dim,#a6a8ad);font-family:var(--font-mono,monospace);font-size:.68rem;letter-spacing:.13em;line-height:1.5;text-transform:uppercase}
+.msml__metric strong{color:var(--fg,#f5f5f5);font-size:clamp(1.15rem,2.5vw,1.65rem);line-height:1.15;overflow-wrap:anywhere}
+.msml__metric small{color:var(--dim,#a6a8ad);font-size:.84rem;line-height:1.5}
+.msml__section{width:100%;margin-top:12px}
+.msml__section-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--line,rgba(255,255,255,.12))}
+.msml__section-heading h2{margin:7px 0 0;color:var(--fg,#f5f5f5);font-family:var(--font-display,inherit);font-size:clamp(1.6rem,4vw,2.35rem);letter-spacing:-.035em}
+.msml__count{color:var(--dim,#a6a8ad);font-family:var(--font-mono,monospace);font-size:.75rem;white-space:nowrap}
+.msml__analysis-list{display:grid;gap:14px;padding-top:16px}
+.msml__analysis-card{padding:clamp(16px,3vw,24px);border:1px solid var(--line,rgba(255,255,255,.12));border-radius:14px;background:rgba(255,255,255,.025)}
+.msml__analysis-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:15px;border-bottom:1px solid var(--line,rgba(255,255,255,.1));color:var(--dim,#a6a8ad);font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase}
+.msml__analysis-meta span{color:var(--accent,#e05a2b)}
+.msml__analysis-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px;padding-top:18px}
+.msml__analysis-field h3{margin:0 0 7px;color:var(--dim,#a6a8ad);font-size:.76rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.msml__analysis-field p{margin:0;color:var(--fg,#f5f5f5);font-size:.96rem;line-height:1.65;overflow-wrap:anywhere}
+.msml__empty-state{display:grid;justify-items:start;gap:9px;margin-top:16px;padding:clamp(20px,4vw,30px);border:1px dashed var(--line,rgba(255,255,255,.18));border-radius:14px}
+.msml__empty-mark{color:var(--accent,#e05a2b);font-size:1.5rem}
+.msml__empty-state h3{margin:0;color:var(--fg,#f5f5f5);font-size:1.1rem}
+.msml__empty-state p,.msml__empty{max-width:60ch;margin:0;color:var(--dim,#a6a8ad);font-size:.93rem;line-height:1.65}
+@media(max-width:680px){.msml__overview{grid-template-columns:1fr}.msml__metric{padding:15px}.msml__analysis-fields{grid-template-columns:1fr;gap:16px}.msml__analysis-meta{align-items:flex-start;flex-direction:column;gap:7px}}
+
+
+/* Mi SML: published weekly training plans */
+.msml__routine-list{display:grid;gap:14px;padding-top:16px}
+.msml__routine-card{padding:clamp(16px,3vw,24px);border:1px solid var(--line,rgba(255,255,255,.12));border-radius:14px;background:linear-gradient(150deg,rgba(224,90,43,.055),rgba(255,255,255,.018))}
+.msml__routine-card h3{margin:18px 0 12px;color:var(--fg,#f5f5f5);font-size:1.25rem;letter-spacing:-.02em}
+.msml__routine-goal{display:grid;gap:5px;margin:0 0 14px;color:var(--fg,#f5f5f5);font-size:.95rem;line-height:1.6}
+.msml__routine-goal strong{color:var(--dim,#a6a8ad);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.msml__routine-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.msml__routine-meta span{padding:6px 9px;border:1px solid var(--line,rgba(255,255,255,.12));border-radius:999px;color:var(--dim,#a6a8ad);font-size:.75rem}
+.msml__routine-content{padding-top:14px;border-top:1px solid var(--line,rgba(255,255,255,.1));color:var(--fg,#f5f5f5);font-size:.94rem;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}
+
+
+/* Admin routine drafting */
+.msml__routine-help { color: var(--dim, #a6a8ad); max-width: 68ch; line-height: 1.6; }
+.msml__routine-form { display: grid; gap: 14px; width: 100%; max-width: 760px; padding: 18px; border: 1px solid var(--line, rgba(255,255,255,.12)); border-radius: 14px; background: rgba(255,255,255,.025); }
+.msml__routine-form label { display: grid; gap: 7px; color: var(--dim, #a6a8ad); font-size: .82rem; }
+.msml__routine-form input, .msml__routine-form select, .msml__routine-form textarea { width: 100%; min-width: 0; border: 1px solid var(--line, rgba(255,255,255,.16)); border-radius: 8px; background: #15171a; color: var(--fg, #f5f5f5); padding: 12px; font: inherit; }
+.msml__routine-form input:focus-visible, .msml__routine-form select:focus-visible, .msml__routine-form textarea:focus-visible { outline: 2px solid var(--accent, #e05a2b); outline-offset: 2px; }
+.msml__routine-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.msml__routine-success { border-left: 2px solid var(--accent, #e05a2b); padding: 10px 14px; color: var(--fg, #f5f5f5); }
+@media (max-width: 680px) { .msml__routine-form-grid { grid-template-columns: 1fr; } }

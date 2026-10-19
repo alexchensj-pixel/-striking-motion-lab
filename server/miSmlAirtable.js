@@ -6,6 +6,7 @@ const PLANES = 'Bonos y planes';
 const PAGOS = 'Pagos';
 const SESIONES = 'Sesiones';
 const ANALISIS = 'SML — Movement Analysis';
+const RUTINAS = 'Rutinas Mi SML';
 const AUTH0_FIELD = () => String(process.env.AIRTABLE_AUTH0_FIELD || 'Auth0 ID').trim();
 // Único conjunto de campos de «SML — Movement Analysis» que puede salir del servidor hacia el navegador (cliente o admin).
 // Lo interno del entrenador (Observación, Evidencia, Interpretación, Hipótesis…) ni siquiera se pide a Airtable.
@@ -47,11 +48,13 @@ async function buildClient(contacto, get = airtableFetch, { admin = false } = {}
   const pagoIds = linkedIds(cf['Pagos']);
   const sesionIds = linkedIds(cf['Sesiones']);
   const analisisIds = linkedIds(cf['SML — Movement Analysis']);
-  const [planes, pagos, sesiones, analisis] = await Promise.all([
+  const rutinaIds = linkedIds(cf['Rutinas Mi SML']);
+  const [planes, pagos, sesiones, analisis, rutinas] = await Promise.all([
     listByIds(PLANES, planIds, ['Registro','Tipo','Clases contratadas','Clases realizadas','Precio','Estado pago','Frecuencia','Notas','Sesiones registradas','Sesiones restantes','Progreso'], get),
     listByIds(PAGOS, pagoIds, ['Pago','Fecha','Importe','Estado','Método','Concepto','Notas'], get),
     listByIds(SESIONES, sesionIds, ['Sesión','Fecha','Disciplina','Formato','Precio cobrado','Notas','Plan asociado'], get),
     listByIds(ANALISIS, analisisIds, ['Visible al cliente', ...ANALISIS_CAMPOS_CLIENTE], get),
+    listByIds(RUTINAS, rutinaIds, ['Rutina','Semana inicio','Semana fin','Estado','Objetivo','Nivel','Sesiones por semana','Contenido rutina','Visible al cliente','Fecha publicación','Origen'], get),
   ]);
   const activePlans = planes.filter(r => { const e = String(r.fields?.['Estado pago'] ?? '').toLowerCase(); return e !== 'cancelado' && e !== 'finalizado'; });
   const plan = activePlans[0]?.fields || planes[0]?.fields || {};
@@ -61,12 +64,22 @@ async function buildClient(contacto, get = airtableFetch, { admin = false } = {}
   const pendingPayments = pagos.filter(r => { const e = String(r.fields?.['Estado'] ?? '').toLowerCase(); return e.includes('pend') || e.includes('adeud') || e.includes('no pag'); });
   const importePendiente = pendingPayments.reduce((sum, r) => sum + num(r.fields?.['Importe']), 0);
   const visibleAnalysis = analisis.filter(r => { const v = r.fields?.['Visible al cliente']; return v === true || String(v ?? '').toLowerCase() === 'sí' || String(v ?? '').toLowerCase() === 'si'; });
+  const rutinasPublicadas = rutinas.filter(r => {
+    const f = r.fields || {};
+    const visible = f['Visible al cliente'] === true || ['sí', 'si', 'true'].includes(String(f['Visible al cliente'] ?? '').toLowerCase());
+    const estado = typeof f['Estado'] === 'object' ? f['Estado']?.name : f['Estado'];
+    return visible && String(estado || '').toLowerCase() === 'publicada';
+  }).sort((a, b) => String(b.fields?.['Semana inicio'] || '').localeCompare(String(a.fields?.['Semana inicio'] || '')));
   return {
     nombre: String(cf['Nombre'] ?? '').trim(),
     plan: { tipo: plan['Tipo'] ?? plan['Registro'] ?? null, frecuencia: plan['Frecuencia'] ?? null, precio: plan['Precio'] ?? null, registro: plan['Registro'] ?? null },
     pago: { estado: plan['Estado pago'] ?? null, importePendiente },
     clases: { contratadas, realizadas, restantes },
     movementAnalysis: visibleAnalysis.map(r => ({ id: r.id, ...Object.fromEntries(ANALISIS_CAMPOS_CLIENTE.filter(k => r.fields?.[k] != null).map(k => [k, r.fields[k]])) })),
+    rutinas: rutinasPublicadas.map(r => {
+      const f = r.fields || {};
+      return { id: r.id, titulo: f['Rutina'] || 'Rutina semanal', semanaInicio: f['Semana inicio'] || null, semanaFin: f['Semana fin'] || null, objetivo: f['Objetivo'] || null, nivel: f['Nivel'] || null, sesionesPorSemana: f['Sesiones por semana'] ?? null, contenido: f['Contenido rutina'] || '', fechaPublicacion: f['Fecha publicación'] || null, origen: f['Origen'] || null };
+    }),
     ...(admin ? { _meta: { contactoId: contacto.id }, _admin: { telefono: cf['Teléfono'] ?? null, estado: cf['Estado'] ?? null, zona: cf['Zona'] ?? null, formato: cf['Formato'] ?? null, frecuencia: cf['Frecuencia'] ?? null } } : {}),
   };
 }
@@ -102,9 +115,34 @@ export async function obtenerPorContactoId(contactoId, deps = {}) {
   const id = String(contactoId || '').trim(); if (!ID_CONTACTO.test(id)) return { estado: 'not-found' };
   const get = deps.fetchTable || airtableFetch;
   if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
-  const rows = await listByIds(CONTACTOS, [id], ['Nombre','Teléfono','Estado','Zona','Formato','Frecuencia','Auth0 ID','Bonos y planes','Pagos','Sesiones','SML — Movement Analysis'], get);
+  const rows = await listByIds(CONTACTOS, [id], ['Nombre','Teléfono','Estado','Zona','Formato','Frecuencia','Auth0 ID','Bonos y planes','Pagos','Sesiones','SML — Movement Analysis','Rutinas Mi SML'], get);
   if (!rows.length) return { estado: 'not-found' };
   return { estado: 'connected', client: await buildClient(rows[0], get, { admin: true }) };
+}
+
+export async function crearBorradorRutina(input, deps = {}) {
+  const contactId = String(input?.contactId || '').trim();
+  if (!ID_CONTACTO.test(contactId)) return { estado: 'not-found' };
+  if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+  const get = deps.fetchTable || airtableFetch;
+  const contacts = await listByIds(CONTACTOS, [contactId], ['Nombre'], get);
+  if (!contacts.length) return { estado: 'not-found' };
+  const fields = {
+    'Rutina': String(input.titulo || 'Rutina semanal').slice(0, 120),
+    'Cliente': [contactId], 'Semana inicio': input.semanaInicio, 'Semana fin': input.semanaFin,
+    'Estado': 'Pendiente revisión', 'Objetivo': String(input.objetivo || '').slice(0, 1000),
+    'Nivel': input.nivel, 'Sesiones por semana': Number(input.sesionesPorSemana),
+    'Contenido rutina': String(input.contenido || '').slice(0, 18000), 'Visible al cliente': false,
+  };
+  const createRecord = deps.createRecord || (async (table, payload) => {
+    const token = TOKEN(); const base = BASE_ID();
+    if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+    const response = await fetch(api(table), { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!response.ok) throw Object.assign(new Error('Airtable create failed'), { code: `AIRTABLE_HTTP_${response.status}` });
+    return response.json();
+  });
+  const created = await createRecord(RUTINAS, { fields });
+  return { estado: 'created', rutina: { id: created.id, ...fields, estado: 'Pendiente revisión', visible: false } };
 }
 
 export const _internals = { airtableFetch, listByIds, buildClient };

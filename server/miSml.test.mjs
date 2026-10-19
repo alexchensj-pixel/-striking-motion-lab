@@ -3,7 +3,7 @@
 // en server/miSmlAuth.js y solo se puede comprobar con un tenant de Auth0 real (ver README).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { atender, tokenDe, sinFuenteDeDatos, RUTA_ME } from './miSml.js';
+import { atender, tokenDe, sinFuenteDeDatos, RUTA_ME, RUTA_ADMIN_GENERAR_RUTINA } from './miSml.js';
 
 const silencio = () => {};
 // Tokens de prueba: «A» y «B» son dos personas distintas; «caducado» y «roto» simulan sesiones no válidas; «caido» simula un fallo del proveedor.
@@ -75,6 +75,24 @@ test('404 para otra ruta de /api/mi-sml/ · 405 para métodos distintos de GET',
   assert.equal((await atender(pet({ pathname: '/api/mi-sml/me/otro' }), deps())).status, 404);
   const m = await atender(pet({ method: 'POST' }), deps());
   assert.deepEqual([m.status, m.headers.allow], [405, 'GET']);
+});
+
+test('generar rutina: solo admin puede invocar el generador y queda en borrador', async () => {
+  let called = 0;
+  const fuente = { async generarRutina(body) { called++; assert.equal(body.contactId, 'recAAAAAAAAAAAAAA'); return { estado: 'created', rutina: { id: 'recBBBBBBBBBBBBBB', estado: 'Pendiente revisión', visible: false } }; } };
+  const req = { method: 'POST', pathname: RUTA_ADMIN_GENERAR_RUTINA, authorization: 'Bearer tokenA', body: { contactId: 'recAAAAAAAAAAAAAA' } };
+  const forbidden = await atender(req, deps({ fuente, adminSub: 'auth0|ADMIN' }));
+  assert.equal(forbidden.status, 403); assert.equal(called, 0);
+  const admin = await atender({ ...req, authorization: 'Bearer admin-token' }, deps({ verify: async () => ({ sub: 'auth0|ADMIN' }), fuente, adminSub: 'auth0|ADMIN' }));
+  assert.equal(admin.status, 201); assert.equal(admin.body.data, 'routine-draft-created');
+  assert.equal(admin.body.routine.visible, false); assert.equal(called, 1);
+});
+
+test('generar rutina: rechaza cuerpo inválido y métodos no autorizados', async () => {
+  const r = await atender({ method: 'POST', pathname: RUTA_ADMIN_GENERAR_RUTINA, authorization: 'Bearer admin-token', body: [] }, deps({ verify: async () => ({ sub: 'auth0|ADMIN' }), adminSub: 'auth0|ADMIN' }));
+  assert.equal(r.status, 400);
+  const method = await atender({ method: 'DELETE', pathname: RUTA_ADMIN_GENERAR_RUTINA, authorization: 'Bearer admin-token' }, deps({ verify: async () => ({ sub: 'auth0|ADMIN' }), adminSub: 'auth0|ADMIN' }));
+  assert.equal(method.status, 405);
 });
 
 test('tokenDe: solo «Bearer <token>» bien formado', () => {
