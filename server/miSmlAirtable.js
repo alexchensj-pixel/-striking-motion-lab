@@ -120,4 +120,29 @@ export async function obtenerPorContactoId(contactoId, deps = {}) {
   return { estado: 'connected', client: await buildClient(rows[0], get, { admin: true }) };
 }
 
+export async function crearBorradorRutina(input, deps = {}) {
+  const contactId = String(input?.contactId || '').trim();
+  if (!ID_CONTACTO.test(contactId)) return { estado: 'not-found' };
+  if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+  const get = deps.fetchTable || airtableFetch;
+  const contacts = await listByIds(CONTACTOS, [contactId], ['Nombre'], get);
+  if (!contacts.length) return { estado: 'not-found' };
+  const fields = {
+    'Rutina': String(input.titulo || 'Rutina semanal').slice(0, 120),
+    'Cliente': [contactId], 'Semana inicio': input.semanaInicio, 'Semana fin': input.semanaFin,
+    'Estado': 'Pendiente revisión', 'Objetivo': String(input.objetivo || '').slice(0, 1000),
+    'Nivel': input.nivel, 'Sesiones por semana': Number(input.sesionesPorSemana),
+    'Contenido rutina': String(input.contenido || '').slice(0, 18000), 'Visible al cliente': false,
+  };
+  const createRecord = deps.createRecord || (async (table, payload) => {
+    const token = TOKEN(); const base = BASE_ID();
+    if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+    const response = await fetch(api(table), { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!response.ok) throw Object.assign(new Error('Airtable create failed'), { code: `AIRTABLE_HTTP_${response.status}` });
+    return response.json();
+  });
+  const created = await createRecord(RUTINAS, { fields });
+  return { estado: 'created', rutina: { id: created.id, ...fields, estado: 'Pendiente revisión', visible: false } };
+}
+
 export const _internals = { airtableFetch, listByIds, buildClient };
