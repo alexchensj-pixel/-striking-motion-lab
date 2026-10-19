@@ -106,7 +106,7 @@ function ClientView({ client, admin = false }) {
         event.preventDefault(); setRoutineBusy(true); setRoutineError(''); setRoutineMessage(''); setCreatedRoutine(null);
         try {
           const draft = await generateAdminRoutine({
-            contactId: client.id || client._admin?.contactoId,
+            contactId: client._meta?.contactoId || client.id || client._admin?.contactoId,
             objetivo: routineForm.objetivo, nivel: routineForm.nivel,
             sesionesPorSemana: Number(routineForm.sesionesPorSemana),
             duracionMinutos: Number(routineForm.duracionMinutos),
