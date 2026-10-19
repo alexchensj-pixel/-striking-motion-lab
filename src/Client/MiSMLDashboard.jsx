@@ -50,6 +50,7 @@ export default function MiSMLDashboard({ onSessionEnded }) {
 }
 
 function ClientView({ client, admin = false }) {
+  const rutinas = Array.isArray(client.rutinas) ? client.rutinas : [];
   const analysis = Array.isArray(client.movementAnalysis)
     ? [...client.movementAnalysis].sort((a, b) => String(b['Fecha evaluación'] || '').localeCompare(String(a['Fecha evaluación'] || '')))
     : [];
@@ -74,6 +75,23 @@ function ClientView({ client, admin = false }) {
           {fields.length ? <div className="msml__analysis-fields">{fields.map(([label, key]) => <div className="msml__analysis-field" key={key}><h3>{label}</h3><p>{String(entry[key])}</p></div>)}</div> : <p className="msml__empty">Este registro todavía no tiene un resumen visible para el alumno.</p>}
         </article>;
       })}</div> : <div className="msml__empty-state"><span className="msml__empty-mark" aria-hidden="true">+</span><h3>Tu seguimiento empieza aquí</h3><p>Cuando tu entrenador publique una evaluación para ti, encontrarás aquí los puntos trabajados, tu evolución y el siguiente objetivo.</p></div>}
+    </section>
+    <section className="msml__section" aria-labelledby="msml-routines-title">
+      <div className="msml__section-heading">
+        <div><span className="msml__eyebrow">PLANIFICACIÓN SEMANAL</span><h2 id="msml-routines-title">Tus rutinas</h2></div>
+        <span className="msml__count">{rutinas.length} {rutinas.length === 1 ? 'rutina' : 'rutinas'}</span>
+      </div>
+      {rutinas.length ? <div className="msml__routine-list">{rutinas.map((routine) => {
+        const inicio = routine.semanaInicio && !Number.isNaN(Date.parse(routine.semanaInicio)) ? new Date(routine.semanaInicio).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : routine.semanaInicio;
+        const fin = routine.semanaFin && !Number.isNaN(Date.parse(routine.semanaFin)) ? new Date(routine.semanaFin).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : routine.semanaFin;
+        return <article className="msml__routine-card" key={routine.id}>
+          <div className="msml__analysis-meta"><span>{routine.nivel || 'Plan SML'}</span><time>{inicio ? `${inicio}${fin ? ` — ${fin}` : ''}` : 'Plan semanal'}</time></div>
+          <h3>{routine.titulo}</h3>
+          {routine.objetivo && <p className="msml__routine-goal"><strong>Objetivo</strong>{routine.objetivo}</p>}
+          <div className="msml__routine-meta">{routine.sesionesPorSemana != null && <span>{routine.sesionesPorSemana} sesiones/semana</span>}{routine.origen && <span>{routine.origen === 'IA revisada' ? 'Preparada con IA · revisada por el entrenador' : routine.origen === 'Plantilla SML' ? 'Sistema SML' : 'Planificación del entrenador'}</span>}</div>
+          {routine.contenido && <div className="msml__routine-content">{routine.contenido}</div>}
+        </article>;
+      })}</div> : <div className="msml__empty-state"><span className="msml__empty-mark" aria-hidden="true">+</span><h3>Tu próxima rutina aparecerá aquí</h3><p>Las rutinas se mostrarán cuando estén publicadas por tu entrenador. Así tendrás el trabajo semanal, su objetivo y las indicaciones en un único lugar.</p></div>}
     </section>
     {admin && client._admin && <p>Zona: {client._admin.zona || '—'} · Formato: {client._admin.formato || '—'} · Frecuencia: {client._admin.frecuencia || '—'}</p>}
   </div>;
