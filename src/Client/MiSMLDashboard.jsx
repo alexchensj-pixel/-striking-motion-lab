@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAdminClient, getAdminClients, getCurrentClient, signOut } from './clientApi.js';
+import { generateAdminRoutine, getAdminClient, getAdminClients, getCurrentClient, signOut } from './clientApi.js';
 
 export default function MiSMLDashboard({ onSessionEnded }) {
   const [mode, setMode] = useState('loading');
@@ -50,6 +50,11 @@ export default function MiSMLDashboard({ onSessionEnded }) {
 }
 
 function ClientView({ client, admin = false }) {
+  const [routineForm, setRoutineForm] = useState({ objetivo: '', nivel: 'Inicial', sesionesPorSemana: '2', duracionMinutos: '30', material: 'Sombra, cuerda y manoplas si están disponibles', focoTecnico: 'Técnica, coordinación y biomecánica', limitaciones: '' });
+  const [routineBusy, setRoutineBusy] = useState(false);
+  const [routineMessage, setRoutineMessage] = useState('');
+  const [routineError, setRoutineError] = useState('');
+  const [createdRoutine, setCreatedRoutine] = useState(null);
   const rutinas = Array.isArray(client.rutinas) ? client.rutinas : [];
   const analysis = Array.isArray(client.movementAnalysis)
     ? [...client.movementAnalysis].sort((a, b) => String(b['Fecha evaluación'] || '').localeCompare(String(a['Fecha evaluación'] || '')))
@@ -94,5 +99,38 @@ function ClientView({ client, admin = false }) {
       })}</div> : <div className="msml__empty-state"><span className="msml__empty-mark" aria-hidden="true">+</span><h3>Tu próxima rutina aparecerá aquí</h3><p>Las rutinas se mostrarán cuando estén publicadas por tu entrenador. Así tendrás el trabajo semanal, su objetivo y las indicaciones en un único lugar.</p></div>}
     </section>
     {admin && client._admin && <p>Zona: {client._admin.zona || '—'} · Formato: {client._admin.formato || '—'} · Frecuencia: {client._admin.frecuencia || '—'}</p>}
+    {admin && <section className="msml__section" aria-labelledby="msml-routine-create-title">
+      <div className="msml__section-heading"><div><span className="msml__eyebrow">HERRAMIENTAS DEL ENTRENADOR</span><h2 id="msml-routine-create-title">Preparar rutina semanal</h2></div></div>
+      <p className="msml__routine-help">Genera una propuesta para este alumno. Se guardará como borrador privado para revisarla antes de publicarla.</p>
+      <form className="msml__routine-form" onSubmit={async (event) => {
+        event.preventDefault(); setRoutineBusy(true); setRoutineError(''); setRoutineMessage(''); setCreatedRoutine(null);
+        try {
+          const draft = await generateAdminRoutine({
+            contactId: client.id || client._admin?.contactoId,
+            objetivo: routineForm.objetivo, nivel: routineForm.nivel,
+            sesionesPorSemana: Number(routineForm.sesionesPorSemana),
+            duracionMinutos: Number(routineForm.duracionMinutos),
+            material: routineForm.material, focoTecnico: routineForm.focoTecnico, limitaciones: routineForm.limitaciones,
+          });
+          setCreatedRoutine(draft); setRoutineMessage('Borrador guardado en Airtable. Sigue privado hasta su revisión.');
+        } catch (e) {
+          setRoutineError(e?.code === 'routine-generator-unavailable' ? 'La generación todavía no está configurada en el servidor.' : e?.code === 'forbidden' ? 'Tu cuenta no tiene permiso para generar rutinas.' : e?.code === 'unauthenticated' ? 'La sesión ha caducado. Vuelve a entrar.' : 'No se ha podido crear la rutina. Comprueba los datos y la configuración del servidor.');
+        } finally { setRoutineBusy(false); }
+      }}>
+        <label>Objetivo de la semana<input required minLength="3" maxLength="300" value={routineForm.objetivo} onChange={e => setRoutineForm(v => ({ ...v, objetivo: e.target.value }))} placeholder="Ej. Mejorar guardia, desplazamientos y coordinación" /></label>
+        <div className="msml__routine-form-grid">
+          <label>Nivel<select value={routineForm.nivel} onChange={e => setRoutineForm(v => ({ ...v, nivel: e.target.value }))}><option>Inicial</option><option>Intermedio</option><option>Avanzado</option></select></label>
+          <label>Sesiones/semana<select value={routineForm.sesionesPorSemana} onChange={e => setRoutineForm(v => ({ ...v, sesionesPorSemana: e.target.value }))}>{[1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n}</option>)}</select></label>
+          <label>Duración por sesión<select value={routineForm.duracionMinutos} onChange={e => setRoutineForm(v => ({ ...v, duracionMinutos: e.target.value }))}>{[15,20,30,40,45,60,90,120].map(n => <option key={n} value={n}>{n} min</option>)}</select></label>
+        </div>
+        <label>Material disponible<input value={routineForm.material} maxLength="300" onChange={e => setRoutineForm(v => ({ ...v, material: e.target.value }))} /></label>
+        <label>Foco técnico<input value={routineForm.focoTecnico} maxLength="500" onChange={e => setRoutineForm(v => ({ ...v, focoTecnico: e.target.value }))} /></label>
+        <label>Limitaciones relevantes (opcional)<textarea value={routineForm.limitaciones} maxLength="500" onChange={e => setRoutineForm(v => ({ ...v, limitaciones: e.target.value }))} rows={3} placeholder="Molestias, restricciones o aspectos que el entrenador debe comprobar" /></label>
+        <button className="msml__btn" type="submit" disabled={routineBusy}>{routineBusy ? 'Generando borrador…' : 'Generar borrador con IA'}</button>
+      </form>
+      {routineError && <p className="msml__note" role="alert">{routineError}</p>}
+      {routineMessage && <p className="msml__routine-success" role="status">{routineMessage}</p>}
+      {createdRoutine && <article className="msml__routine-card"><div className="msml__analysis-meta"><span>BORRADOR PRIVADO</span><span>{createdRoutine.estado || 'Pendiente revisión'}</span></div><h3>{createdRoutine.titulo || 'Rutina semanal SML'}</h3>{createdRoutine.objetivo && <p><strong>Objetivo:</strong> {createdRoutine.objetivo}</p>}<div className="msml__routine-content">{createdRoutine.contenido}</div></article>}
+    </section>}
   </div>;
 }
