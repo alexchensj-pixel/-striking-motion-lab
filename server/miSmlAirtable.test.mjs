@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { obtener } from './miSmlAirtable.js';
+import { obtener, crearBorradorRutina } from './miSmlAirtable.js';
 
 test('Airtable: una identidad Auth0 devuelve solo sus datos y filtra análisis visibles', async () => {
   process.env.AIRTABLE_BASE_ID = 'appTest';
@@ -84,4 +84,22 @@ test('Admin: el listado pagina (más de 100 contactos)', async () => {
     : { records: [{ id: 'rec2', fields: { Nombre: 'B' } }] });
   const { clients } = await listarClientes({ fetchTable: fake });
   assert.equal(clients.length, 2);
+});
+
+test('Airtable: las rutinas generadas quedan pendientes de revisión y no visibles', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  let savedTable, savedPayload;
+  const result = await crearBorradorRutina({
+    contactId: 'recAAAAAAAAAAAAAA', titulo: 'Base técnica', semanaInicio: '2026-10-19', semanaFin: '2026-10-25',
+    objetivo: 'Mejorar coordinación', nivel: 'Inicial', sesionesPorSemana: 2, contenido: 'Día 1: técnica básica.',
+  }, {
+    fetchTable: async (table) => table === 'Contactos' ? { records: [{ id: 'recAAAAAAAAAAAAAA', fields: { Nombre: 'Ana' } }] } : { records: [] },
+    createRecord: async (table, payload) => { savedTable = table; savedPayload = payload; return { id: 'recBBBBBBBBBBBBBB' }; },
+  });
+  assert.equal(savedTable, 'Rutinas Mi SML');
+  assert.deepEqual(savedPayload.fields.Cliente, ['recAAAAAAAAAAAAAA']);
+  assert.equal(savedPayload.fields.Estado, 'Pendiente revisión');
+  assert.equal(savedPayload.fields['Visible al cliente'], false);
+  assert.equal(result.estado, 'created');
+  assert.equal(result.rutina.visible, false);
 });
