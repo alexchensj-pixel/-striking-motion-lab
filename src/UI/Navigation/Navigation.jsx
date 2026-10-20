@@ -64,6 +64,16 @@ export default function Navigation() {
             </button>
           </li>
         ))}
+        <li data-id="academy">
+          <button type="button" onClick={() => { setOpen(false); window.location.assign('/academia'); }}>
+            Academy
+          </button>
+        </li>
+        <li data-id="mi-sml">
+          <button type="button" onClick={() => { setOpen(false); window.location.assign('/mi-sml'); }}>
+            Mi SML
+          </button>
+        </li>
         <li data-on={isOn('book')} data-id={ACTION.id}>
           <button type="button" aria-current={isOn('book') ? 'true' : undefined} onClick={() => { setOpen(false); irAReservar(); }}>
             {ACTION.label}
