@@ -6,6 +6,8 @@ const PLANES = 'Bonos y planes';
 const PAGOS = 'Pagos';
 const SESIONES = 'Sesiones';
 const ANALISIS = 'SML — Movement Analysis';
+const RUTINAS = 'Rutinas Mi SML';
+const ID_CONTACTO = /^rec[A-Za-z0-9]{14}$/;
 const AUTH0_FIELD = () =>
   String(process.env.AIRTABLE_AUTH0_FIELD || 'Auth0 ID').trim();
 const EMAIL_FIELD = () =>
@@ -117,11 +119,13 @@ async function buildClient(
   const pagoIds = linkedIds(cf['Pagos']);
   const sesionIds = linkedIds(cf['Sesiones']);
   const analisisIds = linkedIds(cf['SML — Movement Analysis']);
+  const rutinaIds = linkedIds(cf['Rutinas Mi SML']);
   const [
     planes,
     pagos,
     sesiones,
     analisis,
+    rutinas,
   ] = await Promise.all([
     listByIds(PLANES, planIds, [
       'Registro',
@@ -181,6 +185,7 @@ async function buildClient(
       'Estado',
       'Fecha revisión',
     ], get),
+    listByIds(RUTINAS, rutinaIds, ['Rutina','Semana inicio','Semana fin','Estado','Objetivo','Nivel','Sesiones por semana','Contenido rutina','Visible al cliente','Fecha publicación','Origen'], get),
   ]);
   const activePlans = planes.filter(record => {
     const estado = String(
@@ -235,6 +240,12 @@ async function buildClient(
     );
     return { id: record.id, ...safe };
   });
+  const rutinasPublicadas = rutinas.filter(record => {
+    const fields = record.fields || {};
+    const visible = fields['Visible al cliente'] === true || ['sí', 'si', 'true'].includes(String(fields['Visible al cliente'] ?? '').toLowerCase());
+    const estado = typeof fields['Estado'] === 'object' ? fields['Estado']?.name : fields['Estado'];
+    return visible && String(estado || '').toLowerCase() === 'publicada';
+  }).sort((a, b) => String(b.fields?.['Semana inicio'] || '').localeCompare(String(a.fields?.['Semana inicio'] || '')));
   const client = {
     nombre: String(cf['Nombre'] ?? '').trim(),
     plan: {
@@ -252,6 +263,10 @@ async function buildClient(
       restantes,
     },
     movementAnalysis,
+    rutinas: rutinasPublicadas.map(record => {
+      const fields = record.fields || {};
+      return { id: record.id, titulo: fields['Rutina'] || 'Rutina semanal', semanaInicio: fields['Semana inicio'] || null, semanaFin: fields['Semana fin'] || null, objetivo: fields['Objetivo'] || null, nivel: fields['Nivel'] || null, sesionesPorSemana: fields['Sesiones por semana'] ?? null, contenido: fields['Contenido rutina'] || '', fechaPublicacion: fields['Fecha publicación'] || null, origen: fields['Origen'] || null };
+    }),
   };
   if (includeAdmin) {
     client._admin = {
@@ -399,6 +414,7 @@ export async function obtenerPorContactoId(contactoId, deps = {}) {
     'Pagos',
     'Sesiones',
     'SML — Movement Analysis',
+    'Rutinas Mi SML',
   ], get);
   if (!rows.length) {
     return { estado: 'not-found' };
@@ -412,6 +428,36 @@ export async function obtenerPorContactoId(contactoId, deps = {}) {
     ),
   };
 }
+export async function crearBorradorRutina(input, deps = {}) {
+  const contactId = String(input?.contactId || '').trim();
+  if (!ID_CONTACTO.test(contactId)) return { estado: 'not-found' };
+  if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+  const get = deps.fetchTable || airtableFetch;
+  const contacts = await listByIds(CONTACTOS, [contactId], ['Nombre'], get);
+  if (!contacts.length) return { estado: 'not-found' };
+  const fields = {
+    'Rutina': String(input.titulo || 'Rutina semanal').slice(0, 120),
+    'Cliente': [contactId],
+    'Semana inicio': input.semanaInicio,
+    'Semana fin': input.semanaFin,
+    'Estado': 'Pendiente revisión',
+    'Objetivo': String(input.objetivo || '').slice(0, 1000),
+    'Nivel': input.nivel,
+    'Sesiones por semana': Number(input.sesionesPorSemana),
+    'Contenido rutina': String(input.contenido || '').slice(0, 18000),
+    'Visible al cliente': false,
+  };
+  const createRecord = deps.createRecord || (async (table, payload) => {
+    const token = TOKEN(); const base = BASE_ID();
+    if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+    const response = await fetch(api(table), { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!response.ok) throw Object.assign(new Error('Airtable create failed'), { code: `AIRTABLE_HTTP_${response.status}` });
+    return response.json();
+  });
+  const created = await createRecord(RUTINAS, { fields });
+  return { estado: 'created', rutina: { id: created.id, ...fields, estado: 'Pendiente revisión', visible: false } };
+}
+
 export const _internals = {
   airtableFetch,
   listByIds,

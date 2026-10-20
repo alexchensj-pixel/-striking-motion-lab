@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "test:mi-sml": "node --test server/miSml.test.mjs",
     "test:mi-sml-airtable": "node --test server/miSmlAirtable.test.mjs",
-    "test:mi-sml-all": "npm run test:mi-sml && npm run test:mi-sml-airtable"
+    "test:mi-sml-all": "npm run test:mi-sml && npm run test:mi-sml-airtable && npm run test:mi-sml-routines",
+    "test:mi-sml-routines": "node --test server/miSmlRutinas.test.mjs"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^2.1.3",
