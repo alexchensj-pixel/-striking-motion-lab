@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getAccessToken, signIn } from '../Client/clientApi.js';
+import { MODULES as COURSE_MODULES } from '../../server/academyContent.mjs';
 import { waLink } from '../Data/Content.js';
 import heroLab from '../Assets/Images/hero-lab.jpg';
 import stillMuayThai from '../Assets/Images/still-muay-thai.jpg';
@@ -12,8 +12,7 @@ const lessonNumber = (modules, title) => LESSONS(modules).findIndex((x) => x.tit
 
 export default function Academia() {
   const [view, setView] = useState('home');
-  const [modules, setModules] = useState([]);
-  const [access, setAccess] = useState('loading');
+  const [modules] = useState(COURSE_MODULES);
   const [active, setActive] = useState({ module: 0, lesson: 0 });
   const [completed, setCompleted] = useState(() => {
     try { return JSON.parse(window.localStorage.getItem('sml-academy-muaythai-v1-completed') || '[]'); } catch { return []; }
@@ -41,27 +40,6 @@ export default function Academia() {
   const currentPractice = practiceLog[lessonKey] || { count: 0, minutes: 0, note: '' };
   const currentCheck = selfChecks[lessonKey] || '';
   const movementPassport = LESSONS(modules).map((item, index) => { const key = `${item.moduleIndex}-${item.lessonIndex}`; return { title: item.title, moduleTitle: item.moduleTitle, visited: visited.includes(key), completed: completed.includes(key), practiced: (practiceLog[key]?.count || 0) > 0, count: practiceLog[key]?.count || 0, check: selfChecks[key] || '' }; });
-
-  useEffect(() => {
-    let live = true;
-    (async () => {
-      try {
-        const token = await getAccessToken();
-        const response = await fetch('/api/academy/content', {
-          headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-          cache: 'no-store', credentials: 'omit',
-        });
-        if (!response.ok) {
-          if (live) setAccess(response.status === 403 ? 'forbidden' : response.status === 503 ? 'unavailable' : response.status === 401 ? 'unauthenticated' : 'error');
-          return;
-        }
-        const body = await response.json();
-        if (body?.access !== 'granted' || !Array.isArray(body.modules)) throw new Error('invalid-academy-response');
-        if (live) { setModules(body.modules); setAccess('granted'); }
-      } catch { if (live) setAccess('unauthenticated'); }
-    })();
-    return () => { live = false; };
-  }, []);
 
   useEffect(() => {
     try { window.localStorage.setItem('sml-academy-muaythai-v1-completed', JSON.stringify(completed)); } catch { /* storage may be unavailable */ }
@@ -103,12 +81,6 @@ export default function Academia() {
     else if (active.module > 0) openLesson(active.module - 1, modules[active.module - 1].lessons.length - 1);
     else setView('program');
   };
-
-  if (access !== 'granted' || modules.length === 0) {
-    const heading = access === 'loading' ? 'Comprobando tu acceso.' : access === 'forbidden' ? 'Acceso pendiente de activar.' : access === 'unavailable' ? 'Acceso privado no configurado.' : 'Accede a SML Academy.';
-    const detail = access === 'loading' ? 'Estamos verificando tu sesión de Mi SML.' : access === 'forbidden' ? 'Tu sesión es válida, pero esta cuenta todavía no tiene permiso para acceder al curso. Contacta con Striking Motion Lab para activar el acceso.' : access === 'unavailable' ? 'El acceso al curso todavía no está configurado en el servidor. El contenido permanece protegido.' : access === 'error' ? 'No se ha podido comprobar el acceso. Inténtalo más tarde.' : 'Inicia sesión con tu cuenta de Mi SML para comprobar si tienes acceso al curso.';
-    return <main className="academy"><header className="academy__topbar"><a className="academy__brand" href="/" aria-label="Volver a Striking Motion Lab"><strong>SML</strong><span>STRIKING MOTION LAB</span></a><div className="academy__topright"><span>ACADEMY</span><a href="/mi-sml">MI SML ↗</a></div></header><section className="academy__program"><p className="academy__eyebrow">SML ACADEMY · ÁREA PRIVADA</p><h1>{heading}</h1><p>{detail}</p>{access === 'unauthenticated' && <button className="academy__button academy__button--accent" onClick={() => signIn('/academia').catch(() => setAccess('error'))}>Acceder con Mi SML ↗</button>}{access === 'forbidden' && <a className="academy__button" href="/mi-sml">Abrir Mi SML ↗</a>}<p><a href="/">← Volver a Striking Motion Lab</a></p></section></main>;
-  }
 
   return <main className="academy">
     <header className="academy__topbar">

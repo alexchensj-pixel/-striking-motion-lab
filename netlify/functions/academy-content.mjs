@@ -1,6 +1,6 @@
 import { configurado as authConfigurado, crearVerificador } from '../../server/miSmlAuth.js';
 import { tokenDe } from '../../server/miSml.js';
-import { MODULES } from '../../sml-v31/sml-v31-academy/server/academyContent.mjs';
+import { MODULES } from '../../server/academyContent.mjs';
 
 const json = (status, body, extra = {}) => new Response(JSON.stringify(body), {
   status,
