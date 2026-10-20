@@ -15,6 +15,11 @@
 
 # MI SML · API privada (valida la sesión de Auth0). El comodín deja que la función responda 404 JSON a otras rutas /api/mi-sml/*.
 [[redirects]]
+  from = "/api/academy/content"
+  to = "/.netlify/functions/academy-content"
+  status = 200
+
+[[redirects]]
   from = "/api/mi-sml/me"
   to = "/.netlify/functions/mi-sml-me"
   status = 200
@@ -51,4 +56,22 @@
   for = "/api/mi-sml/*"
   [headers.values]
     Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/academia"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/academia/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/api/academy/*"
+  [headers.values]
+    Cache-Control = "no-store, private"
     X-Robots-Tag = "noindex, nofollow"
