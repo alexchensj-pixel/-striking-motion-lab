@@ -295,6 +295,7 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
 
   const media = useMemo(() => {
     const el = document.createElement('video');
+    el.preload = 'none';
     el.src = src;
     el.loop = true;
     el.muted = true;
