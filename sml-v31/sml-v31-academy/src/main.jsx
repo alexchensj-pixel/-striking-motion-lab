@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App/App.jsx';
+// El árbol 3D público se importa solo en la ruta pública; /mi-sml y /academia no necesitan Three.js ni sus vídeos.
+const App = lazy(() => import('./App/App.jsx'));
 import LegalPage from './UI/Legal/LegalPage.jsx';
 import { RUTAS } from './Data/Legal.js';
 import './styles/global.css';
