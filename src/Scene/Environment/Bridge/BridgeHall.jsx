@@ -302,15 +302,10 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
     el.playsInline = true;
     el.setAttribute('playsinline', '');
     el.setAttribute('webkit-playsinline', '');
-    // 'auto' (antes 'metadata'): es una instrucción real al navegador para que empiece a descargar y
-    // decodificar el vídeo completo desde YA, no solo la cabecera — y arranca en cuanto se crea este
-    // <video>, que es exactamente cuando se monta <BridgeHall> (Environment/index.jsx la renderiza sin
-    // condición alguna, desde el primer frame de toda la experiencia) — es decir, antes de que el usuario
-    // haya podido hacer ni un solo scroll. Es la ÚNICA de las dos figuras del Bridge con 'auto': Fighter.jsx
-    // sigue en 'metadata' a propósito porque a él SÍ le sobra tiempo real (Character Select llega mucho
-    // más tarde en el recorrido) y no conviene gastar datos de más ahí.
-    el.preload = 'auto';
-    el.load();
+    // No descargar el vídeo completo al montar el mundo 3D: el Bridge está lejos de la entrada y puede
+    // que la persona no llegue a verlo. La reproducción se activa cuando su ventana de scroll gana luz.
+    // 'none' evita la descarga anticipada; el gate de readyState mantiene el mesh invisible hasta el primer frame real.
+    el.preload = 'none';
     const vtex = new VideoTexture(el);
     vtex.minFilter = LinearFilter;
     vtex.magFilter = LinearFilter;
