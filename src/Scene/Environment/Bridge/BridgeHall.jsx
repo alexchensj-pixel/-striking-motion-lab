@@ -327,10 +327,11 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
     const { el, mat } = media;
     const s = st.current;
     const now = performance.now();
-    // Mismo mecanismo de intento/backoff que Fighter.jsx y RosterGroup.jsx: se llama a play()
-    // en cuanto el vídeo está en pausa (sin esperar a readyState), con reintento cada 3 s si el
-    // navegador lo rechaza (autoplay bloqueado) — así readyState SÍ puede llegar a subir con datos reales.
-    if (el.paused && !s.pending && now - s.blockedAt > 3000) {
+    // El vídeo solo empieza a descargar/reproducirse cuando su ventana del Bridge está activa.
+    // Antes de ese punto, intentar play() en este componente montado desde el arranque descargaba los MP4
+    // aunque la persona no llegara nunca al Bridge.
+    const target = gainRef?.current ?? 0;
+    if (target > 0.01 && el.paused && !s.pending && now - s.blockedAt > 3000) {
       s.pending = true;
       const p = el.play();
       if (p && p.then) {
@@ -338,10 +339,9 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
       } else {
         s.pending = false;
       }
+    } else if (target <= 0.01 && !el.paused) {
+      el.pause();
     }
-    // Si el móvil bloquea el autoplay, el vídeo se queda en su primer fotograma (sin audio, sin control
-    // visible) — mismo comportamiento aceptado ya en Fighter.jsx para el mismo caso.
-    const target = gainRef?.current ?? 0;
     // GATE de readiness (protección, no sustituye al preload de arriba): mismo umbral que ya usa y prueba
     // Fighter.jsx (readyState>=2 = HAVE_CURRENT_DATA, el navegador confirma que existe ya un frame real
     // decodificado). Pase lo que pase con el scroll, uGain nunca sube de 0 hasta que esto es cierto — así
