@@ -6,6 +6,8 @@ export default function MiSMLDashboard({ onSessionEnded }) {
   const [clients, setClients] = useState([]);
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState(false);
+  const [logoutError, setLogoutError] = useState(false);
+  const [closingSession, setClosingSession] = useState(false);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -30,13 +32,19 @@ export default function MiSMLDashboard({ onSessionEnded }) {
     try { setSelected(await getAdminClient(id)); setMode('admin-detail'); }
     catch (e) { if (e?.code === 'unauthenticated') onSessionEnded?.(); else { setError(true); setMode('admin'); } }
   };
-  const salir = async () => { try { await signOut(); } catch {} };
+  const salir = async () => {
+    setClosingSession(true);
+    setLogoutError(false);
+    try { await signOut(); }
+    catch { setLogoutError(true); setClosingSession(false); }
+  };
 
   const filteredClients = clients.filter(c => `${c.nombre || ''} ${c.estado || ''} ${c.zona || ''}`.toLocaleLowerCase('es').includes(search.toLocaleLowerCase('es')));
   const activeCount = clients.filter(c => String(c.estado || '').toLocaleLowerCase('es').includes('activ')).length;
   const pendingCount = clients.filter(c => String(c.estado || '').toLocaleLowerCase('es').includes('pend')).length;
   return <section className="msml__panel msml__dashboard" aria-label="Mi SML">
-    <div className="msml__dashboard-top"><div><p className="msml__kicker">STRIKING MOTION LAB · ESPACIO PRIVADO</p><h1 className="msml__dashboard-title">{mode === 'admin' ? 'Panel de control' : mode === 'client' ? 'Tu progreso' : mode === 'admin-detail' ? 'Ficha del alumno' : 'Mi SML'}</h1><p className="msml__dashboard-subtitle">{mode === 'admin' ? 'Todo el seguimiento de tus alumnos, en un solo lugar.' : mode === 'client' ? 'Tu entrenamiento. Tu evolución. Tu sistema.' : 'Seguimiento técnico y planificación.'}</p></div><button type="button" className="msml__btn msml__btn--ghost msml__logout" onClick={salir}>Salir ↗</button></div>
+    <div className="msml__dashboard-top"><div><p className="msml__kicker">STRIKING MOTION LAB · ESPACIO PRIVADO</p><h1 className="msml__dashboard-title">{mode === 'admin' ? 'Panel de control' : mode === 'client' ? 'Tu progreso' : mode === 'admin-detail' ? 'Ficha del alumno' : 'Mi SML'}</h1><p className="msml__dashboard-subtitle">{mode === 'admin' ? 'Todo el seguimiento de tus alumnos, en un solo lugar.' : mode === 'client' ? 'Tu entrenamiento. Tu evolución. Tu sistema.' : 'Seguimiento técnico y planificación.'}</p></div><button type="button" className="msml__btn msml__btn--ghost msml__logout" onClick={salir} disabled={closingSession}>{closingSession ? 'Cerrando sesión…' : 'Salir ↗'}</button></div>
+    {logoutError && <p className="msml__note" role="alert">No se ha podido cerrar la sesión. Sigues conectado; inténtalo de nuevo.</p>}
     {mode === 'loading' && <p className="msml__status">Cargando…</p>}
     {error && <p className="msml__note" role="alert">No hemos podido cargar tus datos.</p>}
     {mode === 'admin' && <>
@@ -82,7 +90,7 @@ function ClientView({ client, admin = false }) {
       {analysis.length ? <div className="msml__analysis-list">{analysis.map((entry, index) => {
         const date = entry['Fecha evaluación'];
         const dateLabel = date && !Number.isNaN(Date.parse(date)) ? new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : date;
-        const fields = [['Observación', 'Texto cliente — Observación'], ['Por qué importa', 'Texto cliente — Por qué importa'], ['Qué trabajamos', 'Texto cliente — Qué trabajamos'], ['Evolución', 'Texto cliente — Evolución'], ['Siguiente objetivo', 'Texto cliente — Siguiente objetivo']].filter(([, key]) => entry[key] != null && String(entry[key]).trim());
+        const fields = [['Observación', 'Texto cliente — Observación'], ['Por qué importa', 'Texto cliente — Por qué importa'], ['Qué trabajamos', 'Texto cliente — Qué trabajamos'], ['Evolución', 'Texto cliente — Evolución'], ['Siguiente objetivo', 'Texto cliente — Siguiente objetivo'], ['Fecha de revisión', 'Fecha revisión']].filter(([, key]) => entry[key] != null && String(entry[key]).trim());
         return <article className="msml__analysis-card" key={entry.id || `${date || 'registro'}-${index}`}>
           <div className="msml__analysis-meta"><span>{entry.Disciplina || 'Evaluación técnica'}</span>{dateLabel && <time>{dateLabel}</time>}</div>
           {fields.length ? <div className="msml__analysis-fields">{fields.map(([label, key]) => <div className="msml__analysis-field" key={key}><h3>{label}</h3><p>{String(entry[key])}</p></div>)}</div> : <p className="msml__empty">Este registro todavía no tiene un resumen visible para el alumno.</p>}
