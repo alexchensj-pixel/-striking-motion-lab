@@ -306,7 +306,6 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
     // No descargar el vídeo completo al montar el mundo 3D: el Bridge está lejos de la entrada y puede
     // que la persona no llegue a verlo. La reproducción se activa cuando su ventana de scroll gana luz.
     // 'none' evita la descarga anticipada; el gate de readyState mantiene el mesh invisible hasta el primer frame real.
-    el.preload = 'none';
     const vtex = new VideoTexture(el);
     vtex.minFilter = LinearFilter;
     vtex.magFilter = LinearFilter;
