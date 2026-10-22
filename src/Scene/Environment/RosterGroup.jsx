@@ -145,7 +145,6 @@ export default function RosterGroup() {
     el.playsInline = true;
     el.setAttribute('playsinline', '');
     el.setAttribute('webkit-playsinline', '');
-    el.preload = 'none'; // es el primer vídeo visible de la escena: hace falta desde el arranque de la transición
     const vtex = new VideoTexture(el);
     vtex.minFilter = LinearFilter;
     vtex.magFilter = LinearFilter;
