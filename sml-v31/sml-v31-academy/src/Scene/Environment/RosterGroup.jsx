@@ -136,6 +136,8 @@ export default function RosterGroup() {
   const media = useMemo(() => {
     const still = new TextureLoader().load(poster.roster);
     const el = document.createElement('video');
+    // La escena se monta desde la entrada; no descargar el MP4 hasta que empiece el tramo Explore.
+    el.preload = 'none';
     el.src = video.roster;
     el.loop = true;
     el.muted = true;
