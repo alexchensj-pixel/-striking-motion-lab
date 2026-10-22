@@ -24,7 +24,7 @@ if (!legalTipo && !esMiSML && !esAcademia) {
 }
 
 const fallback = (
-  <main role="status" aria-live="polite" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '2rem', background: '#050608', color: '#f4f4f4', fontFamily: 'sans-serif' }}>
+  <main role="status" aria-live="polite" aria-busy="true" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '2rem', background: '#050608', color: '#f4f4f4', fontFamily: 'sans-serif' }}>
     Cargando Striking Motion Lab…
   </main>
 );
