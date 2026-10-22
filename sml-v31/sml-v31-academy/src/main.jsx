@@ -23,11 +23,19 @@ if (!legalTipo && !esMiSML && !esAcademia) {
   window.scrollTo(0, 0);
 }
 
+const fallback = (
+  <main role="status" aria-live="polite" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '2rem', background: '#050608', color: '#f4f4f4', fontFamily: 'sans-serif' }}>
+    Cargando Striking Motion Lab…
+  </main>
+);
+
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {esMiSML
-      ? <Suspense fallback={null}><MiSML /></Suspense>
-      : esAcademia ? <Suspense fallback={null}><Academia /></Suspense>
-      : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
+    <Suspense fallback={fallback}>
+      {esMiSML
+        ? <MiSML />
+        : esAcademia ? <Academia />
+        : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
+    </Suspense>
   </React.StrictMode>
 );
