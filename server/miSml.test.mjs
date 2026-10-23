@@ -48,7 +48,7 @@ test('CASO C · la identidad sale SOLO del token: la URL no la cambia (ni siquie
   // Una petición con ?cliente=B&id=B en la URL: `atender` no recibe la query; solo el método, la ruta y la cabecera Authorization.
   await atender(pet({ query: '?cliente=B&id=auth0|B', search: '?cliente=B', cliente: 'auth0|B', id: 'auth0|B', body: { sub: 'auth0|B' } }), deps({ fuente }));
   await atender(pet({ authorization: 'Bearer tokenB' }), deps({ fuente }));
-  assert.deepEqual(vistas, [{ sub: 'auth0|A' }, { sub: 'auth0|B' }]); // cada persona, solo la suya; y la fuente solo recibe { sub }
+  assert.deepEqual(vistas, [{ sub: 'auth0|A', email: '', emailVerified: false }, { sub: 'auth0|B', email: '', emailVerified: false }]); // cada persona, solo la suya; y la fuente solo recibe { sub }
 });
 
 test('el token válido sin «sub» no identifica a nadie → 401', async () => {
