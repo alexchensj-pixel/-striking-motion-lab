@@ -85,15 +85,54 @@ async function buildClient(contacto, get = airtableFetch, { admin = false } = {}
 }
 
 export async function obtener(identidad, deps = {}) {
-  const sub = String(identidad?.sub || '').trim(); if (!sub) return { estado: 'forbidden' };
-  const get = deps.fetchTable || airtableFetch; const field = AUTH0_FIELD();
+  const sub = String(identidad?.sub || '').trim();
+  if (!sub) return { estado: 'forbidden' };
+  const get = deps.fetchTable || airtableFetch;
+  const field = AUTH0_FIELD();
   if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
-  const formula = `{${field}}='${esc(sub)}'`;
-  const contactos = await get(CONTACTOS, new URLSearchParams({ filterByFormula: formula, maxRecords: '2' }).toString());
-  const records = contactos.records || [];
-  if (records.length === 0) return { estado: 'forbidden' };
-  if (records.length > 1) throw Object.assign(new Error('Identidad Auth0 duplicada'), { code: 'AUTH0_ID_NOT_UNIQUE' });
-  return { estado: 'connected', client: await buildClient(records[0], get) };
+
+  // First preference: stable Auth0 subject already linked to this contact.
+  const bySub = await get(CONTACTOS, new URLSearchParams({
+    filterByFormula: `{${field}}='${esc(sub)}'`, maxRecords: '2',
+  }).toString());
+  const linked = bySub.records || [];
+  if (linked.length > 1) throw Object.assign(new Error('Identidad Auth0 duplicada'), { code: 'AUTH0_ID_NOT_UNIQUE' });
+  if (linked.length === 1) return { estado: 'connected', client: await buildClient(linked[0], get) };
+
+  // Safe first-login linking: only a signed, explicitly verified email from the validated Auth0 token.
+  const email = String(identidad?.email || '').trim().toLowerCase();
+  if (identidad?.email_verified !== true || !email || !email.includes('@')) return { estado: 'forbidden' };
+  const emailField = String(process.env.AIRTABLE_EMAIL_FIELD || 'Email Mi SML').trim();
+  const byEmail = await get(CONTACTOS, new URLSearchParams({
+    filterByFormula: `LOWER({${emailField}})='${esc(email)}'`, maxRecords: '3',
+  }).toString());
+  const matches = byEmail.records || [];
+  if (matches.length !== 1) return { estado: 'forbidden' };
+  const contact = matches[0];
+  const existingSub = String(contact.fields?.[field] || '').trim();
+  if (existingSub && existingSub !== sub) return { estado: 'forbidden' };
+
+  const save = deps.updateRecord || (async (table, id, fields) => {
+    const token = TOKEN(); const base = BASE_ID();
+    if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+    const response = await fetch(api(table, encodeURIComponent(id)), {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields }),
+    });
+    if (!response.ok) throw Object.assign(new Error('Airtable update failed'), { code: `AIRTABLE_HTTP_${response.status}` });
+    return response.json();
+  });
+  if (!existingSub) {
+    await save(CONTACTOS, contact.id, { [field]: sub });
+    const check = await get(CONTACTOS, new URLSearchParams({
+      filterByFormula: `{${field}}='${esc(sub)}'`, maxRecords: '2',
+    }).toString());
+    const confirmed = check.records || [];
+    if (confirmed.length !== 1 || confirmed[0].id !== contact.id) return { estado: 'forbidden' };
+    return { estado: 'connected', client: await buildClient(confirmed[0], get) };
+  }
+  return { estado: 'connected', client: await buildClient(contact, get) };
 }
 
 export async function listarClientes(deps = {}) {
