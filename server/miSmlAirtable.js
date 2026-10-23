@@ -45,7 +45,8 @@ export function configurado(env = process.env) {
 async function updateContact(contactId, fields) {
   const token = TOKEN(); const base = BASE_ID();
   if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
-  const response = await fetch(api(CONTACTOS, `/${encodeURIComponent(contactId)}`), {
+  const endpoint = `https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(CONTACTOS)}/${encodeURIComponent(contactId)}`;
+  const response = await fetch(endpoint, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ fields }),

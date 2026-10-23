@@ -111,10 +111,11 @@ test('Vinculación automática: solo correo verificado, único y ficha sin Auth0
   const calls = []; let linked = false;
   const fetchTable = async (table, query) => {
     calls.push({table, query});
+    const decodedQuery = decodeURIComponent(query || '');
     if (table !== 'Contactos') return {records: []};
-    if (query.includes('LOWER(TRIM')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
-    if (query.includes('RECORD_ID()')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
-    if (query.includes("{Auth0 ID}='auth0|A'")) return {records: linked ? [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Auth0 ID':'auth0|A'}}] : []};
+    if (decodedQuery.includes('LOWER(TRIM')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
+    if (decodedQuery.includes('RECORD_ID()')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
+    if (decodedQuery.includes("{Auth0 ID}='auth0|A'")) return {records: linked ? [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Auth0 ID':'auth0|A'}}] : []};
     return {records: []};
   };
   const r = await obtener({sub:'auth0|A', email:'ANA@example.com', emailVerified:true}, {
@@ -123,7 +124,7 @@ test('Vinculación automática: solo correo verificado, único y ficha sin Auth0
   });
   assert.equal(r.estado, 'connected');
   assert.equal(r.client.nombre, 'Ana');
-  assert.ok(calls.some(c => c.query.includes('LOWER(TRIM')));
+  assert.ok(calls.some(c => decodeURIComponent(c.query).includes('LOWER(TRIM')));
 });
 
 test('Vinculación automática: correo no verificado o ambiguo no escribe nada', async () => {
