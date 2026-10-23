@@ -115,7 +115,7 @@ export async function obtener(identidad, deps = {}) {
   const save = deps.updateRecord || (async (table, id, fields) => {
     const token = TOKEN(); const base = BASE_ID();
     if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
-    const response = await fetch(api(table, encodeURIComponent(id)), {
+    const response = await fetch(`https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(table)}/${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ fields }),
