@@ -309,43 +309,53 @@ export async function obtener(identidad, deps = {}) {
       code: 'AUTH0_ID_NOT_UNIQUE',
     });
   }
-  if (records.length === 0 && identidad.email && identidad.email_verified) {
+  if (records.length === 0) {
+    // First-login linking is allowed only with an explicitly verified email
+    // supplied by the server-validated Auth0 identity.
+    const email = String(identidad?.email || '').trim().toLowerCase();
+    if (identidad?.email_verified !== true || !email || !email.includes('@')) {
+      return { estado: 'forbidden' };
+    }
     const emailField = EMAIL_FIELD();
-    const emailFormula =
-      `LOWER({${emailField}})='${esc(identidad.email)}'`;
     const byEmail = await get(
       CONTACTOS,
       new URLSearchParams({
-        filterByFormula: emailFormula,
-        maxRecords: '2',
+        filterByFormula: `LOWER({${emailField}})='${esc(email)}'`,
+        maxRecords: '3',
       }).toString()
     );
-    records = byEmail.records || [];
-    if (records.length > 1) {
+    const matches = byEmail.records || [];
+    if (matches.length > 1) {
       throw Object.assign(new Error('Email Mi SML duplicado'), {
         code: 'EMAIL_NOT_UNIQUE',
       });
     }
-    if (records.length === 1) {
-      const record = records[0];
-      const existingSub = String(
-        record.fields?.[field] ?? ''
-      ).trim();
+    if (matches.length === 1) {
+      const record = matches[0];
+      const existingSub = String(record.fields?.[field] ?? '').trim();
       if (existingSub && existingSub !== sub) {
-        throw Object.assign(
-          new Error('Contacto ya vinculado a otra cuenta'),
-          { code: 'AUTH0_ID_CONFLICT' }
-        );
+        throw Object.assign(new Error('Contacto ya vinculado a otra cuenta'), {
+          code: 'AUTH0_ID_CONFLICT',
+        });
       }
-      await (deps.updateRecord || airtableUpdate)(
-        CONTACTOS,
-        record.id,
-        { [field]: sub }
-      );
-      records = [{
-        ...record,
-        fields: { ...record.fields, [field]: sub },
-      }];
+      if (!existingSub) {
+        await (deps.updateRecord || airtableUpdate)(CONTACTOS, record.id, { [field]: sub });
+        // Confirm the link from Airtable before returning any client data.
+        const check = await get(
+          CONTACTOS,
+          new URLSearchParams({
+            filterByFormula: `{${field}}='${esc(sub)}'`,
+            maxRecords: '2',
+          }).toString()
+        );
+        const confirmed = check.records || [];
+        if (confirmed.length !== 1 || confirmed[0].id !== record.id) {
+          return { estado: 'forbidden' };
+        }
+        records = confirmed;
+      } else {
+        records = [record];
+      }
     }
   }
   if (records.length === 0) {

@@ -33,22 +33,31 @@ test('Airtable: identidad Auth0 devuelve solo sus datos y filtra análisis visib
   }
 });
 
-test('Airtable: primer acceso por email verificado vincula Auth0 ID', async () => {
+test('Airtable: primer acceso por email verificado vincula y confirma Auth0 ID', async () => {
   process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
-  const calls = [];
+  let updatedSub = '';
   const fake = async (table, query) => {
-    calls.push({ table, query });
-    if (table === 'Contactos') {
-      if (String(query).includes('LOWER')) return { records: [{ id:'recM', fields:{Nombre:'María','Email Mi SML':'fergamaria@gmail.com','Auth0 ID':''} }] };
-      return { records: [] };
-    }
+    if (table !== 'Contactos') return { records: [] };
+    const q = String(query);
+    if (q.includes('LOWER')) return { records: [{ id:'recM', fields:{Nombre:'María','Email Mi SML':'fergamaria@gmail.com','Auth0 ID':''} }] };
+    if (updatedSub) return { records: [{ id:'recM', fields:{Nombre:'María','Email Mi SML':'fergamaria@gmail.com','Auth0 ID':updatedSub} }] };
     return { records: [] };
   };
   let updated = null;
-  const update = async (table, id, fields) => { updated = {table,id,fields}; return {id,fields}; };
-  const r = await obtener({sub:'google-oauth2|123', email:'fergamaria@gmail.com', email_verified:true}, {fetchTable:fake, updateRecord:update});
+  const update = async (table, id, fields) => { updated = {table,id,fields}; updatedSub = fields['Auth0 ID']; return {id,fields}; };
+  const r = await obtener({sub:'google-oauth2|123', email:'  FERGaMaria@gmail.com ', email_verified:true}, {fetchTable:fake, updateRecord:update});
   assert.equal(r.estado, 'connected');
   assert.deepEqual(updated, {table:'Contactos', id:'recM', fields:{'Auth0 ID':'google-oauth2|123'}});
+});
+
+test('Airtable: no concede acceso si Airtable no confirma el vínculo recién escrito', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const fake = async (table, query) => String(query).includes('LOWER')
+    ? { records: [{ id:'recM', fields:{Nombre:'María','Email Mi SML':'maria@example.com','Auth0 ID':''} }] }
+    : { records: [] };
+  const update = async () => ({ id:'recM' });
+  const r = await obtener({sub:'google-oauth2|123', email:'maria@example.com', email_verified:true}, {fetchTable:fake, updateRecord:update});
+  assert.deepEqual(r, { estado: 'forbidden' });
 });
 
 test('Airtable: email no verificado no vincula', async () => {
