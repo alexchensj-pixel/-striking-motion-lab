@@ -110,7 +110,7 @@ test('Airtable: vincula primera sesión solo con email verificado único y persi
   process.env.AIRTABLE_TOKEN = 'pat_test';
   const linked = [];
   const fake = async (table, query) => {
-    const formula = decodeURIComponent(query || '');
+    const formula = new URLSearchParams(query || '').get('filterByFormula') || '';
     if (table === 'Contactos' && formula.includes("LOWER({Email Mi SML})")) {
       return { records: [{ id: 'recFleur00000001', fields: { Nombre: 'Fleur', 'Email Mi SML': 'fleur.scholten2@gmail.com', 'Auth0 ID': '' } }] };
     }
@@ -136,7 +136,7 @@ test('Airtable: no vincula email no verificado ni coincidencias ambiguas', async
   process.env.AIRTABLE_TOKEN = 'pat_test';
   let writes = 0;
   const fake = async (table, query) => {
-    const formula = decodeURIComponent(query || '');
+    const formula = new URLSearchParams(query || '').get('filterByFormula') || '';
     if (formula.includes("{Auth0 ID}")) return { records: [] };
     if (formula.includes("LOWER({Email Mi SML})")) return { records: [
       { id: 'recFleur00000001', fields: { Nombre: 'Fleur', 'Email Mi SML': 'fleur.scholten2@gmail.com' } },
