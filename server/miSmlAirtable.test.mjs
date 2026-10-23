@@ -111,7 +111,7 @@ test('Vinculación automática: solo correo verificado, único y ficha sin Auth0
   const calls = []; let linked = false;
   const fetchTable = async (table, query) => {
     calls.push({table, query});
-    const decodedQuery = decodeURIComponent((query || '').replace(/\\+/g, ' '));
+    const decodedQuery = decodeURIComponent((query || '').replaceAll('+', ' '));
     if (table !== 'Contactos') return {records: []};
     if (decodedQuery.includes('LOWER(TRIM')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
     if (decodedQuery.includes('RECORD_ID()')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
@@ -124,7 +124,7 @@ test('Vinculación automática: solo correo verificado, único y ficha sin Auth0
   });
   assert.equal(r.estado, 'connected');
   assert.equal(r.client.nombre, 'Ana');
-  assert.ok(calls.some(c => decodeURIComponent(c.query.replace(/\\+/g, ' ')).includes('LOWER(TRIM')));
+  assert.ok(calls.some(c => decodeURIComponent(c.query.replaceAll('+', ' ')).includes('LOWER(TRIM')));
 });
 
 test('Vinculación automática: correo no verificado o ambiguo no escribe nada', async () => {
