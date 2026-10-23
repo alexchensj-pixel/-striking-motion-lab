@@ -103,3 +103,54 @@ test('Airtable: las rutinas generadas quedan pendientes de revisión y no visibl
   assert.equal(result.estado, 'created');
   assert.equal(result.rutina.visible, false);
 });
+
+
+test('Airtable: vincula primera sesión solo con email verificado único y persiste Auth0 ID', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest';
+  process.env.AIRTABLE_TOKEN = 'pat_test';
+  const linked = [];
+  const fake = async (table, query) => {
+    const formula = decodeURIComponent(query || '');
+    if (table === 'Contactos' && formula.includes("LOWER({Email Mi SML})")) {
+      return { records: [{ id: 'recFleur00000001', fields: { Nombre: 'Fleur', 'Email Mi SML': 'fleur.scholten2@gmail.com', 'Auth0 ID': '' } }] };
+    }
+    if (table === 'Contactos' && formula.includes("{Auth0 ID}")) {
+      const sub = formula.includes("auth0|Fleur") && linked.length ? [{ id: 'recFleur00000001', fields: { Nombre: 'Fleur', 'Auth0 ID': 'auth0|Fleur' } }] : [];
+      return { records: sub };
+    }
+    return { records: [] };
+  };
+  const result = await obtener({ sub: 'auth0|Fleur', email: 'Fleur.Scholten2@gmail.com', email_verified: true }, {
+    fetchTable: fake,
+    updateRecord: async (table, id, fields) => { linked.push({ table, id, fields }); return { id }; },
+  });
+  assert.equal(result.estado, 'connected');
+  assert.equal(linked.length, 1);
+  assert.equal(linked[0].table, 'Contactos');
+  assert.equal(linked[0].id, 'recFleur00000001');
+  assert.equal(linked[0].fields['Auth0 ID'], 'auth0|Fleur');
+});
+
+test('Airtable: no vincula email no verificado ni coincidencias ambiguas', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest';
+  process.env.AIRTABLE_TOKEN = 'pat_test';
+  let writes = 0;
+  const fake = async (table, query) => {
+    const formula = decodeURIComponent(query || '');
+    if (formula.includes("{Auth0 ID}")) return { records: [] };
+    if (formula.includes("LOWER({Email Mi SML})")) return { records: [
+      { id: 'recFleur00000001', fields: { Nombre: 'Fleur', 'Email Mi SML': 'fleur.scholten2@gmail.com' } },
+      { id: 'recFleur00000002', fields: { Nombre: 'Fleur duplicada', 'Email Mi SML': 'fleur.scholten2@gmail.com' } },
+    ] };
+    return { records: [] };
+  };
+  const unverified = await obtener({ sub: 'auth0|Fleur', email: 'fleur.scholten2@gmail.com', email_verified: false }, {
+    fetchTable: fake, updateRecord: async () => { writes++; },
+  });
+  assert.deepEqual(unverified, { estado: 'forbidden' });
+  const ambiguous = await obtener({ sub: 'auth0|Fleur', email: 'fleur.scholten2@gmail.com', email_verified: true }, {
+    fetchTable: fake, updateRecord: async () => { writes++; },
+  });
+  assert.deepEqual(ambiguous, { estado: 'forbidden' });
+  assert.equal(writes, 0);
+});
