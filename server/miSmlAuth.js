@@ -33,7 +33,10 @@ export function crearVerificador(env = process.env) {
     jwks ||= createRemoteJWKSet(new URL(`${issuer}.well-known/jwks.json`));
     try {
       const { payload } = await jwtVerify(token, jwks, { issuer, audience, algorithms: ['RS256'] });
-      return { sub: payload.sub };
+      const ns = String(process.env.AUTH0_CLAIMS_NAMESPACE || '').trim().replace(/\/+$/, '');
+      const email = payload.email || (ns ? payload[`${ns}/email`] : undefined);
+      const email_verified = payload.email_verified === true || (ns ? payload[`${ns}/email_verified`] === true : false);
+      return { sub: payload.sub, email: typeof email === 'string' ? email.trim() : '', email_verified };
     } catch (e) {
       throw clasificar(e);
     }
