@@ -103,3 +103,40 @@ test('Airtable: las rutinas generadas quedan pendientes de revisión y no visibl
   assert.equal(result.estado, 'created');
   assert.equal(result.rutina.visible, false);
 });
+
+
+test('Vinculación automática: solo correo verificado, único y ficha sin Auth0 ID', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  delete process.env.ADMIN_AUTH0_SUB;
+  const calls = []; let linked = false;
+  const fetchTable = async (table, query) => {
+    calls.push({table, query});
+    if (table !== 'Contactos') return {records: []};
+    if (query.includes('LOWER(TRIM')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
+    if (query.includes('RECORD_ID()')) return {records: [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Email Mi SML':'ana@example.com'}}]};
+    if (query.includes("{Auth0 ID}='auth0|A'")) return {records: linked ? [{id:'recAAAAAAAAAAAAAA', fields:{Nombre:'Ana', 'Auth0 ID':'auth0|A'}}] : []};
+    return {records: []};
+  };
+  const r = await obtener({sub:'auth0|A', email:'ANA@example.com', emailVerified:true}, {
+    fetchTable,
+    updateContact: async (id, fields) => { assert.equal(id, 'recAAAAAAAAAAAAAA'); assert.deepEqual(fields, {'Auth0 ID':'auth0|A'}); linked = true; return {}; },
+  });
+  assert.equal(r.estado, 'connected');
+  assert.equal(r.client.nombre, 'Ana');
+  assert.ok(calls.some(c => c.query.includes('LOWER(TRIM')));
+});
+
+test('Vinculación automática: correo no verificado o ambiguo no escribe nada', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  let writes = 0;
+  const fetchTable = async (table, query) => {
+    if (table === 'Contactos' && query.includes('LOWER(TRIM')) return {records:[
+      {id:'recAAAAAAAAAAAAAA',fields:{'Email Mi SML':'ana@example.com'}},
+      {id:'recBBBBBBBBBBBBBB',fields:{'Email Mi SML':'ana@example.com'}},
+    ]};
+    return {records:[]};
+  };
+  await obtener({sub:'auth0|A',email:'ana@example.com',emailVerified:false},{fetchTable,updateContact:async()=>{writes++;}});
+  await obtener({sub:'auth0|A',email:'ana@example.com',emailVerified:true},{fetchTable,updateContact:async()=>{writes++;}});
+  assert.equal(writes,0);
+});

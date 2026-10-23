@@ -42,6 +42,51 @@ export function configurado(env = process.env) {
   return Boolean(String(env.AIRTABLE_BASE_ID || '').trim() && String(env.AIRTABLE_TOKEN || '').trim());
 }
 
+async function updateContact(contactId, fields) {
+  const token = TOKEN(); const base = BASE_ID();
+  if (!token || !base) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
+  const response = await fetch(api(CONTACTOS, `/${encodeURIComponent(contactId)}`), {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ fields }),
+  });
+  if (!response.ok) throw Object.assign(new Error('Airtable update failed'), { code: `AIRTABLE_HTTP_${response.status}` });
+  return response.json();
+}
+
+// Vincula solo con email verificado, coincidencia única y campo Auth0 vacío o ya igual.
+// Nunca se crea ni se acepta una identidad desde el navegador; el sub viene del JWT validado.
+async function vincularPorEmail(identidad, get, update = updateContact) {
+  const sub = String(identidad?.sub || '').trim();
+  const email = String(identidad?.email || '').trim().toLowerCase();
+  if (!sub || !email || identidad?.emailVerified !== true) return false;
+  if (sub === String(process.env.ADMIN_AUTH0_SUB || '').trim()) return false;
+  const formula = `LOWER(TRIM({Email Mi SML}&''))='${esc(email)}'`;
+  const p = new URLSearchParams({ filterByFormula: formula, maxRecords: '3' });
+  for (const field of ['Nombre', 'Email Mi SML', 'Auth0 ID']) p.append('fields[]', field);
+  const result = await get(CONTACTOS, p.toString());
+  const rows = result.records || [];
+  if (rows.length !== 1) return false;
+  const row = rows[0]; const fields = row.fields || {};
+  const savedEmail = String(fields['Email Mi SML'] || '').trim().toLowerCase();
+  if (!savedEmail || savedEmail !== email) return false;
+  const linkedSub = String(fields[AUTH0_FIELD()] || '').trim();
+  if (linkedSub && linkedSub !== sub) return false;
+  if (linkedSub === sub) return true;
+  // Recheck uniqueness and ownership immediately before write to reduce race/mis-link risk.
+  const latest = await get(CONTACTOS, new URLSearchParams({
+    filterByFormula: `RECORD_ID()='${esc(row.id)}'`, maxRecords: '2',
+  }).toString());
+  const current = latest.records || [];
+  if (current.length !== 1) return false;
+  const latestFields = current[0].fields || {};
+  if (String(latestFields['Email Mi SML'] || '').trim().toLowerCase() !== email) return false;
+  const latestSub = String(latestFields[AUTH0_FIELD()] || '').trim();
+  if (latestSub && latestSub !== sub) return false;
+  if (!latestSub) await update(row.id, { [AUTH0_FIELD()]: sub });
+  return true;
+}
+
 async function buildClient(contacto, get = airtableFetch, { admin = false } = {}) {
   const cf = contacto.fields || {};
   const planIds = linkedIds(cf['Bonos y planes']);
@@ -89,8 +134,13 @@ export async function obtener(identidad, deps = {}) {
   const get = deps.fetchTable || airtableFetch; const field = AUTH0_FIELD();
   if (!configurado()) throw Object.assign(new Error('Airtable no configurado'), { code: 'AIRTABLE_NOT_CONFIGURED' });
   const formula = `{${field}}='${esc(sub)}'`;
-  const contactos = await get(CONTACTOS, new URLSearchParams({ filterByFormula: formula, maxRecords: '2' }).toString());
-  const records = contactos.records || [];
+  let contactos = await get(CONTACTOS, new URLSearchParams({ filterByFormula: formula, maxRecords: '2' }).toString());
+  let records = contactos.records || [];
+  if (records.length === 0) {
+    await vincularPorEmail(identidad, get, deps.updateContact || updateContact);
+    contactos = await get(CONTACTOS, new URLSearchParams({ filterByFormula: formula, maxRecords: '2' }).toString());
+    records = contactos.records || [];
+  }
   if (records.length === 0) return { estado: 'forbidden' };
   if (records.length > 1) throw Object.assign(new Error('Identidad Auth0 duplicada'), { code: 'AUTH0_ID_NOT_UNIQUE' });
   return { estado: 'connected', client: await buildClient(records[0], get) };
@@ -145,4 +195,4 @@ export async function crearBorradorRutina(input, deps = {}) {
   return { estado: 'created', rutina: { id: created.id, ...fields, estado: 'Pendiente revisión', visible: false } };
 }
 
-export const _internals = { airtableFetch, listByIds, buildClient };
+export const _internals = { airtableFetch, listByIds, buildClient, vincularPorEmail };

@@ -22,7 +22,7 @@ export async function atender({ method, pathname, authorization, body }, { verif
   try {
     const v = await verify(token);
     if (!v || typeof v.sub !== 'string' || !v.sub) return cuerpo(401, { error: 'invalid-session' }, NO_AUTH);
-    identidad = { sub: v.sub };
+    identidad = { sub: v.sub, email: typeof v.email === 'string' ? v.email : '', emailVerified: v.emailVerified === true };
   } catch (e) {
     if (e?.kind === 'expired') return cuerpo(401, { error: 'session-expired' }, NO_AUTH);
     if (e?.kind === 'invalid') return cuerpo(401, { error: 'invalid-session' }, NO_AUTH);

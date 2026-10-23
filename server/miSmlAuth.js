@@ -21,7 +21,9 @@ export function configurado(env = process.env) {
   return Boolean(limpiarDominio(env.AUTH0_DOMAIN) && String(env.AUTH0_AUDIENCE ?? '').trim());
 }
 
-// Devuelve verify(token) → { sub }. El JWKS remoto se cachea dentro de la instancia (jose lo gestiona y rota).
+// Devuelve verify(token) → identidad validada. El correo solo se usa si Auth0 lo marca como verificado.
+const CLAIM_EMAIL = 'https://strikingmotionlab.com/email';
+const CLAIM_EMAIL_VERIFIED = 'https://strikingmotionlab.com/email_verified';
 export function crearVerificador(env = process.env) {
   const dominio = limpiarDominio(env.AUTH0_DOMAIN);
   const audience = String(env.AUTH0_AUDIENCE ?? '').trim();
@@ -33,7 +35,11 @@ export function crearVerificador(env = process.env) {
     jwks ||= createRemoteJWKSet(new URL(`${issuer}.well-known/jwks.json`));
     try {
       const { payload } = await jwtVerify(token, jwks, { issuer, audience, algorithms: ['RS256'] });
-      return { sub: payload.sub };
+      return {
+        sub: payload.sub,
+        email: typeof (payload[CLAIM_EMAIL] ?? payload.email) === 'string' ? String(payload[CLAIM_EMAIL] ?? payload.email).trim().toLowerCase() : '',
+        emailVerified: (payload[CLAIM_EMAIL_VERIFIED] ?? payload.email_verified) === true,
+      };
     } catch (e) {
       throw clasificar(e);
     }
