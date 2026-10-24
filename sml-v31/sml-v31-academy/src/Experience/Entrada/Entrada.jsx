@@ -81,6 +81,7 @@ export default function Entrada() {
             </h1>
             <p className="ent__disc">{hero.disciplinasLinea}</p>
             <p className="ent__beneficio">Empieza desde cero. El entrenamiento se adapta a ti.</p>
+            <p className="ent__precioNota">La evaluación inicial cuesta 30 €. Si después contratas un plan mensual, se descuenta del primer mes.</p>
             <div className="ent__prueba" aria-label="Información de confianza">
               <span>{ratingTexto}</span><span>{site.logro}</span>
             </div>
