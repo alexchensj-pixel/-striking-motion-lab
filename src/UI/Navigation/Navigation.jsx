@@ -50,9 +50,11 @@ export default function Navigation() {
   const overFaq = faqOn && section !== 'experiences' && section !== 'estudio';
   const isOn = (target) => !overFaq && section === target;
 
-  const go = (target) => { setOpen(false); goToSection(target); };
-
-  return (
+  const go = (target) => {
+  setOpen(false);
+  goToSection(target, { direct: true });
+};
+ return (
     <nav className="nav" aria-label="Navegación principal" data-open={open}>
       <button type="button" className="nav__toggle" aria-expanded={open} aria-controls="nav-list" onClick={() => setOpen((o) => !o)}>
         {open ? 'Cerrar' : 'Menú'}
