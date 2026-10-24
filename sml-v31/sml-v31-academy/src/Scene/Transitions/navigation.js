@@ -159,8 +159,8 @@ export function goToSection(id, opts = {}) {
   // Overlays: no tocan capítulos, cámara ni scroll. Antes de abrirlos se duplica la entrada de historial (ver arriba).
   if (id === 'estudio' || id === 'experiences') {
     const alreadyOpen = id === 'estudio' ? st.estudioOpen : st.b2bOpen;
-    if (push && !alreadyOpen) { try { history.pushState(null, '', urlFor(window.location.hash)); overlayEntry = true; } catch { /* sin History API */ } }
-    else if (!alreadyOpen) overlayEntry = true; // apertura al avanzar/volver por historial
+    if (push && !alreadyOpen && !hadOverlay) { try { history.pushState(null, '', urlFor(window.location.hash)); overlayEntry = true; } catch { /* sin History API */ } }
+    else if (!alreadyOpen) overlayEntry = true; // apertura por historial o cambio directo entre overlays
     if (id === 'estudio') st.openEstudio(); else st.openB2B(0); // activeSection lo fija el propio open*
     return;
   }
