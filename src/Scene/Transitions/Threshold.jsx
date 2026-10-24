@@ -22,9 +22,15 @@ export default function Threshold({ from, to, start = 'top bottom', activeFrom =
   const key = `${from}>${to}`;
 
   useLayoutEffect(() => {
+    // Al cargar (onRefresh) TODOS los umbrales se evaluaban, tambien los que estan fuera de pantalla, y el ultimo ganaba:
+    // la web arrancaba marcando "Sobre Chen" (contador 05/06, CTA fijo en HOME, DESCUBRIR calculaba mal el salto).
+    // Ahora el capitulo solo lo marca el umbral que se esta recorriendo (isActive); al salir por arriba o por abajo
+    // se deja el capitulo de origen o de llegada.
+    const setChapter = (id) => useStore.getState().setActiveChapter(id);
     const update = (self) => {
       setSegment(key, self.progress);
-      useStore.getState().setActiveChapter(self.progress > activeFrom ? to : from);
+      if (!self.isActive) return;
+      setChapter(self.progress > activeFrom ? to : from);
     };
     const st = ScrollTrigger.create({
       trigger: ref.current,
@@ -32,6 +38,8 @@ export default function Threshold({ from, to, start = 'top bottom', activeFrom =
       end: 'bottom top',
       onUpdate: update,
       onRefresh: update,
+      onLeave: () => setChapter(to),
+      onLeaveBack: () => setChapter(from),
     });
     return () => st.kill();
   }, [key, from, to, start, activeFrom]);
