@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAdminClient, getAdminClients, getCurrentClient, closeSession } from './clientApi.js';
+import { generateAdminRoutine, getAdminClient, getAdminClients, getCurrentClient, signOut } from './clientApi.js';
 
 export default function MiSMLDashboard({ onSessionEnded }) {
   const [mode, setMode] = useState('loading');
@@ -8,6 +8,7 @@ export default function MiSMLDashboard({ onSessionEnded }) {
   const [error, setError] = useState(false);
   const [logoutError, setLogoutError] = useState(false);
   const [closingSession, setClosingSession] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     let vivo = true;
@@ -16,16 +17,11 @@ export default function MiSMLDashboard({ onSessionEnded }) {
         const list = await getAdminClients();
         if (vivo) { setMode('admin'); setClients(list); }
       } catch (e) {
-        // La petición administrativa es solo para el panel de gestión. Un fallo en ella
-        // no debe impedir que un cliente normal cargue sus propios datos por /me.
-        if (e?.code === 'unauthenticated') { onSessionEnded?.(); return; }
-        try {
-          const client = await getCurrentClient();
-          if (vivo) { setMode('client'); setSelected(client); }
-        } catch (inner) {
-          if (inner?.code === 'unauthenticated') onSessionEnded?.();
-          else if (vivo) setError(true);
-        }
+        if (e?.code === 'forbidden') {
+          try { const client = await getCurrentClient(); if (vivo) { setMode('client'); setSelected(client); } }
+          catch (inner) { if (inner?.code === 'unauthenticated') onSessionEnded?.(); else if (vivo) setError(true); }
+        } else if (e?.code === 'unauthenticated') onSessionEnded?.();
+        else if (vivo) setError(true);
       }
     })();
     return () => { vivo = false; };
@@ -34,69 +30,123 @@ export default function MiSMLDashboard({ onSessionEnded }) {
   const abrir = async (id) => {
     setSelected(null); setMode('admin-loading'); setError(false);
     try { setSelected(await getAdminClient(id)); setMode('admin-detail'); }
-    catch (e) { if (e?.code === 'unauthenticated') onSessionEnded?.(); else setError(true); }
+    catch (e) { if (e?.code === 'unauthenticated') onSessionEnded?.(); else { setError(true); setMode('admin'); } }
   };
-  const cerrarSesion = async () => {
+  const salir = async () => {
     setClosingSession(true);
     setLogoutError(false);
-    try { await closeSession(); }
+    try { await signOut(); }
     catch { setLogoutError(true); setClosingSession(false); }
   };
 
-  return <section className="msml__panel" aria-label="Mi SML">
-    <h1 className="msml__title">Mi SML</h1>
+  const filteredClients = clients.filter(c => `${c.nombre || ''} ${c.estado || ''} ${c.zona || ''}`.toLocaleLowerCase('es').includes(search.toLocaleLowerCase('es')));
+  const activeCount = clients.filter(c => String(c.estado || '').toLocaleLowerCase('es').includes('activ')).length;
+  const pendingCount = clients.filter(c => String(c.estado || '').toLocaleLowerCase('es').includes('pend')).length;
+  return <section className="msml__panel msml__dashboard" aria-label="Mi SML">
+    <div className="msml__dashboard-top"><div><p className="msml__kicker">STRIKING MOTION LAB · ESPACIO PRIVADO</p><h1 className="msml__dashboard-title">{mode === 'admin' ? 'Panel de control' : mode === 'client' ? 'Tu progreso' : mode === 'admin-detail' ? 'Ficha del alumno' : 'Mi SML'}</h1><p className="msml__dashboard-subtitle">{mode === 'admin' ? 'Todo el seguimiento de tus alumnos, en un solo lugar.' : mode === 'client' ? 'Tu entrenamiento. Tu evolución. Tu sistema.' : 'Seguimiento técnico y planificación.'}</p></div><button type="button" className="msml__btn msml__btn--ghost msml__logout" onClick={salir} disabled={closingSession}>{closingSession ? 'Cerrando sesión…' : 'Salir ↗'}</button></div>
+    {logoutError && <p className="msml__note" role="alert">No se ha podido cerrar la sesión. Sigues conectado; inténtalo de nuevo.</p>}
     {mode === 'loading' && <p className="msml__status">Cargando…</p>}
     {error && <p className="msml__note" role="alert">No hemos podido cargar tus datos.</p>}
     {mode === 'admin' && <>
-      <p className="msml__lead">Panel de administración</p>
-      <div className="msml__admin-list">{clients.map(c => <button key={c.id} type="button" className="msml__admin-client" onClick={() => abrir(c.id)}><strong>{c.nombre || 'Sin nombre'}</strong><span>{[c.estado, c.zona].filter(Boolean).join(' · ') || '—'}</span></button>)}</div>
+      <div className="msml__admin-welcome"><div><span className="msml__eyebrow">VISTA GENERAL</span><h2>Tu equipo, de un vistazo.</h2><p>Selecciona un alumno para abrir su ficha, revisar su evolución y preparar su rutina semanal.</p></div><div className="msml__welcome-mark" aria-hidden="true">SML<span> / 01</span></div></div>
+      <div className="msml__overview msml__admin-overview">
+        <article className="msml__metric"><span className="msml__eyebrow">ALUMNOS REGISTRADOS</span><strong>{clients.length}</strong><small>Contactos disponibles en Mi SML</small></article>
+        <article className="msml__metric"><span className="msml__eyebrow">ACTIVOS</span><strong>{activeCount}</strong><small>Con estado activo en el CRM</small></article>
+        <article className="msml__metric"><span className="msml__eyebrow">PENDIENTES</span><strong>{pendingCount}</strong><small>Requieren seguimiento</small></article>
+      </div>
+      <section className="msml__section msml__clients-section"><div className="msml__section-heading"><div><span className="msml__eyebrow">GESTIÓN DE ALUMNOS</span><h2>Alumnos</h2></div><span className="msml__count">{filteredClients.length} resultados</span></div>
+        <div className="msml__client-toolbar"><label className="msml__search"><span aria-hidden="true">⌕</span><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nombre, estado o zona…" aria-label="Buscar alumnos" /></label><span className="msml__toolbar-note">ACCESO PRIVADO</span></div>
+        {filteredClients.length ? <div className="msml__admin-list">{filteredClients.map((c, i) => <button key={c.id} type="button" className="msml__admin-client" onClick={() => abrir(c.id)}><span className="msml__client-avatar">{(c.nombre || '?').trim().split(/\s+/).slice(0,2).map(p => p[0]).join('').toUpperCase()}</span><span className="msml__client-main"><strong>{c.nombre || 'Sin nombre'}</strong><small>{[c.zona, c.formato].filter(Boolean).join(' · ') || 'Ficha de alumno'}</small></span><span className="msml__client-state"><i className={String(c.estado || '').toLocaleLowerCase('es').includes('activ') ? 'is-active' : ''}></i>{c.estado || 'Sin estado'}</span><span className="msml__client-arrow" aria-hidden="true">↗</span></button>)}</div> : <div className="msml__empty-state"><h3>No hay coincidencias</h3><p>Prueba con otro nombre, estado o zona.</p></div>}
+      </section>
     </>}
     {(mode === 'admin-loading' || mode === 'admin-detail') && <>
       {mode === 'admin-loading' && <p className="msml__status">Cargando cliente…</p>}
       {mode === 'admin-detail' && selected && <ClientView client={selected} admin />}
-      <button type="button" className="msml__btn msml__btn--ghost" onClick={() => { setSelected(null); setMode('admin'); }}>Volver a clientes</button>
+      <button type="button" className="msml__btn msml__btn--ghost" onClick={() => { setSelected(null); setError(false); setMode('admin'); }}>Volver a clientes</button>
     </>}
     {mode === 'client' && selected && <ClientView client={selected} />}
-    {logoutError && <p className="msml__note" role="alert">No se ha podido cerrar la sesión. Sigues conectado; inténtalo de nuevo.</p>}
-    <div className="msml__actions msml__session-actions">
-      <a className="msml__btn msml__btn--ghost" href="/">Salir</a>
-      <button type="button" className="msml__btn" onClick={cerrarSesion} disabled={closingSession}>{closingSession ? 'Cerrando sesión…' : 'Cerrar sesión'}</button>
-    </div>
   </section>;
 }
 
 function ClientView({ client, admin = false }) {
-  const analyses = Array.isArray(client.movementAnalysis) ? client.movementAnalysis : [];
-  const adminAnalyses = admin && Array.isArray(client.adminMovementAnalysis) ? client.adminMovementAnalysis : analyses;
+  const [routineForm, setRoutineForm] = useState({ objetivo: '', nivel: 'Inicial', sesionesPorSemana: '2', duracionMinutos: '30', material: 'Sombra, cuerda y manoplas si están disponibles', focoTecnico: 'Técnica, coordinación y biomecánica', limitaciones: '' });
+  const [routineBusy, setRoutineBusy] = useState(false);
+  const [routineMessage, setRoutineMessage] = useState('');
+  const [routineError, setRoutineError] = useState('');
+  const [createdRoutine, setCreatedRoutine] = useState(null);
+  const rutinas = Array.isArray(client.rutinas) ? client.rutinas : [];
+  const analysis = Array.isArray(client.movementAnalysis)
+    ? [...client.movementAnalysis].sort((a, b) => String(b['Fecha evaluación'] || '').localeCompare(String(a['Fecha evaluación'] || '')))
+    : [];
   return <div className="msml__data" aria-label={admin ? 'Ficha de cliente' : 'Datos de cliente'}>
-    {client.nombre && <p className="msml__lead">{client.nombre}</p>}
-    <section className="msml__summary" aria-label="Resumen del plan">
-      <p>Plan: {client.plan?.tipo || '—'}</p>
-      {client.plan?.frecuencia && <p>Frecuencia: {client.plan.frecuencia}</p>}
-      {client.plan?.precio != null && client.plan.precio !== '' && <p>Precio del plan: {client.plan.precio} €</p>}
-      <p>Pago: {client.pago?.estado || '—'}{client.pago?.importePendiente ? ` · Pendiente: ${client.pago.importePendiente} €` : ''}</p>
-      <p>Clases: {client.clases?.realizadas ?? 0}/{client.clases?.contratadas ?? 0} · Restantes: {client.clases?.restantes ?? 0}</p>
-    </section>
-    {analyses.length > 0 && <section className="msml__analysis" aria-label="Análisis de movimiento">
-      <h2 className="msml__section-title">Análisis de movimiento</h2>
-      {adminAnalyses.map((item, index) => {
-        const fields = item || {};
-        const details = [
-          ['Fecha de evaluación', fields['Fecha evaluación']],
-          ['Disciplina', fields['Disciplina']],
-          ['Por qué importa', fields['Texto cliente — Por qué importa']],
-          ['Qué trabajamos', fields['Texto cliente — Qué trabajamos']],
-          ['Evolución', fields['Texto cliente — Evolución']],
-          ['Siguiente objetivo', fields['Texto cliente — Siguiente objetivo']],
-          ['Fecha de revisión', fields['Fecha revisión']],
-        ].filter(([, value]) => value !== null && value !== undefined && String(value).trim() !== '');
-        const observation = fields['Texto cliente — Observación'];
-        return <article className="msml__analysis-card" key={item.id || `${index}-${fields['Fecha evaluación'] || 'analisis'}`}>
-          <h3>{observation || (admin ? fields['Análisis'] : '') || 'Seguimiento de movimiento'}</h3>
-          {details.map(([label, value]) => <p key={label}><strong>{label}:</strong> {String(value)}</p>)}
+    <div className="msml__client-hero"><div><span className="msml__eyebrow">{admin ? 'PERFIL DEL ALUMNO' : 'BIENVENIDO A TU ESPACIO SML'}</span><h2>{client.nombre || 'Tu entrenamiento'}</h2><p>{admin ? 'Datos, seguimiento técnico y planificación individual.' : 'Aquí se reúne tu plan, las sesiones y tu evolución técnica.'}</p></div><span className="msml__hero-emblem" aria-hidden="true">SML<span>+</span></span></div>
+    <div className="msml__overview">
+      <article className="msml__metric"><span className="msml__eyebrow">PLAN ACTUAL</span><strong>{client.plan?.tipo || 'Plan por confirmar'}</strong><small>{client.plan?.frecuencia ? `${client.plan.frecuencia} · ` : ''}{client.plan?.precio != null ? `${client.plan.precio} €` : 'Consulta los detalles con tu entrenador'}</small></article>
+      <article className="msml__metric"><span className="msml__eyebrow">SESIONES RESTANTES</span><strong>{client.clases?.restantes ?? '—'}</strong><small>{client.clases?.realizadas ?? 0} realizadas de {client.clases?.contratadas ?? '—'} contratadas</small></article>
+      <article className="msml__metric"><span className="msml__eyebrow">ESTADO DEL PAGO</span><strong>{client.pago?.estado || 'Por confirmar'}</strong><small>{Number(client.pago?.importePendiente || 0) > 0 ? `Pendiente: ${Number(client.pago.importePendiente).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}` : 'Consulta aquí cualquier actualización con tu entrenador'}</small></article>
+    </div>
+    <section className="msml__section" aria-labelledby="msml-analysis-title">
+      <div className="msml__section-heading"><div><span className="msml__eyebrow">SEGUIMIENTO TÉCNICO</span><h2 id="msml-analysis-title">Movement Analysis</h2></div><span className="msml__count">{analysis.length} {analysis.length === 1 ? 'registro' : 'registros'}</span></div>
+      {analysis.length ? <div className="msml__analysis-list">{analysis.map((entry, index) => {
+        const date = entry['Fecha evaluación'];
+        const dateLabel = date && !Number.isNaN(Date.parse(date)) ? new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : date;
+        const fields = [['Observación', 'Texto cliente — Observación'], ['Por qué importa', 'Texto cliente — Por qué importa'], ['Qué trabajamos', 'Texto cliente — Qué trabajamos'], ['Evolución', 'Texto cliente — Evolución'], ['Siguiente objetivo', 'Texto cliente — Siguiente objetivo'], ['Fecha de revisión', 'Fecha revisión']].filter(([, key]) => entry[key] != null && String(entry[key]).trim());
+        return <article className="msml__analysis-card" key={entry.id || `${date || 'registro'}-${index}`}>
+          <div className="msml__analysis-meta"><span>{entry.Disciplina || 'Evaluación técnica'}</span>{dateLabel && <time>{dateLabel}</time>}</div>
+          {fields.length ? <div className="msml__analysis-fields">{fields.map(([label, key]) => <div className="msml__analysis-field" key={key}><h3>{label}</h3><p>{String(entry[key])}</p></div>)}</div> : <p className="msml__empty">Este registro todavía no tiene un resumen visible para el alumno.</p>}
         </article>;
-      })}
-    </section>}
+      })}</div> : <div className="msml__empty-state"><span className="msml__empty-mark" aria-hidden="true">+</span><h3>Tu seguimiento empieza aquí</h3><p>Cuando tu entrenador publique una evaluación para ti, encontrarás aquí los puntos trabajados, tu evolución y el siguiente objetivo.</p></div>}
+    </section>
+    <section className="msml__section" aria-labelledby="msml-routines-title">
+      <div className="msml__section-heading">
+        <div><span className="msml__eyebrow">PLANIFICACIÓN SEMANAL</span><h2 id="msml-routines-title">Tus rutinas</h2></div>
+        <span className="msml__count">{rutinas.length} {rutinas.length === 1 ? 'rutina' : 'rutinas'}</span>
+      </div>
+      {rutinas.length ? <div className="msml__routine-list">{rutinas.map((routine) => {
+        const inicio = routine.semanaInicio && !Number.isNaN(Date.parse(routine.semanaInicio)) ? new Date(routine.semanaInicio).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : routine.semanaInicio;
+        const fin = routine.semanaFin && !Number.isNaN(Date.parse(routine.semanaFin)) ? new Date(routine.semanaFin).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : routine.semanaFin;
+        return <article className="msml__routine-card" key={routine.id}>
+          <div className="msml__analysis-meta"><span>{routine.nivel || 'Plan SML'}</span><time>{inicio ? `${inicio}${fin ? ` — ${fin}` : ''}` : 'Plan semanal'}</time></div>
+          <h3>{routine.titulo}</h3>
+          {routine.objetivo && <p className="msml__routine-goal"><strong>Objetivo</strong>{routine.objetivo}</p>}
+          <div className="msml__routine-meta">{routine.sesionesPorSemana != null && <span>{routine.sesionesPorSemana} sesiones/semana</span>}{routine.origen && <span>{routine.origen === 'IA revisada' ? 'Preparada con IA · revisada por el entrenador' : routine.origen === 'Plantilla SML' ? 'Sistema SML' : 'Planificación del entrenador'}</span>}</div>
+          {routine.contenido && <div className="msml__routine-content">{routine.contenido}</div>}
+        </article>;
+      })}</div> : <div className="msml__empty-state"><span className="msml__empty-mark" aria-hidden="true">+</span><h3>Tu próxima rutina aparecerá aquí</h3><p>Las rutinas se mostrarán cuando estén publicadas por tu entrenador. Así tendrás el trabajo semanal, su objetivo y las indicaciones en un único lugar.</p></div>}
+    </section>
     {admin && client._admin && <p>Zona: {client._admin.zona || '—'} · Formato: {client._admin.formato || '—'} · Frecuencia: {client._admin.frecuencia || '—'}</p>}
+    {admin && <section className="msml__section" aria-labelledby="msml-routine-create-title">
+      <div className="msml__section-heading"><div><span className="msml__eyebrow">HERRAMIENTAS DEL ENTRENADOR</span><h2 id="msml-routine-create-title">Preparar rutina semanal</h2></div></div>
+      <p className="msml__routine-help">Genera una propuesta para este alumno. Se guardará como borrador privado para revisarla antes de publicarla.</p>
+      <form className="msml__routine-form" onSubmit={async (event) => {
+        event.preventDefault(); setRoutineBusy(true); setRoutineError(''); setRoutineMessage(''); setCreatedRoutine(null);
+        try {
+          const draft = await generateAdminRoutine({
+            contactId: client._meta?.contactoId || client.id || client._admin?.contactoId,
+            objetivo: routineForm.objetivo, nivel: routineForm.nivel,
+            sesionesPorSemana: Number(routineForm.sesionesPorSemana),
+            duracionMinutos: Number(routineForm.duracionMinutos),
+            material: routineForm.material, focoTecnico: routineForm.focoTecnico, limitaciones: routineForm.limitaciones,
+          });
+          setCreatedRoutine(draft); setRoutineMessage('Borrador guardado en Airtable. Sigue privado hasta su revisión.');
+        } catch (e) {
+          setRoutineError(e?.code === 'routine-generator-unavailable' ? 'La generación todavía no está configurada en el servidor.' : e?.code === 'forbidden' ? 'Tu cuenta no tiene permiso para generar rutinas.' : e?.code === 'unauthenticated' ? 'La sesión ha caducado. Vuelve a entrar.' : 'No se ha podido crear la rutina. Comprueba los datos y la configuración del servidor.');
+        } finally { setRoutineBusy(false); }
+      }}>
+        <label>Objetivo de la semana<input required minLength="3" maxLength="300" value={routineForm.objetivo} onChange={e => setRoutineForm(v => ({ ...v, objetivo: e.target.value }))} placeholder="Ej. Mejorar guardia, desplazamientos y coordinación" /></label>
+        <div className="msml__routine-form-grid">
+          <label>Nivel<select value={routineForm.nivel} onChange={e => setRoutineForm(v => ({ ...v, nivel: e.target.value }))}><option>Inicial</option><option>Intermedio</option><option>Avanzado</option></select></label>
+          <label>Sesiones/semana<select value={routineForm.sesionesPorSemana} onChange={e => setRoutineForm(v => ({ ...v, sesionesPorSemana: e.target.value }))}>{[1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n}</option>)}</select></label>
+          <label>Duración por sesión<select value={routineForm.duracionMinutos} onChange={e => setRoutineForm(v => ({ ...v, duracionMinutos: e.target.value }))}>{[15,20,30,40,45,60,90,120].map(n => <option key={n} value={n}>{n} min</option>)}</select></label>
+        </div>
+        <label>Material disponible<input value={routineForm.material} maxLength="300" onChange={e => setRoutineForm(v => ({ ...v, material: e.target.value }))} /></label>
+        <label>Foco técnico<input value={routineForm.focoTecnico} maxLength="500" onChange={e => setRoutineForm(v => ({ ...v, focoTecnico: e.target.value }))} /></label>
+        <label>Limitaciones relevantes (opcional)<textarea value={routineForm.limitaciones} maxLength="500" onChange={e => setRoutineForm(v => ({ ...v, limitaciones: e.target.value }))} rows={3} placeholder="Molestias, restricciones o aspectos que el entrenador debe comprobar" /></label>
+        <button className="msml__btn" type="submit" disabled={routineBusy}>{routineBusy ? 'Generando borrador…' : 'Generar borrador con IA'}</button>
+      </form>
+      {routineError && <p className="msml__note" role="alert">{routineError}</p>}
+      {routineMessage && <p className="msml__routine-success" role="status">{routineMessage}</p>}
+      {createdRoutine && <article className="msml__routine-card"><div className="msml__analysis-meta"><span>BORRADOR PRIVADO</span><span>{createdRoutine.estado || 'Pendiente revisión'}</span></div><h3>{createdRoutine.titulo || 'Rutina semanal SML'}</h3>{createdRoutine.objetivo && <p><strong>Objetivo:</strong> {createdRoutine.objetivo}</p>}<div className="msml__routine-content">{createdRoutine.contenido}</div></article>}
+    </section>}
   </div>;
 }

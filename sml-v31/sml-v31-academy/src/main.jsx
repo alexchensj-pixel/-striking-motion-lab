@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App/App.jsx';
+// El árbol 3D público se importa solo en la ruta pública; /mi-sml y /academia no necesitan Three.js ni sus vídeos.
+const App = lazy(() => import('./App/App.jsx'));
 import LegalPage from './UI/Legal/LegalPage.jsx';
 import { RUTAS } from './Data/Legal.js';
 import './styles/global.css';
@@ -22,11 +23,19 @@ if (!legalTipo && !esMiSML && !esAcademia) {
   window.scrollTo(0, 0);
 }
 
+const fallback = (
+  <main role="status" aria-live="polite" aria-busy="true" style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '2rem', background: '#050608', color: '#f4f4f4', fontFamily: 'sans-serif' }}>
+    Cargando Striking Motion Lab…
+  </main>
+);
+
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {esMiSML
-      ? <Suspense fallback={null}><MiSML /></Suspense>
-      : esAcademia ? <Suspense fallback={null}><Academia /></Suspense>
-      : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
+    <Suspense fallback={fallback}>
+      {esMiSML
+        ? <MiSML />
+        : esAcademia ? <Academia />
+        : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
+    </Suspense>
   </React.StrictMode>
 );

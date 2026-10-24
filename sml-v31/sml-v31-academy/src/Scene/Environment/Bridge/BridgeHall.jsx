@@ -295,6 +295,7 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
 
   const media = useMemo(() => {
     const el = document.createElement('video');
+    el.preload = 'none';
     el.src = src;
     el.loop = true;
     el.muted = true;
@@ -302,15 +303,9 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
     el.playsInline = true;
     el.setAttribute('playsinline', '');
     el.setAttribute('webkit-playsinline', '');
-    // 'auto' (antes 'metadata'): es una instrucción real al navegador para que empiece a descargar y
-    // decodificar el vídeo completo desde YA, no solo la cabecera — y arranca en cuanto se crea este
-    // <video>, que es exactamente cuando se monta <BridgeHall> (Environment/index.jsx la renderiza sin
-    // condición alguna, desde el primer frame de toda la experiencia) — es decir, antes de que el usuario
-    // haya podido hacer ni un solo scroll. Es la ÚNICA de las dos figuras del Bridge con 'auto': Fighter.jsx
-    // sigue en 'metadata' a propósito porque a él SÍ le sobra tiempo real (Character Select llega mucho
-    // más tarde en el recorrido) y no conviene gastar datos de más ahí.
-    el.preload = 'auto';
-    el.load();
+    // El Bridge se monta desde el primer frame, aunque está muy lejos de la entrada. No bajar el MP4
+    // completo hasta que su ventana de scroll se active; readyState mantiene la figura invisible hasta tener un frame real.
+    el.preload = 'none';
     const vtex = new VideoTexture(el);
     vtex.minFilter = LinearFilter;
     vtex.magFilter = LinearFilter;
@@ -332,10 +327,10 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
     const { el, mat } = media;
     const s = st.current;
     const now = performance.now();
-    // Mismo mecanismo de intento/backoff que Fighter.jsx y RosterGroup.jsx: se llama a play()
-    // en cuanto el vídeo está en pausa (sin esperar a readyState), con reintento cada 3 s si el
-    // navegador lo rechaza (autoplay bloqueado) — así readyState SÍ puede llegar a subir con datos reales.
-    if (el.paused && !s.pending && now - s.blockedAt > 3000) {
+    // Solo iniciar la descarga/reproducción cuando la ventana de scroll de esta figura esté activa.
+    // Antes se llamaba a play() desde el primer frame, aunque el Bridge siguiera fuera de pantalla.
+    const target = gainRef?.current ?? 0;
+    if (target > 0.01 && el.paused && !s.pending && now - s.blockedAt > 3000) {
       s.pending = true;
       const p = el.play();
       if (p && p.then) {
@@ -343,10 +338,9 @@ function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
       } else {
         s.pending = false;
       }
+    } else if (target <= 0.01 && !el.paused) {
+      el.pause();
     }
-    // Si el móvil bloquea el autoplay, el vídeo se queda en su primer fotograma (sin audio, sin control
-    // visible) — mismo comportamiento aceptado ya en Fighter.jsx para el mismo caso.
-    const target = gainRef?.current ?? 0;
     // GATE de readiness (protección, no sustituye al preload de arriba): mismo umbral que ya usa y prueba
     // Fighter.jsx (readyState>=2 = HAVE_CURRENT_DATA, el navegador confirma que existe ya un frame real
     // decodificado). Pase lo que pase con el scroll, uGain nunca sube de 0 hasta que esto es cierto — así

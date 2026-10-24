@@ -155,26 +155,26 @@ function LessonVisual({ lesson }) {
   const principles = checks.slice(0, 4);
 
   const lowerTitle = title.toLocaleLowerCase('es');
-  const illustration = /sincronización de apoyos y rotación/.test(lowerTitle) ? 'sincronizacion.jpg'
-    : /rutina técnica en solitario/.test(lowerTitle) ? 'rutina-solitario.jpg'
-    : /transferencia de fuerza y escalera avanzada/.test(lowerTitle) ? 'transferencia-escalera.jpg'
-    : /guardia|centro de gravedad|distribución del peso|colocación de los pies|pierna trasera/.test(lowerTitle) ? 'guard.jpg'
-    : /desplazamiento|paso adelante|paso atrás|lateral|salida en diagonal|entrada y salida/.test(lowerTitle) ? 'footwork.jpg'
-    : /jab|puño adelantado|salida con paso corto|impulso|mano de guardia|impacto|regreso/.test(lowerTitle) ? 'jab.jpg'
-    : /cross|directo trasero|empuje del pie trasero|giro de cadera|rotación del torso|sale el hombro|extensión del brazo/.test(lowerTitle) ? 'cross.jpg'
-    : /crochet|hook|gancho|empuje y giro|transferencia del peso|altura del brazo/.test(lowerTitle) ? 'hook.jpg'
-    : /uppercut|ascendente/.test(lowerTitle) ? 'uppercut.jpg'
-    : /low kick|patada baja/.test(lowerTitle) ? 'lowkick.jpg'
-    : /middle kick|patada media/.test(lowerTitle) ? 'middlekick.jpg'
-    : /rodillas|golpe de rodilla|rodillazo/.test(lowerTitle) ? 'rodillas.jpg'
-    : /movilidad de cadera/.test(lowerTitle) ? 'movilidad.jpg'
-    : /frontales|front kick|teep|patada frontal/.test(lowerTitle) ? 'teep.jpg'
-    : /patada/.test(lowerTitle) ? 'teep.jpg'
-    : /bloqueo|defensa/.test(lowerTitle) ? 'block.jpg'
-    : /esquiva|evasión|slip/.test(lowerTitle) ? 'slip.jpg'
-    : /clinch|rodilla/.test(lowerTitle) ? 'clinch.jpg'
-    : /combinación|combinaciones|secuencia/.test(lowerTitle) ? 'combos.jpg'
-    : 'guard.jpg';
+  const illustration = /sincronización de apoyos y rotación/.test(lowerTitle) ? 'sincronizacion.webp'
+    : /rutina técnica en solitario/.test(lowerTitle) ? 'rutina-solitario.webp'
+    : /transferencia de fuerza y escalera avanzada/.test(lowerTitle) ? 'transferencia-escalera.webp'
+    : /guardia|centro de gravedad|distribución del peso|colocación de los pies|pierna trasera/.test(lowerTitle) ? 'guard.webp'
+    : /desplazamiento|paso adelante|paso atrás|lateral|salida en diagonal|entrada y salida/.test(lowerTitle) ? 'footwork.webp'
+    : /jab|puño adelantado|salida con paso corto|impulso|mano de guardia|impacto|regreso/.test(lowerTitle) ? 'jab.webp'
+    : /cross|directo trasero|empuje del pie trasero|giro de cadera|rotación del torso|sale el hombro|extensión del brazo/.test(lowerTitle) ? 'cross.webp'
+    : /crochet|hook|gancho|empuje y giro|transferencia del peso|altura del brazo/.test(lowerTitle) ? 'hook.webp'
+    : /uppercut|ascendente/.test(lowerTitle) ? 'uppercut.webp'
+    : /low kick|patada baja/.test(lowerTitle) ? 'lowkick.webp'
+    : /middle kick|patada media/.test(lowerTitle) ? 'middlekick.webp'
+    : /rodillas|golpe de rodilla|rodillazo/.test(lowerTitle) ? 'rodillas.webp'
+    : /movilidad de cadera/.test(lowerTitle) ? 'movilidad.webp'
+    : /frontales|front kick|teep|patada frontal/.test(lowerTitle) ? 'teep.webp'
+    : /patada/.test(lowerTitle) ? 'teep.webp'
+    : /bloqueo|defensa/.test(lowerTitle) ? 'block.webp'
+    : /esquiva|evasión|slip/.test(lowerTitle) ? 'slip.webp'
+    : /clinch|rodilla/.test(lowerTitle) ? 'clinch.webp'
+    : /combinación|combinaciones|secuencia/.test(lowerTitle) ? 'combos.webp'
+    : 'guard.webp';
   return <section className="academy__lessonboard" aria-label={`Lámina didáctica de ${title}`}>
     <div className="academy__lessonboardtop">
       <div className="academy__notebookbrand"><span>SML</span><div><strong>ACADEMY</strong><small>ESTUDIO DE MOVIMIENTO</small></div></div>

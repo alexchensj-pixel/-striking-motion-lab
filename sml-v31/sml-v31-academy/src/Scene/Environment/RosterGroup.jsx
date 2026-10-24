@@ -136,6 +136,8 @@ export default function RosterGroup() {
   const media = useMemo(() => {
     const still = new TextureLoader().load(poster.roster);
     const el = document.createElement('video');
+    // La escena se monta desde la entrada; no descargar el MP4 hasta que empiece el tramo Explore.
+    el.preload = 'none';
     el.src = video.roster;
     el.loop = true;
     el.muted = true;
@@ -143,7 +145,6 @@ export default function RosterGroup() {
     el.playsInline = true;
     el.setAttribute('playsinline', '');
     el.setAttribute('webkit-playsinline', '');
-    el.preload = 'auto'; // es el primer vídeo visible de la escena: hace falta desde el arranque de la transición
     const vtex = new VideoTexture(el);
     vtex.minFilter = LinearFilter;
     vtex.magFilter = LinearFilter;
