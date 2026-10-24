@@ -52,7 +52,7 @@ export default function Navigation() {
 
   const go = (target) => {
   setOpen(false);
-  goToSection(target, { direct: true });
+  goToSection(target, { direct: target !== 'explore' });
 };
   
  return (
