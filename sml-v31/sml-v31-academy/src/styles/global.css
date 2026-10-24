@@ -2540,3 +2540,17 @@ body:has(.pf[data-stage="3"]) .scta[data-chapter="proof-chen"] { opacity: 0; vis
 /* NAVEGACIÓN: el destino activo se lee a primera vista (barra de acento más gruesa, texto en peso 600 y subrayado de acento), sin cajas ni iconos. */
 nav.nav li[data-on="true"]::before { width: 2px; }
 nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var(--accent); }
+
+
+/* CONVERSION HOME: confianza visible y una salida humana para quien aún no está listo para reservar. */
+.ent__beneficio { margin: .75rem auto 0; max-width: 32rem; color: #f2efe8; font-family: var(--ent-sans); font-size: clamp(.82rem, 2.2vw, 1rem); line-height: 1.45; text-shadow: 0 1px 8px rgba(0,0,0,.9); }
+.ent__prueba { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: .35rem .9rem; margin: .85rem auto 0; color: #f2efe8; font-family: var(--ent-mono); font-size: .65rem; line-height: 1.5; letter-spacing: .035em; text-shadow: 0 1px 8px rgba(0,0,0,.95); }
+.ent__prueba span + span { padding-left: .9rem; border-left: 1px solid rgba(242,239,232,.42); }
+.ent__consulta { display: block; padding: .45rem .5rem; color: #f2efe8; font-family: var(--ent-sans); font-size: .78rem; line-height: 1.4; text-align: center; text-decoration: underline; text-decoration-color: rgba(224,90,43,.9); text-underline-offset: .25rem; }
+.ent__consulta:hover, .ent__consulta:focus-visible { color: #E05A2B; }
+@media (max-width: 700px) {
+  .ent__beneficio { max-width: 20rem; margin-top: .55rem; font-size: .8rem; }
+  .ent__prueba { max-width: 22rem; margin-top: .55rem; gap: .2rem .55rem; font-size: .58rem; }
+  .ent__prueba span + span { padding-left: .55rem; }
+  .ent__consulta { font-size: .72rem; padding: .35rem .25rem; }
+}
