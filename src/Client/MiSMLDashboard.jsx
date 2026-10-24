@@ -6,6 +6,7 @@ export default function MiSMLDashboard({ onSessionEnded }) {
   const [clients, setClients] = useState([]);
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     let vivo = true;
@@ -31,13 +32,24 @@ export default function MiSMLDashboard({ onSessionEnded }) {
   };
   const salir = async () => { try { await signOut(); } catch {} };
 
-  return <section className="msml__panel" aria-label="Mi SML">
-    <h1 className="msml__title">Mi SML</h1>
+  const filteredClients = clients.filter(c => `${c.nombre || ''} ${c.estado || ''} ${c.zona || ''}`.toLocaleLowerCase('es').includes(search.toLocaleLowerCase('es')));
+  const activeCount = clients.filter(c => String(c.estado || '').toLocaleLowerCase('es').includes('activ')).length;
+  const pendingCount = clients.filter(c => String(c.estado || '').toLocaleLowerCase('es').includes('pend')).length;
+  return <section className="msml__panel msml__dashboard" aria-label="Mi SML">
+    <div className="msml__dashboard-top"><div><p className="msml__kicker">STRIKING MOTION LAB · ESPACIO PRIVADO</p><h1 className="msml__dashboard-title">{mode === 'admin' ? 'Panel de control' : mode === 'client' ? 'Tu progreso' : mode === 'admin-detail' ? 'Ficha del alumno' : 'Mi SML'}</h1><p className="msml__dashboard-subtitle">{mode === 'admin' ? 'Todo el seguimiento de tus alumnos, en un solo lugar.' : mode === 'client' ? 'Tu entrenamiento. Tu evolución. Tu sistema.' : 'Seguimiento técnico y planificación.'}</p></div><button type="button" className="msml__btn msml__btn--ghost msml__logout" onClick={salir}>Salir ↗</button></div>
     {mode === 'loading' && <p className="msml__status">Cargando…</p>}
     {error && <p className="msml__note" role="alert">No hemos podido cargar tus datos.</p>}
     {mode === 'admin' && <>
-      <p className="msml__lead">Panel de administración</p>
-      <div className="msml__admin-list">{clients.map(c => <button key={c.id} type="button" className="msml__admin-client" onClick={() => abrir(c.id)}><strong>{c.nombre || 'Sin nombre'}</strong><span>{[c.estado, c.zona].filter(Boolean).join(' · ') || '—'}</span></button>)}</div>
+      <div className="msml__admin-welcome"><div><span className="msml__eyebrow">VISTA GENERAL</span><h2>Tu equipo, de un vistazo.</h2><p>Selecciona un alumno para abrir su ficha, revisar su evolución y preparar su rutina semanal.</p></div><div className="msml__welcome-mark" aria-hidden="true">SML<span> / 01</span></div></div>
+      <div className="msml__overview msml__admin-overview">
+        <article className="msml__metric"><span className="msml__eyebrow">ALUMNOS REGISTRADOS</span><strong>{clients.length}</strong><small>Contactos disponibles en Mi SML</small></article>
+        <article className="msml__metric"><span className="msml__eyebrow">ACTIVOS</span><strong>{activeCount}</strong><small>Con estado activo en el CRM</small></article>
+        <article className="msml__metric"><span className="msml__eyebrow">PENDIENTES</span><strong>{pendingCount}</strong><small>Requieren seguimiento</small></article>
+      </div>
+      <section className="msml__section msml__clients-section"><div className="msml__section-heading"><div><span className="msml__eyebrow">GESTIÓN DE ALUMNOS</span><h2>Alumnos</h2></div><span className="msml__count">{filteredClients.length} resultados</span></div>
+        <div className="msml__client-toolbar"><label className="msml__search"><span aria-hidden="true">⌕</span><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nombre, estado o zona…" aria-label="Buscar alumnos" /></label><span className="msml__toolbar-note">ACCESO PRIVADO</span></div>
+        {filteredClients.length ? <div className="msml__admin-list">{filteredClients.map((c, i) => <button key={c.id} type="button" className="msml__admin-client" onClick={() => abrir(c.id)}><span className="msml__client-avatar">{(c.nombre || '?').trim().split(/\s+/).slice(0,2).map(p => p[0]).join('').toUpperCase()}</span><span className="msml__client-main"><strong>{c.nombre || 'Sin nombre'}</strong><small>{[c.zona, c.formato].filter(Boolean).join(' · ') || 'Ficha de alumno'}</small></span><span className="msml__client-state"><i className={String(c.estado || '').toLocaleLowerCase('es').includes('activ') ? 'is-active' : ''}></i>{c.estado || 'Sin estado'}</span><span className="msml__client-arrow" aria-hidden="true">↗</span></button>)}</div> : <div className="msml__empty-state"><h3>No hay coincidencias</h3><p>Prueba con otro nombre, estado o zona.</p></div>}
+      </section>
     </>}
     {(mode === 'admin-loading' || mode === 'admin-detail') && <>
       {mode === 'admin-loading' && <p className="msml__status">Cargando cliente…</p>}
@@ -45,7 +57,6 @@ export default function MiSMLDashboard({ onSessionEnded }) {
       <button type="button" className="msml__btn msml__btn--ghost" onClick={() => { setSelected(null); setError(false); setMode('admin'); }}>Volver a clientes</button>
     </>}
     {mode === 'client' && selected && <ClientView client={selected} />}
-    <button type="button" className="msml__btn msml__btn--ghost" onClick={salir}>Salir</button>
   </section>;
 }
 
@@ -60,10 +71,7 @@ function ClientView({ client, admin = false }) {
     ? [...client.movementAnalysis].sort((a, b) => String(b['Fecha evaluación'] || '').localeCompare(String(a['Fecha evaluación'] || '')))
     : [];
   return <div className="msml__data" aria-label={admin ? 'Ficha de cliente' : 'Datos de cliente'}>
-    {client.nombre && <p className="msml__lead">{client.nombre}</p>}
-    <p>Plan: {client.plan?.tipo || '—'}</p>
-    <p>Pago: {client.pago?.estado || '—'}{client.pago?.importePendiente ? ` · Pendiente: ${client.pago.importePendiente} €` : ''}</p>
-    <p>Clases: {client.clases?.realizadas ?? 0}/{client.clases?.contratadas ?? 0} · Restantes: {client.clases?.restantes ?? 0}</p>
+    <div className="msml__client-hero"><div><span className="msml__eyebrow">{admin ? 'PERFIL DEL ALUMNO' : 'BIENVENIDO A TU ESPACIO SML'}</span><h2>{client.nombre || 'Tu entrenamiento'}</h2><p>{admin ? 'Datos, seguimiento técnico y planificación individual.' : 'Aquí se reúne tu plan, las sesiones y tu evolución técnica.'}</p></div><span className="msml__hero-emblem" aria-hidden="true">SML<span>+</span></span></div>
     <div className="msml__overview">
       <article className="msml__metric"><span className="msml__eyebrow">PLAN ACTUAL</span><strong>{client.plan?.tipo || 'Plan por confirmar'}</strong><small>{client.plan?.frecuencia ? `${client.plan.frecuencia} · ` : ''}{client.plan?.precio != null ? `${client.plan.precio} €` : 'Consulta los detalles con tu entrenador'}</small></article>
       <article className="msml__metric"><span className="msml__eyebrow">SESIONES RESTANTES</span><strong>{client.clases?.restantes ?? '—'}</strong><small>{client.clases?.realizadas ?? 0} realizadas de {client.clases?.contratadas ?? '—'} contratadas</small></article>
