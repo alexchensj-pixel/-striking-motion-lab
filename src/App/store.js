@@ -15,7 +15,7 @@ export const useStore = create((set) => ({
   // character-select lo comparten DISCIPLINAS y DESCUBRIR: si la persona venía de 'disciplinas' se conserva; en cualquier otro caso
   // (home por scroll/Bridge, otra sección) pasa a 'explore' y el foco vuelve a 'modos'.
   setActiveChapter: (id) => set((s) => {
-    if (s.b2bOpen || s.estudioOpen) return { activeChapter: id };
+    if (s.b2bOpen || s.estudioOpen || s.primeraVezOpen) return { activeChapter: id };
     if (id === 'character-select') {
       const section = s.activeSection === 'disciplinas' ? 'disciplinas' : 'explore';
       return { activeChapter: id, activeSection: section, exploreFocus: section === 'disciplinas' ? 'disciplinas' : 'modos' };
@@ -76,14 +76,21 @@ export const useStore = create((set) => ({
   // B2B — «Quiero contratar una experiencia». Recorrido propio (Experience/B2B) que se abre como otra puerta del mismo universo:
   // no toca capítulos, cámara ni scroll; al cerrar, la persona vuelve exactamente donde estaba.
   b2bOpen: false,
-  openB2B: () => set({ b2bOpen: true, estudioOpen: false, activeSection: 'experiences' }),
+  openB2B: () => set({ b2bOpen: true, estudioOpen: false, primeraVezOpen: false, activeSection: 'experiences' }),
   closeB2B: () => set((s) => ({ b2bOpen: false, activeSection: sectionForChapter(s.activeChapter, s.exploreFocus) ?? 'home' })),
 
   // ESTUDIO DE COMBATE — capa de profundización del método (Nivel 2). Otra puerta del mismo universo, igual que Experiences:
   // overlay propio, no toca capítulos, cámara ni scroll; al cerrar, la persona vuelve exactamente donde estaba. Excluyente con B2B.
   estudioOpen: false,
-  openEstudio: () => set({ estudioOpen: true, b2bOpen: false, activeSection: 'estudio' }),
+  openEstudio: () => set({ estudioOpen: true, b2bOpen: false, primeraVezOpen: false, activeSection: 'estudio' }),
   closeEstudio: () => set((s) => ({ estudioOpen: false, activeSection: sectionForChapter(s.activeChapter, s.exploreFocus) ?? 'home' })),
+
+  // ES MI PRIMERA VEZ — pantalla breve y OPCIONAL para quien duda (confianza, dudas frecuentes y reserva). Mismo patrón que Estudio:
+  // overlay propio, no toca capítulos, cámara ni scroll; al cerrar, la persona vuelve exactamente donde estaba. Excluyente con B2B y Estudio.
+  // Reservar sigue a un toque desde cualquier sitio: esta pantalla nunca es un paso previo obligatorio.
+  primeraVezOpen: false,
+  openPrimeraVez: () => set({ primeraVezOpen: true, b2bOpen: false, estudioOpen: false, activeSection: 'primera-vez' }),
+  closePrimeraVez: () => set((s) => ({ primeraVezOpen: false, activeSection: sectionForChapter(s.activeChapter, s.exploreFocus) ?? 'home' })),
 
   debug: false,
   toggleDebug: () => set((s) => ({ debug: !s.debug })),

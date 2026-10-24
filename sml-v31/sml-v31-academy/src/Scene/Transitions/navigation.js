@@ -2,14 +2,25 @@ import { gsap } from './gsap.js';
 import { chapters } from '../../Data/Content.js';
 import { useStore } from '../../App/store.js';
 import { SECTIONS, SECTION_CHAPTER, SECTION_HASH, HASH_SECTION } from '../../App/sections.js';
-import { prefersReducedMotion, scrollState } from './scrollState.js';
+import { prefersReducedMotion, scrollState, BRIDGE_END } from './scrollState.js';
 
 const els = {};
 export const registerChapterEl = (id, el) => { els[id] = el; };
 
 const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
-const go = (y, duration) =>
-  gsap.to(window, { scrollTo: { y, autoKill: true }, duration: prefersReducedMotion ? 0 : duration, ease: 'power3.inOut' });
+let bridgeTour = null;
+const INTERRUPT = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+function stopBridgeTour() {
+  if (!bridgeTour) return;
+  const active = bridgeTour;
+  bridgeTour = null;
+  active.kill();
+  INTERRUPT.forEach((ev) => window.removeEventListener(ev, stopBridgeTour, true));
+}
+const go = (y, duration) => {
+  stopBridgeTour();
+  return gsap.to(window, { scrollTo: { y, autoKill: true }, duration: prefersReducedMotion ? 0 : duration, ease: 'power3.inOut' });
+};
 
 // SALTO DIRECTO: coloca la página en `y` sin recorrer la película intermedia. El progreso de cada tramo (ScrollTrigger) es
 // posicional, así que todo lo anterior queda "ya recorrido" y todo lo posterior "sin empezar": el estado es coherente.
@@ -18,6 +29,7 @@ const JUMP_IN = 0.16;
 const JUMP_OUT = 0.4;
 let jumpTl = null;
 export function jumpTo(y) {
+  stopBridgeTour();
   gsap.killTweensOf(window);
   jumpTl?.kill();
   if (prefersReducedMotion) {
@@ -35,12 +47,37 @@ export function jumpTo(y) {
 // entre otros capítulos contiguos. Se escala con la distancia real (≈1,8 s por pantalla, entre 2,2 y 12 s); `autoKill` deja al usuario
 // retomar el scroll en cualquier momento. El resto de pasos contiguos conserva los 2,2 s de siempre.
 const STEP_DURATION = 2.2;
-const BRIDGE_SECONDS_PER_SCREEN = 1.8;
 const crossesBridge = (from, to) => from === 'entrada' && to === 'character-select';
 function travelDuration(from, to, y) {
-  if (!crossesBridge(from, to)) return STEP_DURATION;
-  const screens = Math.abs(y - window.scrollY) / window.innerHeight;
-  return Math.min(Math.max(screens * BRIDGE_SECONDS_PER_SCREEN, STEP_DURATION), 12);
+  if (crossesBridge(from, to)) return STEP_DURATION;
+  return STEP_DURATION;
+}
+
+// DESCUBRIR desde HOME: el Bridge es contenido que hay que poder leer, no un tramo que se atraviesa
+// en una única animación rápida. Recorremos paradas reales de scroll (las mismas posiciones que a mano).
+// Cualquier gesto de la persona interrumpe el tour y le devuelve el control del scroll.
+const BRIDGE_STOPS = [[0.08, 1.1], [0.215, 1.3], [0.35, 1.3], [0.485, 1.1], [0.93, 1.6]];
+const BRIDGE_MOVE = 0.9;
+function tourBridge(targetY) {
+  const threshold = document.querySelector('[data-threshold="entrada>character-select"]');
+  if (!threshold || prefersReducedMotion) { jumpTo(targetY); return; }
+  stopBridgeTour();
+  gsap.killTweensOf(window);
+  jumpTl?.kill();
+  const viewport = window.innerHeight;
+  // ScrollTrigger: start = top bottom; end = bottom top.
+  const start = topOf(threshold) - viewport;
+  const span = threshold.offsetHeight + viewport;
+  const tl = gsap.timeline({ onComplete: stopBridgeTour });
+  BRIDGE_STOPS.forEach(([local, hold], i) => {
+    const y = start + local * BRIDGE_END * span;
+    if (y <= window.scrollY + 2) return; // no retroceder a una parada ya recorrida
+    tl.to(window, { scrollTo: { y, autoKill: false }, duration: i === 0 ? 1.6 : BRIDGE_MOVE, ease: 'sine.inOut' })
+      .to({}, { duration: hold });
+  });
+  tl.to(window, { scrollTo: { y: targetY, autoKill: false }, duration: 1.8, ease: 'sine.inOut' });
+  bridgeTour = tl;
+  INTERRUPT.forEach((ev) => window.addEventListener(ev, stopBridgeTour, { capture: true, passive: true }));
 }
 
 // Capítulo (o 'faq') → posición. Nunca recorre capítulos intermedios.
@@ -58,6 +95,7 @@ export function scrollToChapter(id, duration) {
   const active = useStore.getState().activeChapter;
   const dist = Math.abs(orderOf(id) - orderOf(active));
   if (dist > 1) jumpTo(topOf(els[id]));
+  else if (crossesBridge(active, id)) tourBridge(topOf(els[id]));
   else go(topOf(els[id]), duration ?? travelDuration(active, id, topOf(els[id])));
 }
 
@@ -74,6 +112,10 @@ export function scrollToChapterProgress(id, p, duration = 1.2) {
 // anterior) y, si había un overlay abierto, el hash nuevo se escribe con replaceState DESPUÉS de que su limpieza haya corrido.
 const hashOf = (id) => (SECTION_HASH[id] ? `#${SECTION_HASH[id]}` : '');
 const urlFor = (hash) => window.location.pathname + window.location.search + hash;
+// Cuando un overlay se cierra con Esc/botón, volver a la entrada anterior evita dejar un duplicado muerto
+// en el historial. ignorePop distingue ese back programático del botón Atrás que la persona pulsa con overlay abierto.
+let overlayEntry = false;
+let ignorePop = false;
 function writeHash(id, mode) {
   const hash = hashOf(id);
   if (window.location.hash === hash) return;
@@ -110,13 +152,15 @@ export function goToSection(id, opts = {}) {
   const { push = true, direct = false } = opts;
   const st = useStore.getState();
   const hadOverlay = st.b2bOpen || st.estudioOpen;
+  if (hadOverlay) overlayEntry = false; // la entrada del overlay se reemplaza por la sección de destino
   if (st.b2bOpen && id !== 'experiences') st.closeB2B();
   if (st.estudioOpen && id !== 'estudio') st.closeEstudio();
 
   // Overlays: no tocan capítulos, cámara ni scroll. Antes de abrirlos se duplica la entrada de historial (ver arriba).
   if (id === 'estudio' || id === 'experiences') {
     const alreadyOpen = id === 'estudio' ? st.estudioOpen : st.b2bOpen;
-    if (push && !alreadyOpen) { try { history.pushState(null, '', urlFor(window.location.hash)); } catch { /* sin History API */ } }
+    if (push && !alreadyOpen && !hadOverlay) { try { history.pushState(null, '', urlFor(window.location.hash)); overlayEntry = true; } catch { /* sin History API */ } }
+    else if (!alreadyOpen) overlayEntry = true; // apertura por historial o cambio directo entre overlays
     if (id === 'estudio') st.openEstudio(); else st.openB2B(0); // activeSection lo fija el propio open*
     return;
   }
@@ -152,11 +196,17 @@ function sectionFromHash() {
   return HASH_SECTION[key];
 }
 function onPopState() {
+  if (ignorePop) {
+    ignorePop = false;
+    writeHash(useStore.getState().activeSection, 'replace');
+    return; // back iniciado por el cierre con Esc/botón: conservar scroll y sección actual
+  }
   const id = sectionFromHash() ?? (window.location.hash ? null : 'home');
   // «Atrás» con Empresas / Estudio abierto = cerrar el overlay y quedarse donde estaba la persona (el scroll no se movió bajo él).
   // Sin esto, un hash antiguo (el scroll no escribe hash) la llevaba a otra sección o a HOME.
   const st = useStore.getState();
   if ((st.b2bOpen || st.estudioOpen) && id !== 'experiences' && id !== 'estudio') {
+    overlayEntry = false; // el navegador ya ha regresado a la entrada de origen
     if (st.b2bOpen) st.closeB2B(); else st.closeEstudio();
     return;
   }
@@ -172,7 +222,15 @@ export function initHistoryNavigation() {
   // Cerrar B2B/Estudio con Esc / botón: su limpieza borra el hash; se restituye el de la sección en pantalla (replace, sin entrada nueva).
   useStore.subscribe((s, prev) => {
     const closed = (prev.b2bOpen && !s.b2bOpen) || (prev.estudioOpen && !s.estudioOpen);
-    if (closed && !s.b2bOpen && !s.estudioOpen) setTimeout(() => writeHash(useStore.getState().activeSection, 'replace'), 0);
+    if (!closed || s.b2bOpen || s.estudioOpen) return;
+    const shouldBack = overlayEntry;
+    overlayEntry = false;
+    setTimeout(() => {
+      const now = useStore.getState();
+      if (now.b2bOpen || now.estudioOpen) return;
+      if (shouldBack) { ignorePop = true; history.back(); }
+      else writeHash(now.activeSection, 'replace');
+    }, 0);
   });
 
   // Carga directa con hash de B2C (#metodo…): espera a que los capítulos se registren y salta sin pushear. #empresas y #estudio los abren sus overlays.
@@ -209,5 +267,7 @@ export function stepChapter(dir) {
   const i = chapters.findIndex((c) => c.id === useStore.getState().activeChapter);
   const next = chapters[Math.max(0, Math.min(chapters.length - 1, i + dir))];
   const el = els[next.id];
-  if (el) go(topOf(el), travelDuration(chapters[i].id, next.id, topOf(el)));
+  if (!el) return;
+  if (crossesBridge(chapters[i].id, next.id)) tourBridge(topOf(el));
+  else go(topOf(el), travelDuration(chapters[i].id, next.id, topOf(el)));
 }

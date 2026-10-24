@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import Chapter from '../Chapter.jsx';
 import Calendly from './Calendly.jsx';
 import { useStore } from '../../App/store.js';
-import { reserva, site } from '../../Data/Content.js';
+import { reserva, site, waLink } from '../../Data/Content.js';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 import { useStation } from '../useStation.js';
 import LegalLinks from '../../UI/Legal/LegalLinks.jsx';
@@ -56,6 +56,9 @@ export default function Reserva() {
             <span className="rs__pathA">{reserva.caminos.dudas.accion}</span>
           </button>
         </div>
+
+        {/* Alternativa siempre visible: dudas, o el calendario no carga. */}
+        <p className="ph-text rs__alt">¿Dudas o no carga el calendario? <a className="link" href={waLink('Hola, tengo una duda antes de reservar mi evaluación.')} target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp · {site.whatsappVisible}</a></p>
 
         {/* V27 · paso 7: la objeción de la última pantalla (misma pregunta de faq[]). */}
         <FaqContextual q="¿Cómo funciona la reserva?" />

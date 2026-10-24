@@ -23,8 +23,12 @@ export default function Threshold({ from, to, start = 'top bottom', activeFrom =
 
   useLayoutEffect(() => {
     const update = (self) => {
+      // El progreso del segmento es posicional y se actualiza siempre, pero el capítulo activo NO.
+      // ScrollTrigger refresca también umbrales fuera de pantalla (progreso 0 o 1); si todos escriben
+      // el store durante la carga, gana el último umbral del documento, aunque la persona siga en HOME.
+      // Solo el umbral que realmente atraviesa el viewport puede cambiar el HUD/capítulo.
       setSegment(key, self.progress);
-      useStore.getState().setActiveChapter(self.progress > activeFrom ? to : from);
+      if (self.isActive) useStore.getState().setActiveChapter(self.progress > activeFrom ? to : from);
     };
     const st = ScrollTrigger.create({
       trigger: ref.current,
@@ -32,6 +36,8 @@ export default function Threshold({ from, to, start = 'top bottom', activeFrom =
       end: 'bottom top',
       onUpdate: update,
       onRefresh: update,
+      onLeave: () => useStore.getState().setActiveChapter(to),
+      onLeaveBack: () => useStore.getState().setActiveChapter(from),
     });
     return () => st.kill();
   }, [key, from, to, start, activeFrom]);

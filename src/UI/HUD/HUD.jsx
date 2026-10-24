@@ -22,6 +22,7 @@ export default function HUD() {
   const booking = useStore((s) => s.bookingState);
   const b2bOpen = useStore((s) => s.b2bOpen);
   const estudioOpen = useStore((s) => s.estudioOpen);
+  const primeraVezOpen = useStore((s) => s.primeraVezOpen);
   const bar = useRef(null);
   const dbg = useRef(null);
 
@@ -40,8 +41,9 @@ export default function HUD() {
   let where = chapterById[active].label;
   if (b2bOpen) where = 'Empresas';
   else if (estudioOpen) where = 'Estudio de combate';
+  else if (primeraVezOpen) where = 'Es mi primera vez';
   else if (active === 'character-select' && focus === 'disciplinas') where = 'Disciplinas';
-  const overlay = b2bOpen || estudioOpen;
+  const overlay = b2bOpen || estudioOpen || primeraVezOpen;
   // CONTEXTO (¿dónde estoy y qué estoy mirando?): el HUD solo REFLEJA el estado existente, no lo cambia. `hint` = descriptor fijo de la puerta (solo ≥ 700 px).
   //   DESCUBRIR → posibilidades de entrenamiento (+ la forma elegida)  ·  DISCIPLINAS → las disciplinas (+ la elegida)  ·  MÉTODO → su paso  ·  ENTRENAMIENTO → el formato  ·  RESERVA confirmada.
   const discName = disciplines.find((d) => d.id === discipline)?.name;
