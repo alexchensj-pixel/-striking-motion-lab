@@ -11,6 +11,7 @@ import { goToSection, irAReservar } from '../../Scene/Transitions/navigation.js'
 // EMPRESAS pasa por goToSection('experiences'), que cierra lo que haya encima, gestiona el historial y llama a openB2B (lógica B2B intacta).
 const MAIN = [
   { id: 'disciplinas', label: 'Disciplinas', target: 'disciplinas' },
+  { id: 'explore', label: 'Descubrir', target: 'explore' },
   { id: 'method', label: 'Método', target: 'method' },
   { id: 'training', label: 'Entrenamiento', target: 'training' },
   { id: 'founder', label: 'Sobre Chen', target: 'founder' },
