@@ -54,6 +54,7 @@ export default function Navigation() {
   setOpen(false);
   goToSection(target, { direct: true });
 };
+  
  return (
     <nav className="nav" aria-label="Navegación principal" data-open={open}>
       <button type="button" className="nav__toggle" aria-expanded={open} aria-controls="nav-list" onClick={() => setOpen((o) => !o)}>
