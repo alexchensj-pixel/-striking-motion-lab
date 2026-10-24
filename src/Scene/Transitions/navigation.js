@@ -2,14 +2,16 @@ import { gsap } from './gsap.js';
 import { chapters } from '../../Data/Content.js';
 import { useStore } from '../../App/store.js';
 import { SECTIONS, SECTION_CHAPTER, SECTION_HASH, HASH_SECTION } from '../../App/sections.js';
-import { prefersReducedMotion, scrollState } from './scrollState.js';
+import { prefersReducedMotion, scrollState, BRIDGE_END } from './scrollState.js';
 
 const els = {};
 export const registerChapterEl = (id, el) => { els[id] = el; };
 
 const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
-const go = (y, duration) =>
-  gsap.to(window, { scrollTo: { y, autoKill: true }, duration: prefersReducedMotion ? 0 : duration, ease: 'power3.inOut' });
+const go = (y, duration) => {
+  stopBridgeTour();
+  return gsap.to(window, { scrollTo: { y, autoKill: true }, duration: prefersReducedMotion ? 0 : duration, ease: 'power3.inOut' });
+};
 
 // SALTO DIRECTO: coloca la página en `y` sin recorrer la película intermedia. El progreso de cada tramo (ScrollTrigger) es
 // posicional, así que todo lo anterior queda "ya recorrido" y todo lo posterior "sin empezar": el estado es coherente.
@@ -18,6 +20,7 @@ const JUMP_IN = 0.16;
 const JUMP_OUT = 0.4;
 let jumpTl = null;
 export function jumpTo(y) {
+  stopBridgeTour();
   gsap.killTweensOf(window);
   jumpTl?.kill();
   if (prefersReducedMotion) {
@@ -31,16 +34,44 @@ export function jumpTo(y) {
     .to(scrollState, { jump: 0, duration: JUMP_OUT, ease: 'power1.out' });
 }
 
-// HOME → EXPLORE atraviesa el BRIDGE (umbral de 180vh con copy que hay que poder leer): el recorrido animado no puede durar lo mismo que
-// entre otros capítulos contiguos. Se escala con la distancia real (≈1,8 s por pantalla, entre 2,2 y 12 s); `autoKill` deja al usuario
-// retomar el scroll en cualquier momento. El resto de pasos contiguos conserva los 2,2 s de siempre.
+// HOME → EXPLORE por DESCUBRIR (o ↓ desde HOME): un scroll de una sola pieza cruzaba el Bridge a máxima velocidad (cada ejemplo, < 0,5 s).
+// Ahora el recorrido se detiene un momento en cada bloque (cuerpo · Tyson · McGregor · combate · mapa completo) y sigue hasta EXPLORE.
+// Son posiciones de scroll reales: lo que se ve es exactamente lo mismo que al deslizar a mano. Cualquier gesto de la persona (rueda,
+// toque, tecla) lo detiene y le devuelve el control donde esté. Con «reducir movimiento», salto directo como el resto de la navegación.
+// BRIDGE_STOPS = progreso LOCAL del Bridge (Experience/Entrada/Bridge.jsx#build), a mitad de cada bloque · [parada, pausa en s].
 const STEP_DURATION = 2.2;
-const BRIDGE_SECONDS_PER_SCREEN = 1.8;
 const crossesBridge = (from, to) => from === 'entrada' && to === 'character-select';
-function travelDuration(from, to, y) {
-  if (!crossesBridge(from, to)) return STEP_DURATION;
-  const screens = Math.abs(y - window.scrollY) / window.innerHeight;
-  return Math.min(Math.max(screens * BRIDGE_SECONDS_PER_SCREEN, STEP_DURATION), 12);
+const BRIDGE_STOPS = [[0.08, 1.1], [0.215, 1.3], [0.35, 1.3], [0.485, 1.1], [0.93, 1.6]];
+const BRIDGE_MOVE = 0.9;
+const INTERRUPT = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+let bridgeTour = null;
+
+function stopBridgeTour() {
+  if (!bridgeTour) return;
+  bridgeTour.kill();
+  bridgeTour = null;
+  INTERRUPT.forEach((ev) => window.removeEventListener(ev, stopBridgeTour, true));
+}
+
+function tourBridge(targetY) {
+  const th = document.querySelector('[data-threshold="entrada>character-select"]');
+  if (!th || prefersReducedMotion) { jumpTo(targetY); return; }
+  gsap.killTweensOf(window);
+  jumpTl?.kill();
+  stopBridgeTour();
+  const H = window.innerHeight;
+  const start = topOf(th) - H; // el umbral empieza a contar cuando asoma por abajo (Threshold.jsx: 'top bottom' → 'bottom top')
+  const span = th.offsetHeight + H;
+  const tl = gsap.timeline({ onComplete: stopBridgeTour });
+  BRIDGE_STOPS.forEach(([local, hold], i) => {
+    const y = start + local * BRIDGE_END * span;
+    if (y <= window.scrollY) return; // ya se ha pasado ese bloque
+    tl.to(window, { scrollTo: { y, autoKill: false }, duration: i === 0 ? 1.6 : BRIDGE_MOVE, ease: 'sine.inOut' })
+      .to({}, { duration: hold });
+  });
+  tl.to(window, { scrollTo: { y: targetY, autoKill: false }, duration: 1.8, ease: 'sine.inOut' });
+  bridgeTour = tl;
+  INTERRUPT.forEach((ev) => window.addEventListener(ev, stopBridgeTour, { capture: true, passive: true }));
 }
 
 // Capítulo (o 'faq') → posición. Nunca recorre capítulos intermedios.
@@ -58,7 +89,8 @@ export function scrollToChapter(id, duration) {
   const active = useStore.getState().activeChapter;
   const dist = Math.abs(orderOf(id) - orderOf(active));
   if (dist > 1) jumpTo(topOf(els[id]));
-  else go(topOf(els[id]), duration ?? travelDuration(active, id, topOf(els[id])));
+  else if (crossesBridge(active, id)) tourBridge(topOf(els[id]));
+  else go(topOf(els[id]), duration ?? STEP_DURATION);
 }
 
 // p = 0..1 dentro del capítulo (p.ej. saltar a un sub-estado del laboratorio).
@@ -209,5 +241,7 @@ export function stepChapter(dir) {
   const i = chapters.findIndex((c) => c.id === useStore.getState().activeChapter);
   const next = chapters[Math.max(0, Math.min(chapters.length - 1, i + dir))];
   const el = els[next.id];
-  if (el) go(topOf(el), travelDuration(chapters[i].id, next.id, topOf(el)));
+  if (!el) return;
+  if (crossesBridge(chapters[i].id, next.id)) tourBridge(topOf(el));
+  else go(topOf(el), STEP_DURATION);
 }
