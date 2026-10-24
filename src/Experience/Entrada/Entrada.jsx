@@ -102,7 +102,8 @@ export default function Entrada() {
               Todas por goToSection: DESCUBRIR desde aquí recorre el Bridge (animado); RESERVAR y B2B saltan directo, sin atravesar capítulos. */}
           <div className="ent__actions">
             <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>{hero.ctaReservar}</button>
-            <button type="button" className="ent__explorar" onClick={() => goToSection('explore')}>{hero.ctaExplorar}</button>
+            {/* «No sé qué necesito → Descubrir»: salto directo a DESCUBRIR (sin recorrer el Bridge). El Bridge sigue disponible haciendo scroll desde el Inicio. */}
+            <button type="button" className="ent__explorar" onClick={() => goToSection('explore', { direct: true })}>{hero.ctaExplorar}</button>
             <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>{hero.ctaB2B}</button>
           </div>
         </div>
