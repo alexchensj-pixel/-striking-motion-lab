@@ -8,7 +8,7 @@
 // el scroll / la cámara se colocan como consecuencia. Este módulo no importa nada (lo leen el store y la navegación).
 // PASO 1 (mapa explorable): 'disciplinas' es una PUERTA más, no un capítulo 3D nuevo. Comparte capítulo con 'explore' (DESCUBRIR);
 // lo que las distingue es el foco (store.exploreFocus: 'disciplinas' | 'modos').
-export const SECTIONS = ['home', 'disciplinas', 'explore', 'method', 'estudio', 'training', 'experiences', 'founder', 'book'];
+export const SECTIONS = ['home', 'disciplinas', 'explore', 'method', 'estudio', 'primera-vez', 'training', 'experiences', 'founder', 'book'];
 
 // Capítulo 3D que ilustra cada sección. null = no es un tramo de la película (EXPERIENCES abre el recorrido B2B existente).
 export const SECTION_CHAPTER = {
@@ -16,6 +16,7 @@ export const SECTION_CHAPTER = {
   disciplinas: 'character-select', // DISCIPLINAS: mismo capítulo que explore, foco 'disciplinas'
   explore: 'character-select',     // DESCUBRIR: foco 'modos'
   method: 'asesoria-lab',
+  'primera-vez': null, // overlay propio (Experience/PrimeraVez): opcional, no toca capítulos, cámara ni scroll
   estudio: null, // overlay propio (Experience/Estudio): como Experiences, no toca capítulos, cámara ni scroll
   training: 'slot',
   experiences: null,
@@ -37,7 +38,7 @@ export const sectionForChapter = (chapter, exploreFocus) =>
 // HASH ↔ sección. 'home' = sin hash. #empresas (B2B) y #estudio los escriben sus propios overlays (replaceState).
 export const SECTION_HASH = {
   home: '', disciplinas: 'disciplinas', explore: 'descubrir', method: 'metodo', training: 'entrenamiento',
-  founder: 'chen', book: 'reservar', experiences: 'empresas', estudio: 'estudio',
+  founder: 'chen', book: 'reservar', experiences: 'empresas', estudio: 'estudio', 'primera-vez': 'primera-vez',
 };
 export const HASH_SECTION = Object.fromEntries(Object.entries(SECTION_HASH).map(([s, h]) => [h, s]));
 

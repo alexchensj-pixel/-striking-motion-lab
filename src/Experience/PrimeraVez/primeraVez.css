@@ -1,0 +1,43 @@
+/* ES MI PRIMERA VEZ — overlay opcional (Experience/PrimeraVez). Misma gramática visual que #es (Estudio de combate). */
+#pv {
+  --x-display: var(--font-display); --x-sans: var(--font-sans); --x-mono: var(--font-mono);
+  --x-ink: var(--c-ink); --x-soft: var(--c-soft); --x-mute: var(--c-mute); --x-hair: var(--c-hair); --x-red: var(--c-red);
+  position: fixed; inset: 0; z-index: 11; display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+  color: var(--x-ink); outline: none;
+  background: radial-gradient(120% 90% at 70% 0%, rgba(229, 32, 43, .09), transparent 55%), rgba(5, 6, 8, .94);
+  padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+}
+#pv button, #pv a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+#pv button { cursor: pointer; }
+#pv :is(button, a):focus-visible { outline: 2px solid var(--x-ink); outline-offset: 3px; }
+
+.pv__top { display: flex; align-items: center; gap: 1rem; padding: .6rem 1.25rem; border-bottom: 1px solid var(--x-hair); font-family: var(--x-mono); font-size: .72rem; letter-spacing: .1em; }
+.pv__brand { font-weight: 600; }
+.pv__where { flex: 1; min-width: 0; color: var(--x-mute); text-transform: uppercase; }
+.pv__close { min-height: 2.75rem; padding: 0 .2rem; font-family: var(--x-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--x-soft); }
+
+.pv__stage { position: relative; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; outline: none; padding: 0 clamp(1.25rem, 6vw, 5rem); }
+.pv__col { max-width: 40rem; margin: 0 auto; padding: 1.75rem 0 2rem; display: grid; gap: 1.25rem; }
+.pv__h { margin: 0; font-family: var(--x-display); font-size: clamp(2.2rem, 9vw, 3.6rem); font-weight: 800; line-height: .95; letter-spacing: .01em; text-transform: uppercase; }
+.pv__p { margin: 0; font-family: var(--x-sans); font-size: 1rem; line-height: 1.6; color: var(--x-soft); }
+
+.pv__trust { display: grid; gap: .35rem; padding: .9rem 1rem; border-left: 2px solid var(--x-red); background: rgba(239, 235, 227, .04); }
+.pv__rate { margin: 0; font-family: var(--x-mono); font-size: .9rem; font-weight: 600; letter-spacing: .06em; }
+.pv__link { justify-self: start; min-height: 2.5rem; display: inline-flex; align-items: center; font-family: var(--x-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--x-ink); text-decoration: underline; text-underline-offset: .3em; }
+.pv__logro { margin: 0; font-family: var(--x-sans); font-size: .875rem; color: var(--x-mute); }
+
+.pv__k { margin: .5rem 0 -.5rem; font-family: var(--x-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--x-mute); }
+.pv__faq { display: grid; border-top: 1px solid var(--x-hair); }
+.pv__faq .fq1 { max-width: none; margin-top: 0; padding: .15rem 0; border-bottom: 1px solid var(--x-hair); }
+.pv__faq .fq1__q { color: var(--x-ink); font-family: var(--x-sans); font-size: .95rem; opacity: 1; }
+.pv__faq .fq1__a { color: var(--x-soft); padding-bottom: .75rem; }
+
+.pv__explore { justify-self: start; min-height: 2.75rem; padding: 0; font-family: var(--x-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--x-soft); text-decoration: underline; text-underline-offset: .3em; }
+
+/* Barra de acción: siempre visible, fila propia del overlay (no tapa el contenido). */
+.pv__bar { display: grid; gap: .5rem; justify-items: center; padding: .75rem clamp(1.25rem, 6vw, 5rem) .9rem; border-top: 1px solid var(--x-hair); background: rgba(5, 6, 8, .9); }
+.pv__cta { width: 100%; max-width: 40rem; min-height: 3.25rem; padding: .85rem 1rem; box-sizing: border-box; font-family: var(--x-mono); font-size: .875rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; text-align: center; color: #fff; background: var(--x-red); border: 1px solid var(--x-red); }
+.pv__cta:hover, .pv__cta:focus-visible { background: transparent; }
+.pv__alt { min-height: 2.5rem; display: inline-flex; align-items: center; font-family: var(--x-mono); font-size: .72rem; letter-spacing: .08em; color: var(--x-soft); text-decoration: underline; text-underline-offset: .3em; text-align: center; }
+
+@media (hover: hover) and (pointer: fine) { .pv__close:hover, .pv__explore:hover, .pv__alt:hover, .pv__link:hover { color: #fff; } }

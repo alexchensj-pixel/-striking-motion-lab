@@ -8,6 +8,7 @@ import Footer from '../UI/Footer/Footer.jsx';
 import StickyCTA from '../UI/StickyCTA/StickyCTA.jsx';
 import B2B from '../Experience/B2B/B2B.jsx';
 import Estudio from '../Experience/Estudio/Estudio.jsx';
+import PrimeraVez from '../Experience/PrimeraVez/PrimeraVez.jsx';
 
 // Capas: canvas 3D fijo (mundo) → DOM de las experiencias (scroll) → velo de transición → HUD/UI.
 // La foto integrada (heroLab / PhotoBackdrop) ya NO vive aquí como fondo global: pertenece solo a la
@@ -25,6 +26,7 @@ export default function App() {
       <StickyCTA />
       <B2B />
       <Estudio />
+      <PrimeraVez />
     </>
   );
 }

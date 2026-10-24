@@ -109,15 +109,16 @@ export function goToSection(id, opts = {}) {
   if (!SECTIONS.includes(id)) return;
   const { push = true, direct = false } = opts;
   const st = useStore.getState();
-  const hadOverlay = st.b2bOpen || st.estudioOpen;
+  const hadOverlay = st.b2bOpen || st.estudioOpen || st.primeraVezOpen;
   if (st.b2bOpen && id !== 'experiences') st.closeB2B();
   if (st.estudioOpen && id !== 'estudio') st.closeEstudio();
+  if (st.primeraVezOpen && id !== 'primera-vez') st.closePrimeraVez();
 
   // Overlays: no tocan capítulos, cámara ni scroll. Antes de abrirlos se duplica la entrada de historial (ver arriba).
-  if (id === 'estudio' || id === 'experiences') {
-    const alreadyOpen = id === 'estudio' ? st.estudioOpen : st.b2bOpen;
+  if (id === 'estudio' || id === 'experiences' || id === 'primera-vez') {
+    const alreadyOpen = id === 'estudio' ? st.estudioOpen : id === 'primera-vez' ? st.primeraVezOpen : st.b2bOpen;
     if (push && !alreadyOpen) { try { history.pushState(null, '', urlFor(window.location.hash)); } catch { /* sin History API */ } }
-    if (id === 'estudio') st.openEstudio(); else st.openB2B(0); // activeSection lo fija el propio open*
+    if (id === 'estudio') st.openEstudio(); else if (id === 'primera-vez') st.openPrimeraVez(); else st.openB2B(0); // activeSection lo fija el propio open*
     return;
   }
 
@@ -156,8 +157,8 @@ function onPopState() {
   // «Atrás» con Empresas / Estudio abierto = cerrar el overlay y quedarse donde estaba la persona (el scroll no se movió bajo él).
   // Sin esto, un hash antiguo (el scroll no escribe hash) la llevaba a otra sección o a HOME.
   const st = useStore.getState();
-  if ((st.b2bOpen || st.estudioOpen) && id !== 'experiences' && id !== 'estudio') {
-    if (st.b2bOpen) st.closeB2B(); else st.closeEstudio();
+  if ((st.b2bOpen || st.estudioOpen || st.primeraVezOpen) && id !== 'experiences' && id !== 'estudio' && id !== 'primera-vez') {
+    if (st.b2bOpen) st.closeB2B(); else if (st.estudioOpen) st.closeEstudio(); else st.closePrimeraVez();
     return;
   }
   if (id) goToSection(id, { push: false, direct: true });
@@ -171,13 +172,13 @@ export function initHistoryNavigation() {
 
   // Cerrar B2B/Estudio con Esc / botón: su limpieza borra el hash; se restituye el de la sección en pantalla (replace, sin entrada nueva).
   useStore.subscribe((s, prev) => {
-    const closed = (prev.b2bOpen && !s.b2bOpen) || (prev.estudioOpen && !s.estudioOpen);
-    if (closed && !s.b2bOpen && !s.estudioOpen) setTimeout(() => writeHash(useStore.getState().activeSection, 'replace'), 0);
+    const closed = (prev.b2bOpen && !s.b2bOpen) || (prev.estudioOpen && !s.estudioOpen) || (prev.primeraVezOpen && !s.primeraVezOpen);
+    if (closed && !s.b2bOpen && !s.estudioOpen && !s.primeraVezOpen) setTimeout(() => writeHash(useStore.getState().activeSection, 'replace'), 0);
   });
 
   // Carga directa con hash de B2C (#metodo…): espera a que los capítulos se registren y salta sin pushear. #empresas y #estudio los abren sus overlays.
   const id = sectionFromHash();
-  if (!id || id === 'home' || id === 'experiences' || id === 'estudio') return;
+  if (!id || id === 'home' || id === 'experiences' || id === 'estudio' || id === 'primera-vez') return;
   const chapter = SECTION_CHAPTER[id];
   let tries = 0;
   const wait = () => {
@@ -201,6 +202,7 @@ export function goToAnchor(id) {
   const st = useStore.getState();
   if (st.b2bOpen) st.closeB2B();
   if (st.estudioOpen) st.closeEstudio();
+  if (st.primeraVezOpen) st.closePrimeraVez();
   jumpToChapter(id);
 }
 

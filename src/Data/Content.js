@@ -43,7 +43,8 @@ export const hero = {
   marca: 'Striking Motion Lab',
   titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
   disciplinasLinea: 'Boxeo · K1 · Muay Thai',
-  ctaReservar: 'Reservar · 30 €',
+  ctaReservar: 'Reservar evaluación · 30 €',
+  ctaPrimeraVez: 'Es mi primera vez',
   ctaExplorar: 'No sé qué necesito → Descubrir',
   contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
@@ -345,7 +346,7 @@ export const reserva = {
   texto: 'Elige día y hora. Tu nivel y tu objetivo los evaluamos en la propia sesión.',
   // Dos caminos: reservar ya (calendario directo) o descubrir antes de decidir.
   caminos: {
-    directo: { titulo: 'YA SÉ LO QUE QUIERO', accion: 'Sesión privada · 30 € → elige día y hora.' },
+    directo: { titulo: 'YA SÉ LO QUE QUIERO', accion: 'Reservar evaluación · 30 € → elige día y hora.' },
     dudas: { titulo: 'TODAVÍA NO LO TENGO CLARO', accion: 'Descubre las disciplinas antes de decidir.' },
   },
   // Única aclaración que reduce fricción (FAQ «¿Cómo funciona la reserva?»): el resto del proceso ya se explica en 03/04.

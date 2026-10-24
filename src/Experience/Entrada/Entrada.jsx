@@ -98,12 +98,12 @@ export default function Entrada() {
             </div>
           </div>
 
-          {/* Salidas — jerarquía V27: 1 RESERVAR (→ BOOK, CTA primario) · 2 No sé qué necesito → DESCUBRIR (→ EXPLORE, secundario) · 3 Empresas · Hoteles · Eventos (→ B2B, tercer nivel).
-              Todas por goToSection: DESCUBRIR desde aquí recorre el Bridge (animado); RESERVAR y B2B saltan directo, sin atravesar capítulos. */}
+          {/* Salidas — jerarquía V27: 1 RESERVAR (→ BOOK, CTA primario) · 2 Es mi primera vez (→ overlay opcional PrimeraVez, secundario) · 3 Empresas · Hoteles · Eventos (→ B2B, tercer nivel).
+              Todas por goToSection: RESERVAR, PRIMERA VEZ y B2B saltan directo, sin atravesar capítulos. */}
           <div className="ent__actions">
             <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>{hero.ctaReservar}</button>
-            {/* «No sé qué necesito → Descubrir»: salto directo a DESCUBRIR (sin recorrer el Bridge). El Bridge sigue disponible haciendo scroll desde el Inicio. */}
-            <button type="button" className="ent__explorar" onClick={() => goToSection('explore', { direct: true })}>{hero.ctaExplorar}</button>
+            {/* «Es mi primera vez»: pantalla OPCIONAL (overlay) con confianza, dudas frecuentes y reserva. Quien ya sabe lo que quiere reserva en un toque con el botón de arriba. DESCUBRIR sigue accesible desde esa pantalla, el pie y el scroll (el Bridge no se elimina). */}
+            <button type="button" className="ent__explorar" onClick={() => goToSection('primera-vez')}>{hero.ctaPrimeraVez}</button>
             <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>{hero.ctaB2B}</button>
           </div>
         </div>
