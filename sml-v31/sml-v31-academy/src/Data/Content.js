@@ -36,7 +36,7 @@ export const hero = {
   claimLineas: ['No elijas', 'tu entreno.', 'Descúbrelo.'],
   // Dos caminos principales, con el mismo peso: quien no sabe qué quiere descubre; quien ya lo sabe reserva sin pasar por Descubrir.
   noSe: { pre: 'No sé qué quiero', accion: 'Descubrir', aux: 'Explora el mundo del combate.' },
-  yaSe: { pre: 'Ya sé qué quiero', accion: 'Reservar', aux: 'Sesión privada · 30 €' },
+  yaSe: { pre: 'Ya sé qué quiero', accion: 'Reservar', aux: 'Evaluación inicial · sesión privada · 30 €' },
   // Ruta secundaria (no compite con las dos anteriores).
   ctaB2B: 'Empresas · Hoteles · Eventos →',
   // V22 — mensaje principal de HOME (visible desde el primer fotograma; no depende de ninguna animación ni del scroll).
@@ -68,11 +68,11 @@ export const entradaNarrativa = {
 // p.ej. 'character-select' es el módulo interno; el usuario nunca ve esa palabra, ve "Descubrir".
 export const chapters = [
   { id: 'entrada',          n: '01', label: 'Inicio',                vh: 210 },
-  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 135 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 35vh de meseta antes del umbral
+  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 165 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 65vh de meseta antes del umbral (antes 35: se entraba en el velo eligiendo)
   { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 250 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
   { id: 'slot',             n: '04', label: 'Entrenamiento',         vh: 280 }, // cuatro pasos (Elección directa · Frecuencia · Combinación · Resultado) sobre las piezas de la máquina 3D: pantalla fija; el primero ya es una elección completa (420 vh era para seis)
   { id: 'proof-chen',       n: '05', label: 'Sobre Chen',            vh: 260 },
-  { id: 'reserva',          n: '06', label: 'Reserva',               vh: 140 },
+  { id: 'reserva',          n: '06', label: 'Reserva',               vh: 160 }, // 60vh de llegada (antes 40): el umbral 05→06 cede ese tiempo a la puerta
 ];
 
 export const chapterById = Object.fromEntries(chapters.map((c) => [c.id, c]));
@@ -271,7 +271,7 @@ export const advisorySubstages = [
   },
   {
     id: 'seguimos', label: 'Seguimos', num: '05', n: 'SEGUIMOS',
-    texto: 'Lo que trabajamos cambia contigo.',
+    texto: 'Revisamos tu evolución, detectamos qué necesitas mejorar y ajustamos el entrenamiento a tu progreso. Cada sesión tiene un propósito: que sigas avanzando con criterio y confianza.',
   },
 ];
 
@@ -283,7 +283,8 @@ export const metodoCierre = ['No solo entrenas.', 'Entiendes qué estás desarro
 export const evaluacionInicial = {
   kicker: 'Primera sesión',
   kickerMetodo: 'Tu primer paso', // rótulo en Método (V27 MAPA · paso 5); Chen sigue usando `kicker`
-  titulo: 'Evaluación inicial',
+  // Misma denominación en Método, Sobre Chen y Reserva (oct 2026): es la sesión privada de 30 € que se reserva en el calendario.
+  titulo: 'Evaluación inicial · sesión privada',
   precio: '30 €',
   texto: 'Una primera sesión privada para conocerte, observar cómo te mueves y entender qué necesitas.',
   nota: 'Si continúas con un plan mensual, los 30 € se descuentan del primer pago mensual.',
@@ -340,12 +341,12 @@ export const dossierItems = [
 
 // --- 06 Reserva ---
 export const reserva = {
-  titulo: 'Sesión privada · 30 €',
+  titulo: 'Evaluación inicial · sesión privada · 30 €',
   subtitulo: 'Reserva directa',
   texto: 'Elige día y hora. Tu nivel y tu objetivo los evaluamos en la propia sesión.',
   // Dos caminos: reservar ya (calendario directo) o descubrir antes de decidir.
   caminos: {
-    directo: { titulo: 'YA SÉ LO QUE QUIERO', accion: 'Sesión privada · 30 € → elige día y hora.' },
+    directo: { titulo: 'YA SÉ LO QUE QUIERO', accion: 'Evaluación inicial · sesión privada · 30 € → elige día y hora.' },
     dudas: { titulo: 'TODAVÍA NO LO TENGO CLARO', accion: 'Descubre las disciplinas antes de decidir.' },
   },
   // Única aclaración que reduce fricción (FAQ «¿Cómo funciona la reserva?»): el resto del proceso ya se explica en 03/04.

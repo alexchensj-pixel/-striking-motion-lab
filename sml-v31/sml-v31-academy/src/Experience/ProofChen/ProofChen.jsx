@@ -4,6 +4,7 @@ import { dossierItems, evaluacionInicial, chapterById } from '../../Data/Content
 import { goToSection, scrollToChapterProgress } from '../../Scene/Transitions/navigation.js';
 import { stepOf } from '../../Scene/Camera/waypoints.js';
 import { useStation } from '../useStation.js';
+import { useThresholdFade, smoothstep } from '../useThresholdFade.js';
 
 // Escena 05 · SOBRE CHEN = exposición editorial en cuatro estaciones sobre la arquitectura 3D que ya existe
 // (Environment/blockouts.jsx#Archive: nueve volúmenes verticales, con jerarquía de luz según la estación).
@@ -107,7 +108,11 @@ function Placa({ id, on, className, children }) {
   );
 }
 
+// Una sola voz en 04→05 y 05→06 (como 03→04): Sobre Chen entra cuando la cámara ya llega al archivo y se retira antes de que asome la puerta.
+const chenOpacity = (seg) => smoothstep(seg['slot>proof-chen'] ?? 0, 0.55, 0.9) * (1 - smoothstep(seg['proof-chen>reserva'] ?? 0, 0, 0.35));
+
 export default function ProofChen() {
+  useThresholdFade('proof-chen', chenOpacity, { hold: true });
   const [active, setActive] = useState(0);
   const onProgress = (p) => setActive(stepOf(p, N));
 
