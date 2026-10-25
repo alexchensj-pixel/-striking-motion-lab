@@ -5,22 +5,34 @@ import { scrollState } from '../Scene/Transitions/scrollState.js';
 // Atenúa el DOM de un capítulo según el progreso REAL de un umbral (el mismo que gobierna la cámara y la visibilidad 3D), sin renders de React.
 // Se usa en 03→04 para que NO haya dos voces a la vez: el copy de Método se apaga con la sala y el de Entrenamiento entra cuando el rack ya
 // tiene cuerpo en la nave. No es un velo: no oscurece la escena, solo retira el DOM que no toca. Determinista y reversible (scroll arriba/abajo).
-//  chapterId → id del capítulo (su `.stage` es lo que se atenúa) · opacity(seg) → 0..1 a partir de scrollState.segments
-export function useThresholdFade(chapterId, opacity) {
+// En 04→05 y 05→06 (`hold`) el stage, además, se queda quieto en pantalla mientras su capítulo no está fijado (entrando por abajo o saliendo
+// por arriba): sin esto el texto subía como una página mientras la cámara avanzaba, y las placas (useStation, que proyecta a coordenadas de
+// pantalla) quedaban desplazadas lo que el stage aún no había subido. Es una traslación que anula el desplazamiento del sticky, no un velo.
+//  chapterId → id del capítulo (su `.stage` es lo que se atenúa) · opacity(seg) → 0..1 a partir de scrollState.segments · hold → ver arriba
+export function useThresholdFade(chapterId, opacity, { hold = false } = {}) {
   useEffect(() => {
     let el = null;
     let last = -1;
+    let lastShift = 0;
     // Method remonta su <section> al cruzar el breakpoint móvil: si el elemento se desconecta, se vuelve a buscar.
     const find = () => {
       if (el && el.isConnected) return el;
       el = document.getElementById(chapterId)?.querySelector('.stage') || null;
       last = -1;
+      lastShift = 0;
       return el;
     };
     const tick = () => {
       const node = find();
       if (!node) return;
       const o = Math.min(1, Math.max(0, opacity(scrollState.segments)));
+      if (hold) {
+        // Posición natural del stage (sin transform): el top de la sección al entrar; el fondo de la sección menos el stage al salir.
+        const r = node.parentElement.getBoundingClientRect();
+        const top = r.top > 0 ? r.top : Math.min(0, r.bottom - node.offsetHeight);
+        const shift = o > 0.004 ? Math.round(-top) : 0;
+        if (shift !== lastShift) { lastShift = shift; node.style.transform = shift ? `translate3d(0, ${shift}px, 0)` : ''; }
+      }
       if (Math.abs(o - last) < 0.004 && (o > 0.004) === (last > 0.004)) return;
       last = o;
       node.style.opacity = o >= 0.999 ? '' : o.toFixed(3);
@@ -31,7 +43,7 @@ export function useThresholdFade(chapterId, opacity) {
     tick();
     return () => {
       gsap.ticker.remove(tick);
-      if (el) { el.style.opacity = ''; el.style.pointerEvents = ''; el.style.visibility = ''; }
+      if (el) { el.style.opacity = ''; el.style.pointerEvents = ''; el.style.visibility = ''; if (hold) el.style.transform = ''; }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterId]);

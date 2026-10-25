@@ -104,21 +104,21 @@ const LEDGE_Y = PILLAR_H * 0.34;
 //
 // TYSON — bloque 1: lead-in ANTES de su texto (TYSON_IN → TYSON_PLATEAU_IN, la figura ya está sólida cuando
 // aparece el copy) y salida que coincide con el fundido de su texto (C_TYSON_OUT / C_TYSON_GONE en Bridge.jsx).
-const TYSON_IN = 0.15;
-const TYSON_PLATEAU_IN = 0.185;  // = C_IN (Bridge.jsx): sólido justo cuando aparece "PIENSA EN MIKE TYSON:"
-const TYSON_PLATEAU_OUT = 0.255; // = C_TYSON_OUT (Bridge.jsx)
-const TYSON_OUT = 0.275;         // = C_TYSON_GONE (Bridge.jsx): invisible del todo — Tyson YA se fue
+const TYSON_IN = 0.12;
+const TYSON_PLATEAU_IN = 0.155;  // = C_IN (Bridge.jsx): sólido justo cuando aparece "PIENSA EN MIKE TYSON:"
+const TYSON_PLATEAU_OUT = 0.275; // = C_TYSON_OUT (Bridge.jsx)
+const TYSON_OUT = 0.295;         // = C_TYSON_GONE (Bridge.jsx): invisible del todo — Tyson YA se fue
 
 // McGREGOR — arranca su fundido de entrada cuando arranca su texto (nunca antes) y se sostiene a través del
-// bloque 2; sale con la misma ventana que Tyson, con margen antes de que empiece EL MAPA (MAPA_IN = 0.55).
-const MCGREGOR_IN = 0.28;         // = C_MCGREGOR_IN (Bridge.jsx) — 0.005 después de TYSON_OUT: hueco real
-const MCGREGOR_PLATEAU_IN = 0.30;
-const MCGREGOR_PLATEAU_OUT = 0.515; // = COMBATE_OUT (Bridge.jsx): se apagan ambos con el cierre del bloque 2
-const MCGREGOR_OUT = 0.545;         // invisible del todo justo antes de MAPA_IN (0.55)
+// bloque 2; sale con la misma ventana que Tyson, con margen antes de que empiece EL MAPA (MAPA_IN = 0.57).
+const MCGREGOR_IN = 0.30;         // = C_MCGREGOR_IN (Bridge.jsx) — 0.005 después de TYSON_OUT: hueco real
+const MCGREGOR_PLATEAU_IN = 0.32;
+const MCGREGOR_PLATEAU_OUT = 0.535; // = COMBATE_OUT (Bridge.jsx): se apagan ambos con el cierre del bloque 2
+const MCGREGOR_OUT = 0.565;         // invisible del todo justo antes de MAPA_IN (0.57)
 
 // TYSON, bloque 2: vuelve a ganar presencia en cuanto entra EL COMBATE (McGregor ya está) y sale con él.
-const TYSON2_IN = 0.39;             // = C_OUT + FADE (Bridge.jsx): justo cuando termina el texto de McGregor
-const TYSON2_PLATEAU_IN = 0.42;
+const TYSON2_IN = 0.43;             // = C_OUT + FADE (Bridge.jsx): justo cuando termina el texto de McGregor
+const TYSON2_PLATEAU_IN = 0.46;
 const TYSON2_PLATEAU_OUT = MCGREGOR_PLATEAU_OUT;
 const TYSON2_OUT = MCGREGOR_OUT;
 
@@ -488,8 +488,8 @@ export default function BridgeHall({ transitionOnly = false }) {
     // gobierna intensidades de luz — determinista, reversible, sin estado propio que pueda desincronizarse).
     const local = Math.min(p / BRIDGE_END, 1);
 
-    // Bloque 1: dos ventanas EXCLUYENTES (Tyson termina en TYSON_OUT=0.275 antes de que McGregor suba en
-    // MCGREGOR_IN=0.28). Bloque 2: ambas presentes a la vez. Cada una gobierna solo el vídeo de SU podio. Ver comentario de las constantes TYSON_*/MCGREGOR_* más arriba.
+    // Bloque 1: dos ventanas EXCLUYENTES (Tyson termina en TYSON_OUT=0.295 antes de que McGregor suba en
+    // MCGREGOR_IN=0.30). Bloque 2: ambas presentes a la vez. Cada una gobierna solo el vídeo de SU podio. Ver comentario de las constantes TYSON_*/MCGREGOR_* más arriba.
     const casesTyson = Math.max(
       smoothstep(local, TYSON_IN, TYSON_PLATEAU_IN) * (1 - smoothstep(local, TYSON_PLATEAU_OUT, TYSON_OUT)),
       smoothstep(local, TYSON2_IN, TYSON2_PLATEAU_IN) * (1 - smoothstep(local, TYSON2_PLATEAU_OUT, TYSON2_OUT)),
