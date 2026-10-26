@@ -34,8 +34,13 @@ export function crearVerificador(env = process.env) {
     jwks ||= createRemoteJWKSet(new URL(`${issuer}.well-known/jwks.json`));
     try {
       const { payload } = await jwtVerify(token, jwks, { issuer, audience, algorithms: ['RS256'] });
-      let email = typeof payload.email === 'string' ? payload.email : '';
-      let email_verified = payload.email_verified === true;
+      // Support standard OIDC claims and namespaced claims issued by the MI SML Auth0 Action.
+      const namespace = 'https://strikingmotionlab.com/';
+      let email = typeof payload.email === 'string'
+        ? payload.email
+        : (typeof payload[namespace + 'email'] === 'string' ? payload[namespace + 'email'] : '');
+      let email_verified = payload.email_verified === true
+        || payload[namespace + 'email_verified'] === true;
       if (!email) {
         const r = await fetch(`${issuer}userinfo`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } });
         if (r.ok) {
