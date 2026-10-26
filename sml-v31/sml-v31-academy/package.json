@@ -8,8 +8,9 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test:mi-sml": "node --test server/miSml.test.mjs",
+    "test:mi-sml-auth": "node --test server/miSmlAuth.test.mjs",
     "test:mi-sml-airtable": "node --test server/miSmlAirtable.test.mjs",
-    "test:mi-sml-all": "npm run test:mi-sml && npm run test:mi-sml-airtable"
+    "test:mi-sml-all": "npm run test:mi-sml && npm run test:mi-sml-auth && npm run test:mi-sml-airtable"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^2.1.3",
