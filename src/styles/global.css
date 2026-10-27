@@ -2542,17 +2542,67 @@ nav.nav li[data-on="true"]::before { width: 2px; }
 nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var(--accent); }
 
 
-/* Conversion preview: make the three monthly plans the primary choice, with single sessions below. */
+/* User journey: make the next action and the alternative route explicit. */
+.tr__journey { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; padding: 0; margin: 1rem 0 1.25rem; list-style: none; }
+.tr__journey li { display: flex; align-items: center; gap: .65rem; min-width: 0; padding: .7rem .75rem; border: 1px solid color-mix(in srgb, currentColor 16%, transparent); border-radius: .7rem; background: color-mix(in srgb, currentColor 3%, transparent); }
+.tr__journeyNum { display: grid; place-items: center; flex: 0 0 1.8rem; width: 1.8rem; height: 1.8rem; border: 1px solid var(--accent, currentColor); border-radius: 50%; font-size: .78rem; font-weight: 800; }
+.tr__journey li > span:last-child { display: grid; gap: .15rem; }
+.tr__journey strong { font-size: .84rem; }
+.tr__journey small { font-size: .72rem; opacity: .72; line-height: 1.35; }
+.tr__directIntro { margin: -.25rem 0 1rem; font-size: .9rem; opacity: .78; }
+@media (max-width: 600px) { .tr__journey { grid-template-columns: 1fr; gap: .45rem; margin: .8rem 0 1rem; } .tr__journey li { padding: .55rem .65rem; } }
+
+/* Conversion: monthly plans are the primary path; distinct color accents remain readable in light and dark themes. */
 .tr__monthly { margin: 0 0 1.75rem; }
-.tr__monthlyIntro { max-width: 48rem; margin: .5rem 0 1rem; opacity: .78; }
-.tr__monthlyGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; align-items: stretch; }
-.tr__monthlyCard { display: flex; flex-direction: column; min-width: 0; padding: 1rem; border: 1px solid currentColor; border-color: color-mix(in srgb, currentColor 28%, transparent); border-radius: .5rem; }
-.tr__monthlyFrequency { margin: 0 0 .45rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; opacity: .72; }
-.tr__monthlyName { margin: 0; font-size: 1.15rem; }
-.tr__monthlyPrice { display: flex; align-items: baseline; gap: .35rem; margin: .5rem 0; }
-.tr__monthlyPrice strong { font-size: clamp(1.5rem, 2.4vw, 2.1rem); line-height: 1.1; }
-.tr__monthlyPrice span { font-size: .85rem; opacity: .72; }
-.tr__monthlyLema { min-height: 2.5em; margin: .25rem 0 .75rem; opacity: .82; }
-.tr__monthlyIncludes { display: grid; gap: .4rem; padding-left: 1.1rem; margin: 0 0 1rem; font-size: .88rem; }
-.tr__monthlyCard .tr__btn { width: 100%; margin-top: auto; }
-@media (max-width: 760px) { .tr__monthlyGrid { grid-template-columns: 1fr; } .tr__monthlyLema { min-height: 0; } .tr__monthlyCard { padding: 1rem; } }
+.tr__monthlyIntro { max-width: 48rem; margin: .5rem 0 1.15rem; opacity: .82; }
+.tr__monthlyGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem; align-items: stretch; }
+.tr__monthlyCard { --plan-accent: #8b9bad; position: relative; display: flex; flex-direction: column; min-width: 0; padding: 1.2rem; border: 1px solid color-mix(in srgb, var(--plan-accent) 58%, transparent); border-top: 4px solid var(--plan-accent); border-radius: .85rem; background: color-mix(in srgb, var(--plan-accent) 8%, var(--surface, transparent)); box-shadow: 0 8px 24px rgb(0 0 0 / .08); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.tr__monthlyCard--arsenal { --plan-accent: #e0a33b; }
+.tr__monthlyCard--striker { --plan-accent: #38b2a0; }
+.tr__monthlyCard--fight-iq { --plan-accent: #9a83e8; }
+.tr__monthlyCard:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgb(0 0 0 / .14); }
+.tr__monthlyCard.is-featured { border-width: 2px; border-top-width: 5px; box-shadow: 0 12px 32px color-mix(in srgb, var(--plan-accent) 18%, transparent); }
+.tr__monthlyBadge { align-self: flex-start; margin: -.1rem 0 .7rem; padding: .28rem .55rem; border-radius: 999px; background: var(--plan-accent); color: #10201e; font-size: .66rem; font-weight: 800; letter-spacing: .08em; }
+.tr__monthlyFrequency { margin: 0 0 .45rem; color: var(--plan-accent); font-size: .72rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.tr__monthlyName { margin: 0; font-size: 1.2rem; letter-spacing: .025em; }
+.tr__monthlyPrice { display: flex; align-items: baseline; gap: .35rem; margin: .55rem 0; }
+.tr__monthlyPrice strong { font-size: clamp(1.65rem, 2.4vw, 2.2rem); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tr__monthlyPrice span { font-size: .85rem; opacity: .75; }
+.tr__monthlyLema { min-height: 2.5em; margin: .25rem 0 .75rem; opacity: .85; }
+.tr__monthlyIncludes { display: grid; gap: .48rem; padding-left: 1.1rem; margin: 0 0 1.15rem; font-size: .88rem; }
+.tr__monthlyIncludes li::marker { color: var(--plan-accent); }
+.tr__monthlyCard .tr__btn { width: 100%; margin-top: auto; border-color: var(--plan-accent); }
+.tr__monthlyCard .tr__btn:focus-visible { outline: 3px solid var(--plan-accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .tr__monthlyCard { transition: none; } .tr__monthlyCard:hover { transform: none; } }
+@media (max-width: 900px) { .tr__monthlyGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tr__monthlyCard:last-child { grid-column: 1 / -1; } }
+@media (max-width: 600px) { .tr__monthlyGrid { grid-template-columns: 1fr; } .tr__monthlyCard:last-child { grid-column: auto; } .tr__monthlyLema { min-height: 0; } .tr__monthlyCard { padding: 1rem; } }
+
+
+/* CONVERSION + LEGIBILIDAD: conservar la identidad visual y reforzar lectura, foco y acciones. */
+:root { --fs-body: 1.0625rem; }
+body { font-size: 16px; line-height: 1.65; }
+button, [role="button"], a.button, .tr__btn { cursor: pointer; }
+:where(button, [role="button"], a, input, select, textarea):focus-visible { outline: 3px solid #f0b64b; outline-offset: 4px; }
+:where(p, li, label, .tr__monthlyLema, .tr__monthlyIncludes) { line-height: 1.65; }
+:where(.tr__monthlyIncludes, .tr__monthlyFrequency, .tr__monthlyPrice span, .tr__monthlyBadge) { font-size: max(0.875rem, 14px); }
+.tr__monthlyName { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.25; }
+.tr__monthlyCard .tr__btn { min-height: 48px; padding: .85rem 1rem; font-size: 1rem; font-weight: 750; }
+@media (max-width: 700px) {
+  body { font-size: 16px; }
+  :where(button, [role="button"], a.button, .tr__btn) { min-height: 48px; }
+  :where(.tr__monthlyGrid) { gap: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* RECORRIDO CORTO: quitar pasos narrativos y tarifas duplicadas; conservar planes, precios y accesos directos. */
+.tr__journey { display: none !important; }
+.tr__tarifas { display: none !important; }
+.tr__monthlyIntro, .tr__directIntro { max-width: 58ch; margin-block: .4rem .8rem; }
+.tr__monthly { margin-bottom: 1rem; }
+.tr__monthlyGrid { margin-block: .75rem; }
+.tr__monthlyCard { gap: .65rem; }
+.tr__monthlyIncludes { margin-block: .25rem .5rem; }
+.tr__direct { margin-top: 1rem; }
+.tr__outs { gap: .75rem; }
+.tr__out { cursor: pointer; min-height: 48px; }
+.tr__door, .tr__clear, .tr__resBtn, .tr__opt, .tr__step button { cursor: pointer; min-height: 44px; }
