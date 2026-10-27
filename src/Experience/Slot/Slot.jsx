@@ -215,7 +215,8 @@ export default function Slot() {
                   const detalle = planes.find((x) => x.id === p.id);
                   const frecuenciaId = { arsenal: '1-dia', striker: '2-dias', 'fight-iq': '3-dias' }[p.id];
                   return (
-                    <article className="tr__monthlyCard" key={p.id}>
+                    <article className={`tr__monthlyCard tr__monthlyCard--${p.id}${p.id === 'striker' ? ' is-featured' : ''}`} key={p.id} data-plan={p.id}>
+                      {p.id === 'striker' && <p className="tr__monthlyBadge">RECOMENDADO</p>}
                       <p className="tr__monthlyFrequency">{p.frecuencia}</p>
                       <h4 className="tr__monthlyName">{p.nombre}</h4>
                       <p className="tr__monthlyPrice"><strong>{p.precio} €</strong><span>/mes</span></p>
