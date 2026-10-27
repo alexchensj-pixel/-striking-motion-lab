@@ -2593,3 +2593,16 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
   :where(.tr__monthlyGrid) { gap: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* RECORRIDO CORTO: quitar pasos narrativos y tarifas duplicadas; conservar planes, precios y accesos directos. */
+.tr__journey { display: none !important; }
+.tr__tarifas { display: none !important; }
+.tr__monthlyIntro, .tr__directIntro { max-width: 58ch; margin-block: .4rem .8rem; }
+.tr__monthly { margin-bottom: 1rem; }
+.tr__monthlyGrid { margin-block: .75rem; }
+.tr__monthlyCard { gap: .65rem; }
+.tr__monthlyIncludes { margin-block: .25rem .5rem; }
+.tr__direct { margin-top: 1rem; }
+.tr__outs { gap: .75rem; }
+.tr__out { cursor: pointer; min-height: 48px; }
+.tr__door, .tr__clear, .tr__resBtn, .tr__opt, .tr__step button { cursor: pointer; min-height: 44px; }
