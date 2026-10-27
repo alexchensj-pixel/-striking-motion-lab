@@ -2576,3 +2576,20 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 @media (prefers-reduced-motion: reduce) { .tr__monthlyCard { transition: none; } .tr__monthlyCard:hover { transform: none; } }
 @media (max-width: 900px) { .tr__monthlyGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tr__monthlyCard:last-child { grid-column: 1 / -1; } }
 @media (max-width: 600px) { .tr__monthlyGrid { grid-template-columns: 1fr; } .tr__monthlyCard:last-child { grid-column: auto; } .tr__monthlyLema { min-height: 0; } .tr__monthlyCard { padding: 1rem; } }
+
+
+/* CONVERSION + LEGIBILIDAD: conservar la identidad visual y reforzar lectura, foco y acciones. */
+:root { --fs-body: 1.0625rem; }
+body { font-size: 16px; line-height: 1.65; }
+button, [role="button"], a.button, .tr__btn { cursor: pointer; }
+:where(button, [role="button"], a, input, select, textarea):focus-visible { outline: 3px solid #f0b64b; outline-offset: 4px; }
+:where(p, li, label, .tr__monthlyLema, .tr__monthlyIncludes) { line-height: 1.65; }
+:where(.tr__monthlyIncludes, .tr__monthlyFrequency, .tr__monthlyPrice span, .tr__monthlyBadge) { font-size: max(0.875rem, 14px); }
+.tr__monthlyName { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.25; }
+.tr__monthlyCard .tr__btn { min-height: 48px; padding: .85rem 1rem; font-size: 1rem; font-weight: 750; }
+@media (max-width: 700px) {
+  body { font-size: 16px; }
+  :where(button, [role="button"], a.button, .tr__btn) { min-height: 48px; }
+  :where(.tr__monthlyGrid) { gap: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
