@@ -2540,3 +2540,19 @@ body:has(.pf[data-stage="3"]) .scta[data-chapter="proof-chen"] { opacity: 0; vis
 /* NAVEGACIÓN: el destino activo se lee a primera vista (barra de acento más gruesa, texto en peso 600 y subrayado de acento), sin cajas ni iconos. */
 nav.nav li[data-on="true"]::before { width: 2px; }
 nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var(--accent); }
+
+
+/* Conversion preview: make the three monthly plans the primary choice, with single sessions below. */
+.tr__monthly { margin: 0 0 1.75rem; }
+.tr__monthlyIntro { max-width: 48rem; margin: .5rem 0 1rem; opacity: .78; }
+.tr__monthlyGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; align-items: stretch; }
+.tr__monthlyCard { display: flex; flex-direction: column; min-width: 0; padding: 1rem; border: 1px solid currentColor; border-color: color-mix(in srgb, currentColor 28%, transparent); border-radius: .5rem; }
+.tr__monthlyFrequency { margin: 0 0 .45rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; opacity: .72; }
+.tr__monthlyName { margin: 0; font-size: 1.15rem; }
+.tr__monthlyPrice { display: flex; align-items: baseline; gap: .35rem; margin: .5rem 0; }
+.tr__monthlyPrice strong { font-size: clamp(1.5rem, 2.4vw, 2.1rem); line-height: 1.1; }
+.tr__monthlyPrice span { font-size: .85rem; opacity: .72; }
+.tr__monthlyLema { min-height: 2.5em; margin: .25rem 0 .75rem; opacity: .82; }
+.tr__monthlyIncludes { display: grid; gap: .4rem; padding-left: 1.1rem; margin: 0 0 1rem; font-size: .88rem; }
+.tr__monthlyCard .tr__btn { width: 100%; margin-top: auto; }
+@media (max-width: 760px) { .tr__monthlyGrid { grid-template-columns: 1fr; } .tr__monthlyLema { min-height: 0; } .tr__monthlyCard { padding: 1rem; } }
