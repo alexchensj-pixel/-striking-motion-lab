@@ -3,7 +3,7 @@ import Chapter from '../Chapter.jsx';
 import GrupoFinder from './GrupoFinder.jsx';
 import { slotState, reflectDrum, pingMachine, pullLever } from './slotState.js';
 import {
-  training, preguntas, salidas, detalleDe, desdeGrupo, planesMensuales, planLinea, starterKit, trainingUi, sesionesPrecios, sesionesTitulo,
+  training, preguntas, salidas, detalleDe, desdeGrupo, planesMensuales, planLinea, planes, starterKit, trainingUi, sesionesPrecios, sesionesTitulo,
   MODALIDADES_COMBO, CAPACIDAD_BANDEJA, MIN_MODALIDADES, FRECUENCIA_NUM, sesionesDe, propuestaCombinacion, conteo, armarPlan,
 } from '../../Data/Slot.js';
 import { grupos } from '../../Data/Grupos.js';
@@ -207,8 +207,38 @@ export default function Slot() {
         {/* ELECCIÓN — ventana del tambor. Camino principal: tres salidas del mismo peso, sin precio en el rótulo, y la puerta (secundaria) a la máquina. */}
         <Placa id="formato" on={actual === 'formato'} wide={buscando && origen === 'directo'}>
           <div className="tr__qs">
+            <section className="tr__monthly" aria-labelledby="tr-monthly-h">
+              <h3 className="tr__gh" id="tr-monthly-h">PLANES MENSUALES</h3>
+              <p className="tr__monthlyIntro">Empieza por el plan que encaja contigo. Al elegirlo, continuarás al siguiente paso con tu selección guardada.</p>
+              <ol className="tr__journey" aria-label="Cómo reservar">
+                <li><span className="tr__journeyNum">1</span><span><strong>Elige tu plan</strong><small>Frecuencia y precio claros</small></span></li>
+                <li><span className="tr__journeyNum">2</span><span><strong>Continúa</strong><small>Tu elección se conserva</small></span></li>
+                <li><span className="tr__journeyNum">3</span><span><strong>Organiza tu sesión</strong><small>Sigue el flujo de reserva</small></span></li>
+              </ol>
+              <div className="tr__monthlyGrid">
+                {planesMensuales.items.map((p) => {
+                  const detalle = planes.find((x) => x.id === p.id);
+                  const frecuenciaId = { arsenal: '1-dia', striker: '2-dias', 'fight-iq': '3-dias' }[p.id];
+                  return (
+                    <article className={`tr__monthlyCard tr__monthlyCard--${p.id}${p.id === 'striker' ? ' is-featured' : ''}`} key={p.id} data-plan={p.id}>
+                      {p.id === 'striker' && <p className="tr__monthlyBadge">RECOMENDADO</p>}
+                      <p className="tr__monthlyFrequency">{p.frecuencia}</p>
+                      <h4 className="tr__monthlyName">{p.nombre}</h4>
+                      <p className="tr__monthlyPrice"><strong>{p.precio} €</strong><span>/mes</span></p>
+                      <p className="tr__monthlyLema">{detalle?.lema}</p>
+                      <ul className="tr__monthlyIncludes">
+                        {(detalle?.incluye || []).map((item) => <li key={item}>{item}</li>)}
+                      </ul>
+                      <button type="button" className="tr__btn tr__btn--main" onClick={() => { selectFormat(null); selectFrequency(frecuenciaId); setVia('frecuencia'); setBuscando(false); salir(); }}>ELEGIR {p.nombre.toUpperCase()}</button>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+
             <section className="tr__direct" aria-labelledby="tr-direct-h">
-              <h3 className="tr__gh" id="tr-direct-h">{trainingUi.directoTitulo}</h3>
+              <h3 className="tr__gh" id="tr-direct-h">¿Prefieres probar primero?</h3>
+              <p className="tr__directIntro">Explora sesiones sueltas y otros formatos sin elegir un plan mensual.</p>
               <div className="tr__outs" role="group" aria-labelledby="tr-direct-h">
                 {salidas.map((o) => (
                   <button key={o.id} type="button" className="tr__out" data-on={directo === o.id} aria-pressed={directo === o.id} onClick={() => pickSalida(o.id)}>

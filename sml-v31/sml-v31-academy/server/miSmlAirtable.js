@@ -311,8 +311,9 @@ export async function obtener(identidad, deps = {}) {
   }
   if (records.length === 0 && identidad.email && identidad.email_verified) {
     const emailField = EMAIL_FIELD();
+    const emailNormalizado = String(identidad.email).trim().toLowerCase();
     const emailFormula =
-      `LOWER({${emailField}})='${esc(identidad.email)}'`;
+      `LOWER({${emailField}})='${esc(emailNormalizado)}'`;
     const byEmail = await get(
       CONTACTOS,
       new URLSearchParams({

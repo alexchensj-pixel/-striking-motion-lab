@@ -22,9 +22,12 @@ export default function Threshold({ from, to, start = 'top bottom', activeFrom =
   const key = `${from}>${to}`;
 
   useLayoutEffect(() => {
+    // El capítulo activo solo lo marca el umbral que se está recorriendo. Antes lo hacían TODOS en cada refresco (también al cargar,
+    // fuera de pantalla): ganaba el último (05→06) y la página arrancaba en «Sobre Chen», con lo que DESCUBRIR desde HOME saltaba en
+    // lugar de atravesar el Bridge. Fuera de su tramo, el capítulo activo lo fija el propio capítulo (useChapter, onToggle).
     const update = (self) => {
       setSegment(key, self.progress);
-      useStore.getState().setActiveChapter(self.progress > activeFrom ? to : from);
+      if (self.isActive) useStore.getState().setActiveChapter(self.progress > activeFrom ? to : from);
     };
     const st = ScrollTrigger.create({
       trigger: ref.current,

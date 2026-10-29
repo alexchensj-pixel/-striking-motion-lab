@@ -40,16 +40,19 @@ const SCRUB_LERP = 0.14;
 // Bloque 2 · EL COMBATE — la idea central (.bridge__a): no existe una única manera de combatir.
 //   Los dos ejemplos (vídeos de los podios) quedan presentes a la vez — ver BridgeHall.jsx.
 // Bloque 3 · EL MAPA — pila de 5 capas que se revela una a una (.bridge__d).
+// Reparto (oct 2026): Tyson y McGregor son los únicos ejemplos concretos (y con vídeo): cada uno pasa de ~14 vh a ~24 vh de scroll.
+// El tiempo sale del primer bloque (más breve) y del mapa (capas algo más juntas). El final de EL COMBATE (último instante con los vídeos)
+// apenas se mueve (0,515 → 0,535): la cámara avanza durante todo el umbral y así los podios siguen a la misma distancia (≈ 0,1 m menos).
 const FADE = 0.03;
-const B_IN = 0.02, B_L2 = 0.07, B_OUT = 0.15;
+const B_IN = 0.02, B_L2 = 0.055, B_OUT = 0.12;
 const C_FADE = 0.02;
-const C_IN = 0.185;
-const C_TYSON_OUT = 0.255;
-const C_TYSON_GONE = C_TYSON_OUT + C_FADE; // 0.275
-const C_MCGREGOR_IN = 0.28;
-const C_OUT = 0.36;
-const COMBATE_IN = 0.395, COMBATE_OUT = 0.515;
-const MAPA_IN = 0.55, MAPA_STEP = 0.08; // capas en MAPA_IN + i·MAPA_STEP → la 5.ª en 0.87
+const C_IN = 0.155;
+const C_TYSON_OUT = 0.275;
+const C_TYSON_GONE = C_TYSON_OUT + C_FADE; // 0.295
+const C_MCGREGOR_IN = 0.30;
+const C_OUT = 0.40;
+const COMBATE_IN = 0.435, COMBATE_OUT = 0.535;
+const MAPA_IN = 0.57, MAPA_STEP = 0.075; // capas en MAPA_IN + i·MAPA_STEP → la 5.ª en 0.87
 const MAPA_END = 1;
 
 // Instante en que empieza cada BLOQUE — el mismo "corte de cámara" (flash + micro-zoom del encuadre) se
@@ -64,6 +67,7 @@ const ALL_MOMENTOS = '.bridge__b, .bridge__c, .bridge__a, .bridge__d';
 
 const build = (tl) => {
   tl.set(ALL_MOMENTOS, { autoAlpha: 0 }, 0);
+  tl.set('.bridge__c-slot', { autoAlpha: 0 }, 0);
   tl.set('.bridge__caption', { scale: 1, transformOrigin: '50% 50%' }, 0);
   tl.set('.bridge__flash', { autoAlpha: 0 }, 0);
   tl.set('.bridge__d-funnel', { scale: 1.16, transformOrigin: '50% 20%' }, 0);
@@ -80,7 +84,9 @@ const build = (tl) => {
   // 1 · EL CUERPO — ejemplos opuestos (Tyson → McGregor), NUNCA a la vez. El contenedor `.bridge__c` (y el
   // divisor central) se mantienen visibles durante todo el tramo, incluido el hueco entre uno y otro: lo
   // único que se apaga y enciende por separado es cada `.bridge__c-slot`.
+  // Los dos casos parten ocultos: sin esto McGregor (cuyo fundido empieza en C_MCGREGOR_IN) se veía junto a Tyson desde C_IN.
   tl.set(ALL_MOMENTOS, { autoAlpha: 0 }, C_IN)
+    .set('.bridge__c-slot', { autoAlpha: 0 }, C_IN)
     .fromTo('.bridge__c', { autoAlpha: 0 }, { autoAlpha: 1, duration: FADE, immediateRender: false }, C_IN)
     .fromTo('.bridge__c-divider', { autoAlpha: 0 }, { autoAlpha: 1, duration: FADE, immediateRender: false }, C_IN)
     .fromTo('.bridge__c-slot[data-i="0"]', { autoAlpha: 0, x: -14 }, { autoAlpha: 1, x: 0, duration: C_FADE, immediateRender: false }, C_IN)

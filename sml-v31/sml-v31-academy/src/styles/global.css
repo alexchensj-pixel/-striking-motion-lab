@@ -78,8 +78,11 @@ ul, ol { list-style: none; }
 }
 .threshold { height: 50vh; position: relative; }
 /* Umbral HOME → EXPLORE: aloja el BRIDGE (cuerpo → combate → mapa), 180vh de scroll. Su progreso lo reparten Bridge.jsx / BridgeHall.jsx
-   (BRIDGE_END, BRIDGE_OUT_END en scrollState.js). El resto de umbrales siguen siendo tramos cortos de 50vh. */
+   (BRIDGE_END, BRIDGE_OUT_END en scrollState.js). El resto de umbrales siguen siendo tramos cortos de 50vh (salvo los dos de abajo). */
 .threshold[data-threshold="entrada>character-select"] { height: 180vh; }
+/* 02→03 (velo) y 05→06 (aproximación a la puerta) no traen contenido propio: 10vh de alto = 110vh de recorrido (antes 150vh). */
+.threshold[data-threshold="character-select>asesoria-lab"],
+.threshold[data-threshold="proof-chen>reserva"] { height: 10vh; }
 
 /* tipografía / utilidades */
 .label { font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; color: var(--dim); }

@@ -5,6 +5,7 @@ import { useStore } from '../../App/store.js';
 import { reserva, site } from '../../Data/Content.js';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 import { useStation } from '../useStation.js';
+import { useThresholdFade, smoothstep } from '../useThresholdFade.js';
 import LegalLinks from '../../UI/Legal/LegalLinks.jsx';
 import { FaqContextual } from '../Faq/Faq.jsx';
 
@@ -13,7 +14,11 @@ import { FaqContextual } from '../Faq/Faq.jsx';
 // Último paso. Elegir «Ya sé lo que quiero» abre la reserva; volver a tocarlo (mientras no esté confirmada) la cierra y devuelve a la puerta con las dos rutas.
 // Dos caminos: reservar (calendario directo de la Sesión Privada) o volver a EXPLORE si todavía no lo tiene claro.
 // V27: al entrar por RESERVAR (goToSection('book') = openBooking + salto directo) el calendario es lo primero que se ve; las rutas y el «después de reservar» van debajo.
+// 05→06: la reserva no entra hasta que el aro de la puerta domina el encuadre (Sobre Chen ya se ha retirado: una sola voz).
+const reservaOpacity = (seg) => smoothstep(seg['proof-chen>reserva'] ?? 0, 0.55, 0.9);
+
 export default function Reserva() {
+  useThresholdFade('reserva', reservaOpacity, { hold: true });
   // El calendario se abre desde aquí o desde el hero / CTA fijo / navegación (irAReservar): una sola acción hasta la reserva.
   const status = useStore((s) => s.bookingState);
   const setStatus = useStore((s) => s.setBookingState);
