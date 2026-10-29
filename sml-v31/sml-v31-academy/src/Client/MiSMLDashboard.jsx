@@ -72,10 +72,22 @@ function ClientView({ client, admin = false }) {
     : [];
   return <div className="msml__data" aria-label={admin ? 'Ficha de cliente' : 'Datos de cliente'}>
     <div className="msml__client-hero"><div><span className="msml__eyebrow">{admin ? 'PERFIL DEL ALUMNO' : 'BIENVENIDO A TU ESPACIO SML'}</span><h2>{client.nombre || 'Tu entrenamiento'}</h2><p>{admin ? 'Datos, seguimiento técnico y planificación individual.' : 'Aquí se reúne tu plan, las sesiones y tu evolución técnica.'}</p></div><span className="msml__hero-emblem" aria-hidden="true">SML<span>+</span></span></div>
-    <div className="msml__overview">
+    <div className={`msml__overview${client.bonos?.length ? ' msml__overview--bonos' : ''}`}>
+      {client.bonos?.length ? <>
+        {client.bonos.map((b) => <article key={b.id} className={`msml__metric msml__bono${b.compartido ? ' msml__bono--group' : ''}`}>
+          <span className="msml__eyebrow">{b.compartido ? 'BONO DE GRUPO · COMPARTIDO' : client.bonos.some((x) => x.compartido) ? 'BONO INDIVIDUAL' : 'PLAN ACTUAL'}</span>
+          <strong>{b.tipo || 'Plan por confirmar'}</strong>
+          <small>{b.frecuencia ? `${b.frecuencia} · ` : ''}{b.precio != null ? `${b.precio} €` : 'Consulta los detalles con tu entrenador'}</small>
+          <div className="msml__bono-clases"><span className="msml__bono-restantes">{b.clases?.restantes ?? '—'}</span><span>sesiones restantes<br />{b.clases?.realizadas ?? 0} realizadas de {b.clases?.contratadas ?? '—'} contratadas</span></div>
+          {b.compartido && <small className="msml__bono-aviso">Estas sesiones son del grupo: el consumo que ves es el de todo el grupo, no solo el tuyo.</small>}
+          <small className="msml__bono-pago">Pago: {b.estadoPago || 'Por confirmar'}</small>
+        </article>)}
+        {Number(client.pago?.importePendiente || 0) > 0 && <article className="msml__metric"><span className="msml__eyebrow">PAGO PENDIENTE</span><strong>{Number(client.pago.importePendiente).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</strong><small>Consulta aquí cualquier actualización con tu entrenador</small></article>}
+      </> : <>
       <article className="msml__metric"><span className="msml__eyebrow">PLAN ACTUAL</span><strong>{client.plan?.tipo || 'Plan por confirmar'}</strong><small>{client.plan?.frecuencia ? `${client.plan.frecuencia} · ` : ''}{client.plan?.precio != null ? `${client.plan.precio} €` : 'Consulta los detalles con tu entrenador'}</small></article>
       <article className="msml__metric"><span className="msml__eyebrow">SESIONES RESTANTES</span><strong>{client.clases?.restantes ?? '—'}</strong><small>{client.clases?.realizadas ?? 0} realizadas de {client.clases?.contratadas ?? '—'} contratadas</small></article>
       <article className="msml__metric"><span className="msml__eyebrow">ESTADO DEL PAGO</span><strong>{client.pago?.estado || 'Por confirmar'}</strong><small>{Number(client.pago?.importePendiente || 0) > 0 ? `Pendiente: ${Number(client.pago.importePendiente).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}` : 'Consulta aquí cualquier actualización con tu entrenador'}</small></article>
+      </>}
     </div>
     <section className="msml__section" aria-labelledby="msml-analysis-title">
       <div className="msml__section-heading"><div><span className="msml__eyebrow">SEGUIMIENTO TÉCNICO</span><h2 id="msml-analysis-title">Movement Analysis</h2></div><span className="msml__count">{analysis.length} {analysis.length === 1 ? 'registro' : 'registros'}</span></div>
