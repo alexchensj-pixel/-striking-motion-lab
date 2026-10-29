@@ -46,7 +46,9 @@ test('Airtable: primer acceso por email verificado vincula Auth0 ID', async () =
   };
   let updated = null;
   const update = async (table, id, fields) => { updated = {table,id,fields}; return {id,fields}; };
-  const r = await obtener({sub:'google-oauth2|123', email:'fergamaria@gmail.com', email_verified:true}, {fetchTable:fake, updateRecord:update});
+  const r = await obtener({sub:'google-oauth2|123', email:'  Fergamaria@GMAIL.com  ', email_verified:true}, {fetchTable:fake, updateRecord:update});
+  const emailLookup = calls.find(({table, query}) => table === 'Contactos' && String(query).includes('LOWER'));
+  assert.equal(new URLSearchParams(emailLookup.query).get('filterByFormula'), "LOWER({Email Mi SML})='fergamaria@gmail.com'");
   assert.equal(r.estado, 'connected');
   assert.deepEqual(updated, {table:'Contactos', id:'recM', fields:{'Auth0 ID':'google-oauth2|123'}});
 });
