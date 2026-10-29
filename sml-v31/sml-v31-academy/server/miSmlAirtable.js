@@ -139,6 +139,7 @@ async function buildClient(
       'Sesiones registradas (auto)',
       'Sesiones restantes (auto)',
       'Progreso (auto)',
+      'Cliente',
     ], get),
     listByIds(PAGOS, pagoIds, [
       'Pago',
@@ -193,16 +194,33 @@ async function buildClient(
     ).toLowerCase();
     return estado !== 'cancelado' && estado !== 'finalizado';
   });
-  const plan = activePlans[0]?.fields || planes[0]?.fields || {};
-  const realizadas = num(
-    plan['Clases realizadas'] ??
-    plan['Sesiones registradas (auto)']
-  );
-  const contratadas = num(plan['Clases contratadas']);
-  const restantes =
-    plan['Sesiones restantes (auto)'] != null
-      ? num(plan['Sesiones restantes (auto)'])
+  // Un bono es compartido si está vinculado a más de un cliente. Solo se cuenta; nunca se exponen sus IDs ni nombres.
+  const esCompartido = (record) => linkedIds(record.fields?.['Cliente']).length > 1;
+  const clasesDe = (f) => {
+    const contratadas = num(f['Clases contratadas']);
+    const realizadas = num(f['Clases realizadas'] ?? f['Sesiones registradas (auto)']);
+    const restantes = f['Sesiones restantes (auto)'] != null
+      ? num(f['Sesiones restantes (auto)'])
       : Math.max(0, contratadas - realizadas);
+    return { contratadas, realizadas, restantes };
+  };
+  // Individuales primero (orden estable): el resumen principal nunca es el bono de un grupo si existe uno propio.
+  const ordenados = [...activePlans].sort((x, y) => Number(esCompartido(x)) - Number(esCompartido(y)));
+  const bonos = ordenados.map(record => {
+    const f = record.fields || {};
+    return {
+      id: record.id,
+      nombre: f['Registro'] ?? null,
+      tipo: f['Tipo'] ?? f['Registro'] ?? null,
+      compartido: esCompartido(record),
+      frecuencia: f['Frecuencia'] ?? null,
+      precio: f['Precio'] ?? null,
+      estadoPago: f['Estado pago'] ?? null,
+      clases: clasesDe(f),
+    };
+  });
+  const plan = ordenados[0]?.fields || planes[0]?.fields || {};
+  const { contratadas, realizadas, restantes } = clasesDe(plan);
   const pendingPayments = pagos.filter(record => {
     const estado = String(
       record.fields?.['Estado'] ?? ''
@@ -262,6 +280,7 @@ async function buildClient(
       realizadas,
       restantes,
     },
+    bonos,
     movementAnalysis,
     rutinas: rutinasPublicadas.map(record => {
       const fields = record.fields || {};
