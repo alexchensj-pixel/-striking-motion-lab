@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && node scripts/check-mi-sml-css-size.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test:mi-sml": "node --test server/miSml.test.mjs",
     "test:mi-sml-auth": "node --test server/miSmlAuth.test.mjs",
