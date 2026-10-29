@@ -11,7 +11,7 @@ if (!cssFile) {
 }
 const { size } = await stat(join(pathname, cssFile));
 console.log(`MI SML CSS size: ${size} bytes (${cssFile})`);
-if (size < 3000) {
-  console.error(`MI SML CSS is unexpectedly small (${size} bytes; minimum 3000). Build stopped.`);
+if (size < 3400) {
+  console.error(`MI SML CSS is unexpectedly small (${size} bytes; minimum 3400). Build stopped.`);
   process.exit(1);
 }
