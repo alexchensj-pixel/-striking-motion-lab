@@ -1,6 +1,7 @@
 // MI SML · núcleo privado. La identidad siempre sale del token Auth0 validado.
 export const RUTA_ME = '/api/mi-sml/me';
 export const RUTA_ADMIN_CLIENTES = '/api/mi-sml/admin/clients';
+export const RUTA_ADMIN_GENERAR_RUTINA = '/api/mi-sml/admin/routines/generate';
 export const sinFuenteDeDatos = { async obtener() { return { estado: 'not-connected' }; } };
 
 export function tokenDe(authorization) {
@@ -11,8 +12,9 @@ export function tokenDe(authorization) {
 const cuerpo = (status, body, extra = {}) => ({ status, body, headers: extra });
 const NO_AUTH = { 'www-authenticate': 'Bearer' };
 
-export async function atender({ method, pathname, authorization }, { verify, fuente = sinFuenteDeDatos, log = console.error, adminSub = '' }) {
-  if (method !== 'GET') return cuerpo(405, { error: 'method-not-allowed' }, { allow: 'GET' });
+export async function atender({ method, pathname, authorization, body }, { verify, fuente = sinFuenteDeDatos, log = console.error, adminSub = '' }) {
+  const generarRutinaPost = method === 'POST' && pathname === RUTA_ADMIN_GENERAR_RUTINA;
+  if (method !== 'GET' && !generarRutinaPost) return cuerpo(405, { error: 'method-not-allowed' }, { allow: pathname === RUTA_ADMIN_GENERAR_RUTINA ? 'POST' : 'GET' });
   const token = tokenDe(authorization);
   if (!token) return cuerpo(401, { error: 'unauthenticated' }, NO_AUTH);
 
@@ -30,6 +32,18 @@ export async function atender({ method, pathname, authorization }, { verify, fue
 
   const isAdmin = Boolean(String(adminSub || '').trim()) && identidad.sub === String(adminSub).trim();
   try {
+    if (generarRutinaPost) {
+      if (!isAdmin) return cuerpo(403, { error: 'forbidden' });
+      if (!body || typeof body !== 'object' || Array.isArray(body)) return cuerpo(400, { error: 'invalid-input' });
+      if (typeof fuente.generarRutina !== 'function') return cuerpo(503, { error: 'routine-generator-unavailable' });
+      const r = await fuente.generarRutina(body);
+      if (r?.estado === 'invalid-input') return cuerpo(400, { error: 'invalid-input', fields: r.fields || [] });
+      if (r?.estado === 'not-found') return cuerpo(404, { error: 'contact-not-found' });
+      if (r?.estado === 'not-configured') return cuerpo(503, { error: 'routine-generator-unavailable' });
+      if (r?.estado === 'created' && r.rutina) return cuerpo(201, { session: 'valid', data: 'routine-draft-created', routine: r.rutina });
+      return cuerpo(500, { error: 'internal' });
+    }
+
     if (pathname === RUTA_ME) {
       const r = await fuente.obtener(identidad);
       if (r?.estado === 'forbidden') return cuerpo(403, { error: 'forbidden' });
