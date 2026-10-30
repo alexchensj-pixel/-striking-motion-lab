@@ -24,7 +24,7 @@ export const waLink = (msg) => `https://wa.me/${site.whatsapp}${msg ? `?text=${e
 
 // Frases ya aprobadas que estaban repetidas en Chen y en la FAQ. Se definen una sola vez para poder usarlas
 // en el momento en que el cliente necesita entenderlas (Scene 03, Scene 04, FAQ) sin reescribirlas.
-export const evaluacionInicialTexto = 'Empiezas con la Evaluación inicial: sesión presencial y privada (30€). Sirve para analizar tu punto de partida y construir tu plan a medida. Si después contratas un plan mensual, ese importe se descuenta del primer mes.';
+export const evaluacionInicialTexto = 'Empiezas con la Evaluación inicial: sesión presencial y privada (30€). Sirve para analizar tu punto de partida y construir tu plan a medida. Si después contratas un plan mensual (Arsenal, Striker o Fight IQ), ese importe se descuenta del primer mes. No se descuenta en parejas ni en grupos.';
 // Reseñas: solo el dato documentado (nota media y nº de reseñas en Google). Sin adjetivos ni testimonios.
 export const ratingTexto = `${site.rating.valor.replace('.', ',')} ★ · ${site.rating.resenas} reseñas ${site.rating.fuente}`;
 export const materialTexto = 'El material necesario para las sesiones lo aporta Striking Motion Lab: no necesitas comprar nada para empezar.';
@@ -351,7 +351,7 @@ export const reserva = {
   // Única aclaración que reduce fricción (FAQ «¿Cómo funciona la reserva?»): el resto del proceso ya se explica en 03/04.
   despuesTitulo: 'Qué pasa después de reservar',
   despues: [
-    'La sesión es presencial y privada (30€). El pago se gestiona aparte, no online.',
+    'La sesión es presencial y privada (30€). Puedes pagar por Bizum, transferencia o efectivo, antes o después de la sesión.',
   ],
 };
 
@@ -366,8 +366,9 @@ export const faq = [
   { q: '¿Qué ocurre en mi primera sesión?', a: 'Evaluamos tu nivel y tu objetivo, y empezamos a trabajar fundamentos. Solo necesitas ropa deportiva cómoda y agua — el material técnico lo llevo yo.' },
   { q: '¿Cómo sé qué plan elegir?', a: 'No hace falta decidirlo antes de empezar. Después de tu primera sesión te oriento sobre el plan que mejor encaja contigo, y siempre puedes cambiar de plan más adelante.' },
   { q: '¿Puedo empezar antes de contratar un plan?', a: `Sí. ${evaluacionInicialTexto}` },
-  { q: '¿Cómo funciona la reserva?', a: 'Directamente desde la web: eliges día y hora disponible en el calendario y confirmas — sin tener que escribir antes para preguntar disponibilidad. El pago de la sesión se gestiona aparte, no online.' },
-  { q: '¿Entrenáis a domicilio en toda Madrid?', a: 'Sí, con todo el material incluido. La disponibilidad concreta se confirma por WhatsApp.' },
+  { q: '¿Cómo funciona la reserva?', a: 'Directamente desde la web: eliges día y hora disponible en el calendario y confirmas — sin tener que escribir antes para preguntar disponibilidad. El pago puede hacerse por Bizum, transferencia o efectivo, antes o después de la sesión.' },
+  { q: '¿Puedo cambiar o cancelar una sesión?', a: 'Sí, avisando con al menos 24 horas. Si hay que aplazar una sesión por disponibilidad, puedes recuperarla la semana siguiente. Los planes son mensuales: no se acumulan sesiones pendientes ni se extienden durante varios meses.' },
+  { q: '¿Dónde entrenáis y tiene coste el desplazamiento?', a: 'La ubicación se acuerda contigo según tu zona, con todo el material incluido. En la zona A de Metro de Madrid el desplazamiento está incluido; fuera de ella se añaden 10 € por desplazamiento (en sesiones compartidas se cobra una sola vez, no por persona). Para otras localidades confirmamos la disponibilidad y el suplemento por WhatsApp antes de contratar.' },
 ];
 
 export const empresas = {
