@@ -145,3 +145,73 @@ test('Airtable: bonos cancelados o finalizados no se listan', async () => {
   const r = await obtener({ sub: 'g|2' }, { fetchTable: fake });
   assert.deepEqual(r.client.bonos.map(b => b.tipo), ['Vigente']);
 });
+
+test('Airtable: el bono compartido no expone precio, pago, id ni nombres de otros alumnos', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const grupo = { id: 'rec22sBRdL96ODEMM', fields: { Registro: 'Sanse · José, Javi, Jess y Vane · 20 sesiones', Tipo: 'Bono de grupo', 'Clases contratadas': 20, 'Clases realizadas': 11, 'Sesiones restantes (auto)': 9, Precio: 212, 'Estado pago': 'Pagado', Frecuencia: '1x semana',
+    Cliente: [{id:'recSanse'},{id:'recJose'},{id:'recJess'},{id:'recVane'},{id:'recJavi'}] } };
+  const individual = { id: 'rec9vBaGCBtfraoZA', fields: { Registro: 'Sanse · asignación individual · José · 5 sesiones', Tipo: 'Bono individual (grupo Sanse)', 'Clases contratadas': 5, 'Clases realizadas': 3, 'Sesiones restantes (auto)': 2, Precio: 53, 'Estado pago': 'Pendiente', Cliente: [{id:'recJose'}] } };
+  const fake = async (table) => {
+    if (table === 'Contactos') return { records: [{ id: 'recJose', fields: { Nombre: 'José', 'Auth0 ID': 'g|jose', 'Bonos y planes': [{id: grupo.id}, {id: individual.id}] } }] };
+    if (table === 'Bonos y planes') return { records: [grupo, individual] };
+    return { records: [] };
+  };
+  const r = await obtener({ sub: 'g|jose' }, { fetchTable: fake });
+  const [propio, delGrupo] = r.client.bonos;
+  assert.deepEqual(Object.keys(delGrupo).sort(), ['clases', 'compartido', 'frecuencia', 'tipo'], 'el bono compartido solo lleva lo necesario');
+  assert.deepEqual(Object.keys(propio).sort(), ['clases', 'compartido', 'estadoPago', 'frecuencia', 'precio', 'tipo'], 'el individual no lleva id ni nombre de registro');
+  assert.equal(delGrupo.tipo, 'Bono de grupo');
+  assert.equal(propio.precio, 53);
+  assert.equal(propio.estadoPago, 'Pendiente');
+  const json = JSON.stringify(r.client);
+  assert.equal(json.includes('212'), false, 'el precio del grupo no sale por la API');
+  assert.equal(json.includes('rec22sBRdL96ODEMM'), false, 'el id del bono de grupo no sale por la API');
+  assert.equal(json.includes('rec9vBaGCBtfraoZA'), false, 'tampoco el id del bono individual');
+  for (const nombre of ['Javi', 'Jess', 'Vane']) assert.equal(json.includes(nombre), false, `no se expone el nombre de otro alumno (${nombre})`);
+  assert.equal(r.client.plan.precio, 53, 'los campos antiguos siguen apuntando al individual');
+  assert.equal(r.client.pago.estado, 'Pendiente');
+  assert.equal(r.client.plan.compartido, false);
+});
+
+test('Airtable: alumno con solo un bono compartido: marcado como compartido y sin datos económicos', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const grupo = { id: 'recGrupoSolo', fields: { Registro: 'Sanse · Javi y Vane', 'Clases contratadas': 20, 'Clases realizadas': 11, 'Sesiones restantes (auto)': 9, Precio: 212, 'Estado pago': 'Pagado', Frecuencia: '1x semana',
+    Cliente: [{id:'recJavi'},{id:'recVane'}] } };
+  const fake = async (table) => {
+    if (table === 'Contactos') return { records: [{ id: 'recJavi', fields: { Nombre: 'Javi', 'Auth0 ID': 'g|javi', 'Bonos y planes': [{id: grupo.id}] } }] };
+    if (table === 'Bonos y planes') return { records: [grupo] };
+    return { records: [] };
+  };
+  const r = await obtener({ sub: 'g|javi' }, { fetchTable: fake });
+  const { bonos, plan, pago, clases } = r.client;
+  assert.equal(bonos.length, 1);
+  assert.equal(bonos[0].compartido, true);
+  assert.equal('precio' in bonos[0], false);
+  assert.equal('estadoPago' in bonos[0], false);
+  assert.equal(bonos[0].tipo, null, 'sin Tipo no se usa Registro, que puede nombrar a otros alumnos');
+  assert.equal(plan.compartido, true, 'los campos antiguos también lo marcan como compartido');
+  assert.equal(plan.precio, null, 'el precio del grupo no se atribuye al alumno');
+  assert.equal(plan.tipo, null);
+  assert.equal(pago.estado, null, 'el estado de pago del grupo no se atribuye al alumno');
+  assert.deepEqual(clases, { contratadas: 20, realizadas: 11, restantes: 9 });
+  const json = JSON.stringify(r.client);
+  assert.equal(json.includes('212'), false);
+  assert.equal(json.includes('Vane'), false);
+});
+
+test('Airtable: orden estable (individuales primero) y bono de dos clientes (Parejas) cuenta como compartido', async () => {
+  process.env.AIRTABLE_BASE_ID = 'appTest'; process.env.AIRTABLE_TOKEN = 'pat_test';
+  const bono = (id, tipo, clientes) => ({ id, fields: { Tipo: tipo, 'Clases contratadas': 4, 'Clases realizadas': 1, Precio: 10, 'Estado pago': 'Pagado', Cliente: clientes.map(c => ({id: c})) } });
+  const fake = async (table) => {
+    if (table === 'Contactos') return { records: [{ id: 'recA', fields: { Nombre: 'Ana', 'Auth0 ID': 'g|ana', 'Bonos y planes': ['g1','i1','g2','i2'].map(id => ({id})) } }] };
+    if (table === 'Bonos y planes') return { records: [
+      bono('g1', 'Pareja 1', ['recA', 'recB']), bono('i1', 'Propio 1', ['recA']),
+      bono('g2', 'Pareja 2', ['recA', 'recC']), bono('i2', 'Propio 2', ['recA']) ] };
+    return { records: [] };
+  };
+  const r = await obtener({ sub: 'g|ana' }, { fetchTable: fake });
+  assert.deepEqual(r.client.bonos.map(b => b.tipo), ['Propio 1', 'Propio 2', 'Pareja 1', 'Pareja 2']);
+  assert.deepEqual(r.client.bonos.map(b => b.compartido), [false, false, true, true]);
+  assert.equal(r.client.plan.tipo, 'Propio 1');
+  for (const b of r.client.bonos.filter(x => x.compartido)) { assert.equal('precio' in b, false); assert.equal('estadoPago' in b, false); }
+});

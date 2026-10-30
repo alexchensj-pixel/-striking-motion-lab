@@ -204,22 +204,31 @@ async function buildClient(
       : Math.max(0, contratadas - realizadas);
     return { contratadas, realizadas, restantes };
   };
+  // El título de un bono compartido nunca cae a "Registro": ese texto puede nombrar a otros alumnos.
+  const tipoDe = (f, compartido) => compartido ? (f['Tipo'] ?? null) : (f['Tipo'] ?? f['Registro'] ?? null);
   // Individuales primero (orden estable): el resumen principal nunca es el bono de un grupo si existe uno propio.
   const ordenados = [...activePlans].sort((x, y) => Number(esCompartido(x)) - Number(esCompartido(y)));
+  // Lista pública de bonos: sin IDs ni nombres de registro. Un bono compartido no lleva precio ni estado de pago
+  // (son del grupo, no del alumno); las claves ni siquiera existen para que nada los pinte por error.
   const bonos = ordenados.map(record => {
     const f = record.fields || {};
-    return {
-      id: record.id,
-      nombre: f['Registro'] ?? null,
-      tipo: f['Tipo'] ?? f['Registro'] ?? null,
-      compartido: esCompartido(record),
+    const compartido = esCompartido(record);
+    const bono = {
+      tipo: tipoDe(f, compartido),
+      compartido,
       frecuencia: f['Frecuencia'] ?? null,
-      precio: f['Precio'] ?? null,
-      estadoPago: f['Estado pago'] ?? null,
       clases: clasesDe(f),
     };
+    if (!compartido) {
+      bono.precio = f['Precio'] ?? null;
+      bono.estadoPago = f['Estado pago'] ?? null;
+    }
+    return bono;
   });
-  const plan = ordenados[0]?.fields || planes[0]?.fields || {};
+  // Campos antiguos (plan, clases, pago): apuntan al bono individual; si solo hay uno compartido, sin datos económicos.
+  const planRecord = ordenados[0] || planes[0];
+  const plan = planRecord?.fields || {};
+  const planCompartido = planRecord ? esCompartido(planRecord) : false;
   const { contratadas, realizadas, restantes } = clasesDe(plan);
   const pendingPayments = pagos.filter(record => {
     const estado = String(
@@ -267,12 +276,13 @@ async function buildClient(
   const client = {
     nombre: String(cf['Nombre'] ?? '').trim(),
     plan: {
-      tipo: plan['Tipo'] ?? plan['Registro'] ?? null,
+      tipo: tipoDe(plan, planCompartido),
       frecuencia: plan['Frecuencia'] ?? null,
-      precio: plan['Precio'] ?? null,
+      precio: planCompartido ? null : (plan['Precio'] ?? null),
+      compartido: planCompartido,
     },
     pago: {
-      estado: plan['Estado pago'] ?? null,
+      estado: planCompartido ? null : (plan['Estado pago'] ?? null),
       importePendiente,
     },
     clases: {
