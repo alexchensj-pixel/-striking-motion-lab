@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import Chapter from '../Chapter.jsx';
 import PhotoBackdrop from '../../Scene/PhotoBackdrop.jsx';
 import { gsap } from '../../Scene/Transitions/gsap.js';
-import { hero, entradaNarrativa } from '../../Data/Content.js';
+import { hero, entradaNarrativa, site, ratingTexto, waLink } from '../../Data/Content.js';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 
 // 01 — Entrada. El mundo (corredor, portales) es 3D y vive en Scene/Environment/Entrada.
@@ -80,6 +80,11 @@ export default function Entrada() {
               {hero.titulo.map((line) => <span key={line}>{line}</span>)}
             </h1>
             <p className="ent__disc">{hero.disciplinasLinea}</p>
+            <p className="ent__beneficio">Empieza desde cero. El entrenamiento se adapta a ti.</p>
+            <p className="ent__precioNota">La evaluación inicial cuesta 30 €. Si después contratas un plan mensual, se descuenta del primer mes.</p>
+            <div className="ent__prueba" aria-label="Información de confianza">
+              <span>{ratingTexto}</span><span>{site.logro}</span>
+            </div>
           </div>
 
           <div className="ent__cue" aria-hidden="true">
@@ -103,6 +108,7 @@ export default function Entrada() {
           <div className="ent__actions">
             <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>{hero.ctaReservar}</button>
             <button type="button" className="ent__explorar" onClick={() => goToSection('explore')}>{hero.ctaExplorar}</button>
+            <a className="ent__consulta" href={waLink('Hola, quiero información sobre las sesiones de boxeo, Muay Thai o kickboxing en Madrid.')} target="_blank" rel="noreferrer">¿Tienes dudas? Escríbeme por WhatsApp</a>
             <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>{hero.ctaB2B}</button>
           </div>
         </div>

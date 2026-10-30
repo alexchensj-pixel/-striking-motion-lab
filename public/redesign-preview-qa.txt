@@ -1,0 +1,4 @@
+Striking Motion Lab — homepage redesign preview
+
+This is a non-production preview. Review /redesign-preview.html on desktop and mobile before any merge.
+Production homepage, MI SML, and Academy remain unchanged.
