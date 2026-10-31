@@ -121,7 +121,7 @@ export const planesMensuales = {
   titulo: 'PLANES MENSUALES',
   desde: PLANES_DESDE,
   desdeNota: 'En grupo reducido, con frecuencia mensual. Los planes 1:1 van debajo.',
-  nota: 'Los 30 € de la evaluación inicial se descuentan del primer pago mensual.',
+  nota: 'Los 30 € de la evaluación inicial se descuentan del primer pago mensual de Arsenal, Striker o Fight IQ.',
   items: planes.map((p) => ({
     id: p.id, nombre: p.nombre.toUpperCase(), precio: p.precio, unidad: '/mes', sesionesSemana: p.sesionesSemana,
     frecuencia: frecuencia(p.sesionesSemana), lema: p.lema,
