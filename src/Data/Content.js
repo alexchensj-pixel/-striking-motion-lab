@@ -71,7 +71,7 @@ export const chapters = [
   { id: 'character-select', n: '02', label: 'Descubrir',             vh: 135 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 35vh de meseta antes del umbral
   { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 250 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
   { id: 'slot',             n: '04', label: 'Entrenamiento',         vh: 280 }, // cuatro pasos (Elección directa · Frecuencia · Combinación · Resultado) sobre las piezas de la máquina 3D: pantalla fija; el primero ya es una elección completa (420 vh era para seis)
-  { id: 'proof-chen',       n: '05', label: 'Sobre Chen',            vh: 260 },
+  { id: 'proof-chen',       n: '05', label: 'Sobre Alex',            vh: 260 },
   { id: 'reserva',          n: '06', label: 'Reserva',               vh: 140 },
 ];
 
@@ -311,14 +311,14 @@ export const resenasGoogle = [
 
 export const dossierItems = [
   {
-    id: 'chen', label: 'Chen', titulo: 'Peleador. Entrenador.',
+    id: 'chen', label: 'Alex', titulo: 'Peleador. Entrenador.',
     texto: ['Compito en Muay Thai y K1, y entreno dentro de un entorno con deportistas vinculados a la selección española y campeones nacionales FEKM. Cada sesión privada parte de esa misma exigencia.'],
   },
   {
     id: 'trayectoria', label: 'Trayectoria',
     datos: [['Disciplinas', 'Muay Thai y K1'], ['Resultado', site.logro]],
     texto: ['Entreno dentro de un entorno con deportistas vinculados a la selección española y campeones nacionales FEKM.'],
-    imagen: { src: image.chenRing, alt: 'Chen, con pantalón corto rojo, de pie en el ring durante una competición federada FEKM de K1/Muay Thai' },
+    imagen: { src: image.chenRing, alt: 'Alex, con pantalón corto rojo, de pie en el ring durante una competición federada FEKM de K1/Muay Thai' },
   },
   {
     // Solo lo lee Data/B2B.js (títulos de los 4 pasos). La escena 05 NO lo muestra (ProofChen.jsx lo filtra).
