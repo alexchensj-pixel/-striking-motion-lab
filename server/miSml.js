@@ -22,7 +22,13 @@ export async function atender({ method, pathname, authorization, body }, { verif
   try {
     const v = await verify(token);
     if (!v || typeof v.sub !== 'string' || !v.sub) return cuerpo(401, { error: 'invalid-session' }, NO_AUTH);
-    identidad = { sub: v.sub };
+    // Preserve only claims returned by the verified Auth0 token. The Airtable
+    // source needs these two claims to safely link a first login by verified email.
+    identidad = {
+      sub: v.sub,
+      email: typeof v.email === 'string' ? v.email.trim() : '',
+      email_verified: v.email_verified === true,
+    };
   } catch (e) {
     if (e?.kind === 'expired') return cuerpo(401, { error: 'session-expired' }, NO_AUTH);
     if (e?.kind === 'invalid') return cuerpo(401, { error: 'invalid-session' }, NO_AUTH);
