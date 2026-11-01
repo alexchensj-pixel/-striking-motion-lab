@@ -31,7 +31,7 @@ export const variables = [
   // «Personas» se elimina: sin fuente real y ya lo implica el formato (1:1, Parejas, Grupo reducido).
   {
     id: 'ubicacion', label: 'Ubicación',
-    options: [{ id: 'domicilio', label: 'A domicilio en Madrid' }], // FAQ: «¿Entrenáis a domicilio en toda Madrid? Sí, con todo el material incluido».
+    options: [{ id: 'domicilio', label: 'En Madrid, donde tenga sentido para ti' }], // FAQ: «¿Entrenáis a domicilio en toda Madrid? Sí, con todo el material incluido».
   },
 ];
 
@@ -44,35 +44,35 @@ export const hybridBase = variables.find((v) => v.id === 'formato').options.filt
 export const existingPlans = [
   {
     id: '1-1', tipo: 'formato', nombre: '1:1', precio: 30, unidad: '€ / sesión suelta',
-    texto: 'Máxima personalización. Adaptación completa a tu nivel y objetivo, con seguimiento individual desde la primera sesión. Se descuenta del primer mes si después contratas un plan mensual.',
+    texto: 'Máxima personalización. Adaptación completa a tu nivel y objetivo, con seguimiento individual desde la primera sesión. La evaluación inicial (30 €) se descuenta si después contratas Arsenal, Striker o Fight IQ.',
   },
   {
     id: 'duo', tipo: 'formato', nombre: 'Parejas', precio: 20, unidad: '€ / persona / sesión',
     texto: 'Mismo formato personalizado, entrenando junto a otra persona — pareja, amigo o familiar.',
   },
   {
-    id: 'grupo', tipo: 'formato', nombre: 'Grupo reducido', precio: 15, unidad: '€ / sesión', desde: 'desde 55€/mes',
+    id: 'grupo', tipo: 'formato', nombre: 'Grupo reducido', precio: 15, unidad: '€ / persona / sesión', desde: 'bonos: 55 € (4 clases/mes) · 95 € (8 clases/mes)',
     texto: 'Entrenamiento en grupos pequeños, máximo 4 personas, con más interacción sin perder la corrección individual. Si hay demanda en tu zona, podemos crear un grupo ahí.',
   },
   {
     id: 'arsenal', tipo: 'mensual', nombre: 'Arsenal', sesionesSemana: 1, precio: 110, unidad: '€ / mes',
     lema: 'Construye tus herramientas de combate.',
     enfasis: [['Técnica', 70], ['Personalización', 35], ['Estrategia', 20]],
-    incluye: ['Evaluación técnica inicial', 'Análisis técnico en vídeo', 'Entrenamientos enfocados en técnica y condición física', 'Comba de entrenamiento de boxeo'],
+    incluye: ['4 sesiones al mes · 60 min · 27,50 € por sesión', 'Evaluación técnica inicial', 'Análisis técnico en vídeo', 'Entrenamientos enfocados en técnica y condición física', 'Comba de entrenamiento de boxeo'],
     objetivo: 'Mejorar tu técnica y dar un paso firme.',
   },
   {
     id: 'striker', tipo: 'mensual', nombre: 'Striker', sesionesSemana: 2, precio: 185, unidad: '€ / mes',
     lema: 'Desarrolla tu capacidad como peleador.',
     enfasis: [['Técnica', 80], ['Personalización', 75], ['Estrategia', 50]],
-    incluye: ['Base Arsenal', 'Plan de entrenamiento personalizado', 'Biblioteca de ejercicios personalizada', 'Trabajo específico según objetivos', 'Comba de entrenamiento de boxeo'],
+    incluye: ['8 sesiones al mes · 60 min · 23,13 € por sesión', 'Base Arsenal', 'Plan de entrenamiento personalizado', 'Biblioteca de ejercicios personalizada', 'Trabajo específico según objetivos', 'Comba de entrenamiento de boxeo'],
     objetivo: 'Más estructura, foco y resultados para el siguiente paso.',
   },
   {
     id: 'fight-iq', tipo: 'mensual', nombre: 'Fight IQ', sesionesSemana: 3, precio: 270, unidad: '€ / mes',
     lema: 'Aprende a leer y dominar el combate.',
     enfasis: [['Técnica', 90], ['Personalización', 90], ['Estrategia', 95]],
-    incluye: ['Base Striker', 'Preparación específica para combate', 'Trabajo de estrategia y táctica', 'Desarrollo de estilo de pelea', 'Sparring supervisado con peleador', 'Comba de entrenamiento de boxeo'],
+    incluye: ['12 sesiones al mes · 60 min · 22,50 € por sesión', 'Base Striker', 'Preparación específica para combate', 'Trabajo de estrategia y táctica', 'Desarrollo de estilo de pelea', 'Sparring supervisado con peleador', 'Comba de entrenamiento de boxeo'],
     objetivo: 'Para quien quiere ir más allá de mejorar: entender el combate y prepararse con criterio. Compromiso, disciplina y resultados.',
   },
 ];

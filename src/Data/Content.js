@@ -16,7 +16,7 @@ export const site = {
   calendlyBase: 'https://calendly.com/alexchensj',
   calendly: 'https://calendly.com/alexchensj?hide_gdpr_banner=1&background_color=0a0a0a&text_color=f2efe8&primary_color=9a1f2d',
   rating: { valor: '5.0', resenas: 18, fuente: 'Google' },
-  logro: '3.º — Copa de España 2025 · FEKM / WAKO',
+  logro: '3.º en K1 −57 kg — Copa de España 2025 · FEKM / WAKO',
 };
 
 // Enlace de WhatsApp con mensaje ya escrito.
@@ -24,10 +24,10 @@ export const waLink = (msg) => `https://wa.me/${site.whatsapp}${msg ? `?text=${e
 
 // Frases ya aprobadas que estaban repetidas en Chen y en la FAQ. Se definen una sola vez para poder usarlas
 // en el momento en que el cliente necesita entenderlas (Scene 03, Scene 04, FAQ) sin reescribirlas.
-export const evaluacionInicialTexto = 'Empiezas con la Evaluación inicial: sesión presencial y privada (30€). Sirve para analizar tu punto de partida y construir tu plan a medida. Si después contratas un plan mensual, ese importe se descuenta del primer mes.';
+export const evaluacionInicialTexto = 'Empiezas con la Evaluación inicial: sesión presencial y privada (30€). Sirve para analizar tu punto de partida y construir tu plan a medida. Si después contratas Arsenal, Striker o Fight IQ, los 30 € se descuentan del plan (no en parejas ni en grupos).';
 // Reseñas: solo el dato documentado (nota media y nº de reseñas en Google). Sin adjetivos ni testimonios.
 export const ratingTexto = `${site.rating.valor.replace('.', ',')} ★ · ${site.rating.resenas} reseñas ${site.rating.fuente}`;
-export const materialTexto = 'El material necesario para las sesiones lo aporta Striking Motion Lab: no necesitas comprar nada para empezar.';
+export const materialTexto = 'Yo aporto el material necesario para las sesiones: no necesitas comprar nada para empezar.';
 
 // --- 01 Entrada ---
 export const hero = {
@@ -36,14 +36,19 @@ export const hero = {
   claimLineas: ['No elijas', 'tu entreno.', 'Descúbrelo.'],
   // Dos caminos principales, con el mismo peso: quien no sabe qué quiere descubre; quien ya lo sabe reserva sin pasar por Descubrir.
   noSe: { pre: 'No sé qué quiero', accion: 'Descubrir', aux: 'Explora el mundo del combate.' },
-  yaSe: { pre: 'Ya sé qué quiero', accion: 'Reservar', aux: 'Sesión privada · 30 €' },
+  yaSe: { pre: 'Ya sé qué quiero', accion: 'Reservar', aux: 'Evaluación inicial · 30 €' },
   // Ruta secundaria (no compite con las dos anteriores).
   ctaB2B: 'Empresas · Hoteles · Eventos →',
+  // Recorrido C (prueba): rutas rápidas, modalidades y confianza en el primer pantallazo.
+  ctaPrecios: 'Precios →',
+  ctaGrupos: 'Parejas y grupos →',
+  modalidades: 'Individual · Parejas · Grupos reducidos',
+  confianza: `${ratingTexto} · 3.º en K1 −57 kg, Copa de España 2025`,
   // V22 — mensaje principal de HOME (visible desde el primer fotograma; no depende de ninguna animación ni del scroll).
   marca: 'Striking Motion Lab',
   titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
   disciplinasLinea: 'Boxeo · K1 · Muay Thai',
-  ctaReservar: 'Reservar · 30 €',
+  ctaReservar: 'Reservar evaluación · 30 €',
   ctaExplorar: 'No sé qué necesito → Descubrir',
   contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
@@ -67,11 +72,11 @@ export const entradaNarrativa = {
 // id = nombre técnico interno del módulo (Experience/<Id>). label = lo que ve el usuario.
 // p.ej. 'character-select' es el módulo interno; el usuario nunca ve esa palabra, ve "Descubrir".
 export const chapters = [
-  { id: 'entrada',          n: '01', label: 'Inicio',                vh: 210 },
-  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 135 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 35vh de meseta antes del umbral
-  { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 250 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
+  { id: 'entrada',          n: '01', label: 'Inicio',                vh: 140 },
+  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 120 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 35vh de meseta antes del umbral
+  { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 160 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
   { id: 'slot',             n: '04', label: 'Entrenamiento',         vh: 280 }, // cuatro pasos (Elección directa · Frecuencia · Combinación · Resultado) sobre las piezas de la máquina 3D: pantalla fija; el primero ya es una elección completa (420 vh era para seis)
-  { id: 'proof-chen',       n: '05', label: 'Sobre Chen',            vh: 260 },
+  { id: 'proof-chen',       n: '05', label: 'Sobre Alex',            vh: 140 },
   { id: 'reserva',          n: '06', label: 'Reserva',               vh: 140 },
 ];
 
@@ -252,18 +257,18 @@ export const advisorySubstages = [
   },
   {
     id: 'conozco', label: 'Te conozco', num: '01', n: 'TE CONOZCO',
-    texto: 'Antes de decidir qué entrenar, necesitamos saber desde dónde empiezas.',
+    texto: 'Antes de decidir qué entrenar, necesito saber desde dónde empiezas.',
     elementos: ['Objetivo', 'Experiencia', 'Disponibilidad', 'Contexto'],
   },
   {
     id: 'observo', label: 'Te observo', num: '02', n: 'TE OBSERVO',
-    texto: 'Vemos cómo te mueves antes de decidir qué necesitas.',
+    texto: 'Veo cómo te mueves antes de decidir qué necesitas.',
     destacada: 'Aquí entra la evaluación inicial.',
     etiqueta: 'Evaluación inicial · 30 €', // marca que acompaña al paso cuando está plegado
   },
   {
     id: 'entrenamos', label: 'Entrenamos', num: '03', n: 'ENTRENAMOS',
-    texto: 'Lo que vemos determina lo que trabajamos.',
+    texto: 'Lo que veo determina lo que trabajamos.',
   },
   {
     id: 'adaptamos', label: 'Adaptamos', num: '04', n: 'ADAPTAMOS',
@@ -286,14 +291,14 @@ export const evaluacionInicial = {
   titulo: 'Evaluación inicial',
   precio: '30 €',
   texto: 'Una primera sesión privada para conocerte, observar cómo te mueves y entender qué necesitas.',
-  nota: 'Si continúas con un plan mensual, los 30 € se descuentan del primer pago mensual.',
+  nota: 'Si contratas Arsenal, Striker o Fight IQ, los 30 € se descuentan del plan. No se descuentan en parejas ni en grupos.',
   cta: 'Reservar evaluación',
   ctaMas: 'Quiero saber más',
   // Contexto que se despliega con «Quiero saber más»: los mismos pasos del método aplicados a la primera sesión.
   mas: [
     ['Te conozco', 'Objetivo, experiencia, disponibilidad y contexto.'],
     ['Te observo', 'Cómo te mueves, antes de decidir qué necesitas.'],
-    ['Después', 'Lo que vemos determina lo que trabajamos: de ahí sale tu plan a medida.'],
+    ['Después', 'Lo que veo determina lo que trabajamos: de ahí sale tu plan a medida.'],
   ],
 };
 
@@ -311,21 +316,21 @@ export const resenasGoogle = [
 
 export const dossierItems = [
   {
-    id: 'chen', label: 'Chen', titulo: 'Peleador. Entrenador.',
-    texto: ['Compito en Muay Thai y K1, y entreno dentro de un entorno con deportistas vinculados a la selección española y campeones nacionales FEKM. Cada sesión privada parte de esa misma exigencia.'],
+    id: 'chen', label: 'Alex', titulo: 'Peleador. Entrenador.',
+    texto: ['Compito en K1 y Muay Thai (FEKM / WAKO). Cada sesión privada parte de esa misma exigencia.'],
   },
   {
     id: 'trayectoria', label: 'Trayectoria',
-    datos: [['Disciplinas', 'Muay Thai y K1'], ['Resultado', site.logro]],
-    texto: ['Entreno dentro de un entorno con deportistas vinculados a la selección española y campeones nacionales FEKM.'],
-    imagen: { src: image.chenRing, alt: 'Chen, con pantalón corto rojo, de pie en el ring durante una competición federada FEKM de K1/Muay Thai' },
+    datos: [['Disciplinas', 'K1 y Muay Thai'], ['Resultado', site.logro], ['Campeonatos de España', 'Dos participaciones, representando a Madrid']],
+    texto: ['Dos participaciones en Campeonatos de España representando a Madrid.'],
+    imagen: { src: image.chenRing, alt: 'Alex, con pantalón corto rojo, de pie en el ring durante una competición federada FEKM de K1/Muay Thai' },
   },
   {
     // Solo lo lee Data/B2B.js (títulos de los 4 pasos). La escena 05 NO lo muestra (ProofChen.jsx lo filtra).
     id: 'metodo', label: 'Método',
     pasos: [
       { titulo: 'Te conozco', texto: 'Objetivo, experiencia, preferencias, necesidades y qué quieres desarrollar.' },
-      { titulo: 'Te observo', texto: 'Lo que vemos se convierte en decisiones.' },
+      { titulo: 'Te observo', texto: 'Lo que veo se convierte en decisiones.' },
       { titulo: 'Entrenamos', texto: 'Cada sesión tiene un propósito.' },
       { titulo: 'Seguimos',   texto: 'El proceso cambia contigo.' },
     ],
@@ -340,18 +345,21 @@ export const dossierItems = [
 
 // --- 06 Reserva ---
 export const reserva = {
-  titulo: 'Sesión privada · 30 €',
+  titulo: 'Evaluación inicial · 30 €',
   subtitulo: 'Reserva directa',
-  texto: 'Elige día y hora. Tu nivel y tu objetivo los evaluamos en la propia sesión.',
+  texto: 'Elige día y hora. En la propia sesión evalúo tu nivel y tu objetivo, y después te oriento sobre el plan que mejor encaja contigo.',
   // Dos caminos: reservar ya (calendario directo) o descubrir antes de decidir.
   caminos: {
-    directo: { titulo: 'YA SÉ LO QUE QUIERO', accion: 'Sesión privada · 30 € → elige día y hora.' },
+    directo: { titulo: 'YA SÉ LO QUE QUIERO', accion: 'Evaluación inicial · 30 € → elige día y hora.' },
     dudas: { titulo: 'TODAVÍA NO LO TENGO CLARO', accion: 'Descubre las disciplinas antes de decidir.' },
   },
   // Única aclaración que reduce fricción (FAQ «¿Cómo funciona la reserva?»): el resto del proceso ya se explica en 03/04.
-  despuesTitulo: 'Qué pasa después de reservar',
+  despuesTitulo: 'Antes, durante y después de reservar',
   despues: [
-    'La sesión es presencial y privada (30€). El pago se gestiona aparte, no online.',
+    'Antes: eliges día y hora y confirmas. No hace falta escribirme antes; si tienes dudas, puedes hacerlo por WhatsApp.',
+    'Durante: 60 minutos, presencial y privada. Trae ropa deportiva cómoda y agua; el material lo llevo yo. Conozco tu objetivo, observo cómo te mueves y entrenamos.',
+    'Después: te oriento sobre el plan que mejor encaja contigo. Si contratas Arsenal, Striker o Fight IQ, los 30 € se descuentan del plan.',
+    'Seguimiento: tras la sesión te escribo con mi recomendación, el precio del plan y cómo empezar. Puedes pagar por Bizum, transferencia o efectivo, antes o después de cada sesión.',
   ],
 };
 
@@ -363,11 +371,13 @@ export const faq = [
   { q: '¿Tengo que hacer sparring?', a: 'No es obligatorio. No es para el primer día: se introduce poco a poco y se adapta a tu nivel. No es una pelea, es una forma de aprender.' },
   { q: '¿Tengo que comprar material?', a: `${materialTexto} El Kit de Inicio (+65€: guantes + vendas + bucal) es opcional.` },
   { q: '¿Tengo que competir?', a: 'No. El entrenamiento puede orientarse a técnica y bienestar sin ninguna intención de competir.' },
-  { q: '¿Qué ocurre en mi primera sesión?', a: 'Evaluamos tu nivel y tu objetivo, y empezamos a trabajar fundamentos. Solo necesitas ropa deportiva cómoda y agua — el material técnico lo llevo yo.' },
+  { q: '¿Qué ocurre en mi primera sesión?', a: 'Evalúo tu nivel y tu objetivo, y empezamos a trabajar fundamentos. Solo necesitas ropa deportiva cómoda y agua — el material técnico lo llevo yo.' },
   { q: '¿Cómo sé qué plan elegir?', a: 'No hace falta decidirlo antes de empezar. Después de tu primera sesión te oriento sobre el plan que mejor encaja contigo, y siempre puedes cambiar de plan más adelante.' },
   { q: '¿Puedo empezar antes de contratar un plan?', a: `Sí. ${evaluacionInicialTexto}` },
-  { q: '¿Cómo funciona la reserva?', a: 'Directamente desde la web: eliges día y hora disponible en el calendario y confirmas — sin tener que escribir antes para preguntar disponibilidad. El pago de la sesión se gestiona aparte, no online.' },
-  { q: '¿Entrenáis a domicilio en toda Madrid?', a: 'Sí, con todo el material incluido. La disponibilidad concreta se confirma por WhatsApp.' },
+  { q: '¿Cómo funciona la reserva?', a: 'Directamente desde la web: eliges día y hora disponible en el calendario y confirmas — sin tener que escribir antes para preguntar disponibilidad. Puedes pagar por Bizum, transferencia o efectivo, antes o después de la sesión.' },
+  { q: '¿Dónde entrenamos y tiene coste el desplazamiento?', a: 'Acordamos el lugar según tu zona, con todo el material incluido. En la zona A de Metro de Madrid el desplazamiento está incluido; fuera de ella se añaden 10 € por sesión (en parejas y grupos, una sola vez por sesión compartida, no por persona). Para otras localidades te confirmo la disponibilidad y el suplemento por WhatsApp antes de contratar.' },
+  { q: '¿Puedo cambiar o cancelar una sesión?', a: 'Sí, avisándome con al menos 24 horas. Con menos de 24 horas, la sesión se consume. Si soy yo quien necesita aplazarla por motivos organizativos, la recuperamos la semana siguiente, según mi disponibilidad. Los planes son mensuales: las sesiones no se acumulan ni pasan al mes siguiente.' },
+  { q: '¿Cuánto cuesta cada sesión dentro de un plan?', a: 'Entre 22,50 € y 27,50 € por sesión de 60 minutos, según el plan, frente a 30 € de la sesión suelta.' },
 ];
 
 export const empresas = {
@@ -387,5 +397,5 @@ export const cierre = {
   texto: 'Descubre tu disciplina — o reserva directamente si ya lo tienes claro.',
   yaSe: 'Ya sé lo que quiero — Reservar →',
   noSe: 'No sé qué elegir — Solicitar asesoramiento →',
-  mensajeAsesoria: 'Hola, sigo sin tener claro qué disciplina encaja conmigo. ¿Podéis orientarme?',
+  mensajeAsesoria: 'Hola, sigo sin tener claro qué disciplina encaja conmigo. ¿Puedes orientarme?',
 };

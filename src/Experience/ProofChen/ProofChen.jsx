@@ -29,7 +29,7 @@ const items = [...base, { id: 'siguiente', label: ev.titulo }];
 const N = items.length;
 
 // Etiqueta corta del índice (en móvil solo se despliega la de la estación activa).
-const CORTA = { chen: 'Chen', trayectoria: 'Trayectoria', resenas: 'Alumnos', siguiente: 'Evaluación' };
+const CORTA = { chen: 'Alex', trayectoria: 'Trayectoria', resenas: 'Alumnos', siguiente: 'Evaluación' };
 const pad = (n) => String(n).padStart(2, '0');
 // v29 · papel de cada pieza en la exposición: EVIDENCIA (la persona y su foto) → ARCHIVO (trayectoria) → PRUEBA SOCIAL (alumnos) → RESULTADO (siguiente paso).
 const ROL = { chen: 'EVIDENCIA', trayectoria: 'ARCHIVO', resenas: 'PRUEBA SOCIAL', siguiente: 'RESULTADO' };

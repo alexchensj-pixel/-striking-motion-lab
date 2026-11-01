@@ -49,7 +49,7 @@ export const NAV_ITEMS = [
   { id: 'disciplinas', label: 'Disciplinas', kind: 'section', target: 'disciplinas' },
   { id: 'method',      label: 'Método',      kind: 'section', target: 'method' },
   { id: 'training',    label: 'Entrenamiento', kind: 'section', target: 'training' },
-  { id: 'founder',     label: 'Sobre Chen',  kind: 'section', target: 'founder' },
+  { id: 'founder',     label: 'Sobre Alex',  kind: 'section', target: 'founder' },
   { id: 'experiences', label: 'Empresas',    kind: 'section', target: 'experiences' },
   { id: 'book',        label: 'Reservar',    kind: 'action' },
 ];
