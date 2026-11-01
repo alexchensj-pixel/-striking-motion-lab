@@ -14,7 +14,7 @@ const MAIN = [
   { id: 'explore', label: 'Descubrir', target: 'explore' },
   { id: 'method', label: 'Método', target: 'method' },
   { id: 'training', label: 'Entrenamiento', target: 'training' },
-  { id: 'founder', label: 'Sobre Chen', target: 'founder' },
+  { id: 'founder', label: 'Sobre Alex', target: 'founder' },
   { id: 'experiences', label: 'Empresas', target: 'experiences' },
 ];
 const ACTION = { id: 'book', label: 'Reservar' }; // data-id="book": conserva el acento definido en global.css
