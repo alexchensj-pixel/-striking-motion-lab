@@ -50,7 +50,7 @@ export function crearVerificador(env = process.env) {
       const { payload } = await jwtVerify(token, jwks, { issuer, audience, algorithms: ['RS256'] });
       const identidad = extraerIdentidad(payload);
       let { email, email_verified } = identidad;
-      if (!email) {
+      if (!email || !email_verified) {
         const r = await fetch(`${issuer}userinfo`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } });
         if (r.ok) {
           const u = await r.json();
