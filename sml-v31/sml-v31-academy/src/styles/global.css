@@ -2589,3 +2589,15 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 /* Acordeones (FAQ): respuesta visible al tocar */
 .faq__q:active, .fq1__q:active { background: rgba(143, 179, 255, .12); }
 @media (hover: hover) { .faq__q:hover, .fq1__q:hover { background: rgba(143, 179, 255, .08); } }
+
+
+/* ===================================================================================================================
+   RECORRIDO C · CONVERSIÓN. Barra fija con dos acciones: reservar (principal, sólida) y WhatsApp (secundaria, contorno).
+   =============================================================================================================== */
+.scta { gap: .4rem; }
+.scta__btn { display: inline-flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; box-sizing: border-box; cursor: pointer; }
+.scta__btn:not(.scta__btn--wa) { background: var(--fg); color: var(--bg); border-color: var(--fg); text-shadow: none; font-weight: 700; }
+.scta__btn--wa { min-height: 2.5rem; font-size: .8125rem; border: 1px solid rgba(143, 179, 255, .6); background: rgba(5, 6, 8, .85); color: var(--fg); }
+.scta__btn--wa::after { content: '↗'; margin-left: .45rem; }
+.scta__btn:active { transform: translateY(1px); }
+@media (hover: hover) { .scta__btn--wa:hover { background: rgba(143, 179, 255, .18); border-color: var(--accent); color: #fff; } }

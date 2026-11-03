@@ -166,7 +166,7 @@ export const trainingUi = {
   ctaPlan: 'EMPEZAR CON LA EVALUACIÓN',
   ctaHibrido: 'RESERVAR EVALUACIÓN',
   directoTitulo: 'ELECCIÓN DIRECTA',
-  directoNota: 'Sin pasos previos.',
+  directoNota: 'Sin pasos previos. Sesiones de 60 minutos · material incluido.',
   configurar: 'CONFIGURAR FRECUENCIA',
   configurarLinea: 'Combina 1:1 y grupo reducido en tu semana.',
   volverDirecto: 'ELEGIR DIRECTAMENTE',

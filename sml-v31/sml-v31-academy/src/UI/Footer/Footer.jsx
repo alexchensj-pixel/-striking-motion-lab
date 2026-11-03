@@ -36,16 +36,16 @@ export default function Footer() {
         <p className="ph-text">{cierre.texto}</p>
         <div className="foot__rutas">
           <div className="foot__ruta">
-            <p className="label">¿Ya sabes qué quieres?</p>
-            <button type="button" className="btn foot__rutaBtn" onClick={() => irAReservar()}>Reservar</button>
+            <p className="label">Ya tengo claro lo que busco</p>
+            <button type="button" className="btn foot__rutaBtn" onClick={() => irAReservar()}>Reservar evaluación</button>
           </div>
           <div className="foot__ruta">
-            <p className="label">¿No?</p>
-            <button type="button" className="btn foot__rutaBtn" onClick={() => goToSection('explore')}>Descubrir</button>
+            <p className="label">Necesito orientación</p>
+            <button type="button" className="btn foot__rutaBtn" onClick={() => window.open(waLink(cierre.mensajeAsesoria), '_blank', 'noopener')}>Hablar por WhatsApp</button>
           </div>
           <div className="foot__ruta">
-            <p className="label">¿Eres empresa, hotel o evento?</p>
-            <button type="button" className="btn foot__rutaBtn" onClick={() => goToSection('experiences')}>Hablar con SML</button>
+            <p className="label">Soy empresa, hotel o evento</p>
+            <button type="button" className="btn foot__rutaBtn" onClick={() => goToSection('experiences')}>Contactar con SML</button>
           </div>
         </div>
         <p className="label">{site.ciudad} · {site.disciplinas}</p>

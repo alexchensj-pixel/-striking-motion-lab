@@ -50,7 +50,8 @@ export const hero = {
   titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
   disciplinasLinea: 'Boxeo · K1 · Muay Thai',
   ctaReservar: 'Reservar evaluación · 30 €',
-  ctaExplorar: 'No sé qué necesito → Descubrir',
+  ctaExplorar: '¿No sabes por dónde empezar? Te oriento →',
+  mensajeOrientacion: 'Hola, no sé por dónde empezar. ¿Puedes orientarme?',
   contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
   // Sin uso en pantalla. Reescrito: la web no recomienda disciplina automáticamente.
@@ -240,7 +241,7 @@ export const explore = {
   // Etiquetas de los bloques de la disciplina elegida.
   bloques: { personaje: 'Personaje y vídeo', que: 'Qué es', como: 'Cómo se entrena', desarrolla: 'Qué desarrolla', glosario: 'Glosario' },
   tuEleccion: 'Tu elección',
-  verLas3: 'Ver las tres disciplinas',
+  verLas3: 'Conocer las disciplinas',
   seleccionado: 'Seleccionado',
   profundizar: 'Profundizar',
   cerrar: 'Cerrar',
@@ -380,6 +381,8 @@ export const faq = [
   { q: '¿Dónde entrenamos y tiene coste el desplazamiento?', a: 'Acordamos el lugar según tu zona, con todo el material incluido. En la zona A de Metro de Madrid el desplazamiento está incluido; fuera de ella se añaden 10 € por sesión (en parejas y grupos, una sola vez por sesión compartida, no por persona). Para otras localidades te confirmo la disponibilidad y el suplemento por WhatsApp antes de contratar.' },
   { q: '¿Puedo cambiar o cancelar una sesión?', a: 'Sí, avisándome con al menos 24 horas. Con menos de 24 horas, la sesión se consume. Si soy yo quien necesita aplazarla por motivos organizativos, la recuperamos la semana siguiente, según mi disponibilidad. Los planes son mensuales: las sesiones no se acumulan ni pasan al mes siguiente.' },
   { q: '¿Cuánto cuesta cada sesión dentro de un plan?', a: 'Entre 22,50 € y 27,50 € por sesión de 60 minutos, según el plan, frente a 30 € de la sesión suelta.' },
+  { q: '¿Qué diferencia hay entre una sesión suelta y un plan mensual?', a: 'La sesión suelta cuesta 30 € y no te compromete a nada. Los planes mensuales fijan una frecuencia semanal y salen más baratos por sesión: Arsenal 110 € (4 sesiones), Striker 185 € (8) y Fight IQ 270 € (12). Si empiezas con la evaluación inicial y contratas un plan, los 30 € se descuentan.' },
+  { q: '¿Cómo funcionan los grupos y cómo me apunto?', a: 'Son grupos de máximo 4 personas: 15 € por persona y sesión, o con bono por persona, 55 € por 4 clases al mes y 95 € por 8 clases al mes. Se forman por zona, día y hora: en Entrenamiento eliges «Grupo reducido», ves los grupos abiertos en tu zona y te apuntas, o me escribes por WhatsApp y te propongo uno.' },
 ];
 
 export const empresas = {
@@ -396,7 +399,7 @@ export const empresas = {
 
 export const cierre = {
   titulo: 'No necesitas saber qué entrenar.',
-  texto: 'Descubre tu disciplina — o reserva directamente si ya lo tienes claro.',
+  texto: 'Reserva si ya lo tienes claro; si necesitas orientación, escríbeme y te recomiendo por dónde empezar.',
   yaSe: 'Ya sé lo que quiero — Reservar →',
   noSe: 'No sé qué elegir — Solicitar asesoramiento →',
   mensajeAsesoria: 'Hola, sigo sin tener claro qué disciplina encaja conmigo. ¿Puedes orientarme?',

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useStore } from '../../App/store.js';
 import { goToSection, irAReservar, scrollToChapterProgress } from '../../Scene/Transitions/navigation.js';
 import { existingPlans } from '../../Data/Programs.js';
+import { waLink } from '../../Data/Content.js';
 
 // CTA fijo CONTEXTUAL (V27 MAPA · paso 7). Una sola acción por pantalla, la que no duplica ninguna local:
 //   home · reserva · footer            → oculto (HOME ya trae RESERVAR; Reserva ES la reserva; el footer trae sus tres caminos)
@@ -49,24 +50,13 @@ export default function StickyCTA() {
   else if (chapter === 'proof-chen') accion = 'reservar';
   if (!accion) return null;
 
+  // Reserva y orientación siempre a mano. En MÉTODO la reserva ya la trae su propio CTA: solo queda WhatsApp.
   return (
     <div className="scta" data-chapter={chapter} data-cta={accion}>
-      {/* El texto y el destino coinciden: desde DISCIPLINAS, «Descubrir mi entrenamiento» lleva a DESCUBRIR; ya dentro de DESCUBRIR, el paso siguiente es el MÉTODO. */}
-      {accion === 'descubrir' && focus === 'disciplinas' && (
-        <button type="button" className="scta__btn" onClick={() => goToSection('explore')}>Descubrir mi entrenamiento</button>
-      )}
-      {accion === 'descubrir' && focus !== 'disciplinas' && (
-        <button type="button" className="scta__btn" onClick={() => goToSection('method')}>Ver el método</button>
-      )}
-      {accion === 'evaluacion' && (
+      {accion !== 'evaluacion' && (
         <button type="button" className="scta__btn" onClick={() => irAReservar()}>Reservar evaluación · {sesion.precio} €</button>
       )}
-      {accion === 'entrenamiento' && (
-        <button type="button" className="scta__btn" onClick={() => scrollToChapterProgress('slot', 0.5 / 4)}>Elegir mi entrenamiento</button>
-      )}
-      {accion === 'reservar' && (
-        <button type="button" className="scta__btn" onClick={() => irAReservar()}>Reservar · {sesion.precio} €</button>
-      )}
+      <a className="scta__btn scta__btn--wa" href={waLink('Hola, tengo una duda antes de reservar. ¿Puedes orientarme?')} target="_blank" rel="noopener noreferrer">Hablar por WhatsApp</a>
     </div>
   );
 }
