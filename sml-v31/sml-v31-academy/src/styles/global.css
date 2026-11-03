@@ -2554,3 +2554,38 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 .ent__links .ent__b2bLink { max-width: none; width: auto; }
 .ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 13.5rem); pointer-events: none; }
 .ent__actions { z-index: 5; }
+
+
+/* ===================================================================================================================
+   RECORRIDO C · BOTONES RECONOCIBLES. Todo lo que se puede pulsar tiene superficie, contorno, tamaño táctil, indicador
+   de dirección y respuesta al tocar. Mantiene la estética existente (esquinas rectas, mono en mayúsculas, acento azul).
+   Jerarquía: principal = relleno sólido; secundario = contorno + fondo translúcido; terciario = ficha pequeña de ruta.
+   Títulos y textos informativos no llevan contorno ni flecha.
+   =============================================================================================================== */
+.ent__explorar, .ent__b2bLink, .ex__estudio, .ex__reset, .exs__more, .pf__more, .pf__link, .xp__link, .es__close, .xp__close, .tr__clear, .foot__link {
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  min-height: 2.75rem; padding: 0 1rem; box-sizing: border-box;
+  border: 1px solid rgba(143, 179, 255, .55); background: rgba(5, 6, 8, .6);
+  text-decoration: none; cursor: pointer;
+  -webkit-tap-highlight-color: rgba(143, 179, 255, .28);
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .08s ease;
+}
+.ent__explorar:active, .ent__b2bLink:active, .ex__estudio:active, .ex__reset:active, .exs__more:active, .pf__more:active, .pf__link:active, .xp__link:active, .es__close:active, .xp__close:active, .tr__clear:active, .foot__link:active { transform: translateY(1px); background: rgba(143, 179, 255, .26); border-color: var(--accent); }
+.ent__explorar:focus-visible, .ent__b2bLink:focus-visible, .ex__estudio:focus-visible, .ex__reset:focus-visible, .exs__more:focus-visible, .pf__more:focus-visible, .pf__link:focus-visible, .xp__link:focus-visible, .es__close:focus-visible, .xp__close:focus-visible, .tr__clear:focus-visible, .foot__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (hover: hover) {
+  .ent__explorar:hover, .ent__b2bLink:hover, .ex__estudio:hover, .ex__reset:hover, .exs__more:hover, .pf__more:hover, .pf__link:hover, .xp__link:hover, .es__close:hover, .xp__close:hover, .tr__clear:hover, .foot__link:hover { background: rgba(143, 179, 255, .16); border-color: var(--accent); color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .ent__explorar, .ent__b2bLink, .ex__estudio, .ex__reset, .exs__more, .pf__more, .pf__link, .xp__link, .es__close, .xp__close, .tr__clear, .foot__link { transition: none; } }
+
+/* Indicadores de dirección cuando el texto no los lleva */
+.ent__links .ent__b2bLink::after, .foot__link::after, .ex__reset::after { content: '→'; font-family: var(--font-mono, monospace); }
+.pf__link::after { content: '↗'; font-family: var(--font-mono, monospace); }
+
+/* Hero: acción secundaria a todo el ancho y fila de rutas como fichas pequeñas */
+.ent__explorar { width: 100%; border-color: rgba(217, 221, 230, .6); }
+.ent__links { gap: .5rem; }
+.ent__links .ent__b2bLink { flex: 0 1 auto; min-height: 2.5rem; padding: 0 .8rem; font-family: var(--ent-mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg); opacity: 1; }
+
+/* Acordeones (FAQ): respuesta visible al tocar */
+.faq__q:active, .fq1__q:active { background: rgba(143, 179, 255, .12); }
+@media (hover: hover) { .faq__q:hover, .fq1__q:hover { background: rgba(143, 179, 255, .08); } }

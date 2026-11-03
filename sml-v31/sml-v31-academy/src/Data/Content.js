@@ -40,8 +40,9 @@ export const hero = {
   // Ruta secundaria (no compite con las dos anteriores).
   ctaB2B: 'Empresas · Hoteles · Eventos →',
   // Recorrido C (prueba): rutas rápidas, modalidades y confianza en el primer pantallazo.
-  ctaPrecios: 'Precios →',
-  ctaGrupos: 'Parejas y grupos →',
+  ctaPrecios: 'Precios',
+  ctaGrupos: 'Parejas y grupos',
+  ctaEmpresas: 'Empresas y eventos',
   modalidades: 'Individual · Parejas · Grupos reducidos',
   confianza: `${ratingTexto} · 3.º en K1 −57 kg, Copa de España 2025`,
   // V22 — mensaje principal de HOME (visible desde el primer fotograma; no depende de ninguna animación ni del scroll).
