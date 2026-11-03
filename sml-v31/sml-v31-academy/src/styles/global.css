@@ -2601,3 +2601,7 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 .scta__btn--wa::after { content: '↗'; margin-left: .45rem; }
 .scta__btn:active { transform: translateY(1px); }
 @media (hover: hover) { .scta__btn--wa:hover { background: rgba(143, 179, 255, .18); border-color: var(--accent); color: #fff; } }
+
+/* Condiciones junto a las tarifas: legibles, secundarias y sin parecer botones. */
+.tr__tarNota { list-style: none; margin: .65rem 0 0; padding: .6rem 0 0; border-top: 1px solid rgba(217, 221, 230, .18); display: grid; gap: .3rem; }
+.tr__tarNota li { font-size: .6875rem; line-height: 1.45; letter-spacing: .02em; color: var(--dim); }

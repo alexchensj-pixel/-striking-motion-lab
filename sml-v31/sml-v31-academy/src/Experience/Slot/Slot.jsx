@@ -3,7 +3,7 @@ import Chapter from '../Chapter.jsx';
 import GrupoFinder from './GrupoFinder.jsx';
 import { slotState, reflectDrum, pingMachine, pullLever } from './slotState.js';
 import {
-  training, preguntas, salidas, detalleDe, desdeGrupo, planesMensuales, planLinea, starterKit, trainingUi, sesionesPrecios, sesionesTitulo,
+  training, preguntas, salidas, detalleDe, desdeGrupo, planesMensuales, planLinea, starterKit, trainingUi, sesionesPrecios, sesionesTitulo, condicionesTarifas,
   MODALIDADES_COMBO, CAPACIDAD_BANDEJA, MIN_MODALIDADES, FRECUENCIA_NUM, sesionesDe, propuestaCombinacion, conteo, armarPlan,
 } from '../../Data/Slot.js';
 import { grupos } from '../../Data/Grupos.js';
@@ -227,6 +227,9 @@ export default function Slot() {
                 <p className="tr__tarK">{planesMensuales.titulo}</p>
                 <ul className="tr__tarL">
                   {planesMensuales.items.map((p) => <li key={p.id}>{planLinea(p)}</li>)}
+                </ul>
+                <ul className="tr__tarNota" aria-label="Condiciones">
+                  {condicionesTarifas.map((c) => <li key={c}>{c}</li>)}
                 </ul>
               </div>
               {/* V27 · paso 7: la duda de quien ve las tarifas (misma pregunta de faq[]). */}

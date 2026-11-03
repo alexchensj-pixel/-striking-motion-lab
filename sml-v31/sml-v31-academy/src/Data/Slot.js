@@ -181,3 +181,10 @@ export const trainingUi = {
   grupoAnclar: 'ANCLAR MI TRAMO EN GRUPO',
   evalTitulo: empezar.titulo, evalTexto: empezar.texto, evalCta: 'RESERVAR EVALUACIÓN',
 };
+
+// Condiciones visibles junto a las tarifas (no escondidas en el pie ni en la FAQ). Mismos criterios que la FAQ.
+export const condicionesTarifas = [
+  'Sesiones de 60 minutos · material incluido.',
+  'Bonos de grupo, por persona: 55 € por 4 clases al mes · 95 € por 8 clases al mes.',
+  'Zona A de Metro de Madrid: desplazamiento incluido. Fuera de zona A: +10 € por sesión (una sola vez en parejas y grupos).',
+];
