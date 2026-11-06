@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import Chapter from '../Chapter.jsx';
 import PhotoBackdrop from '../../Scene/PhotoBackdrop.jsx';
 import { gsap } from '../../Scene/Transitions/gsap.js';
-import { hero, entradaNarrativa } from '../../Data/Content.js';
+import { hero, entradaNarrativa, waLink } from '../../Data/Content.js';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 
 // 01 — Entrada. El mundo (corredor, portales) es 3D y vive en Scene/Environment/Entrada.
@@ -80,6 +80,8 @@ export default function Entrada() {
               {hero.titulo.map((line) => <span key={line}>{line}</span>)}
             </h1>
             <p className="ent__disc">{hero.disciplinasLinea}</p>
+            <p className="ent__mod">{hero.modalidades}</p>
+            <p className="ent__confianza">{hero.confianza}</p>
           </div>
 
           <div className="ent__cue" aria-hidden="true">
@@ -102,8 +104,12 @@ export default function Entrada() {
               Todas por goToSection: DESCUBRIR desde aquí recorre el Bridge (animado); RESERVAR y B2B saltan directo, sin atravesar capítulos. */}
           <div className="ent__actions">
             <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>{hero.ctaReservar}</button>
-            <button type="button" className="ent__explorar" onClick={() => goToSection('explore')}>{hero.ctaExplorar}</button>
-            <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>{hero.ctaB2B}</button>
+            <button type="button" className="ent__explorar" onClick={() => window.open(waLink(hero.mensajeOrientacion), '_blank', 'noopener')}>{hero.ctaExplorar}</button>
+            <div className="ent__links">
+              <button type="button" className="ent__b2bLink" onClick={() => goToSection('training')}>{hero.ctaPrecios}</button>
+              <button type="button" className="ent__b2bLink" onClick={() => goToSection('training')}>{hero.ctaGrupos}</button>
+              <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>{hero.ctaEmpresas}</button>
+            </div>
           </div>
         </div>
       </Chapter>

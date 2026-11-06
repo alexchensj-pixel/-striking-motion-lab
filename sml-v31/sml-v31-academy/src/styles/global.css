@@ -76,10 +76,10 @@ ul, ol { list-style: none; }
   display: flex; flex-direction: column; justify-content: center;
   padding: 3.5rem 1.25rem 3rem var(--pad-l);
 }
-.threshold { height: 50vh; position: relative; }
+.threshold { height: 20vh; position: relative; }
 /* Umbral HOME → EXPLORE: aloja el BRIDGE (cuerpo → combate → mapa), 180vh de scroll. Su progreso lo reparten Bridge.jsx / BridgeHall.jsx
    (BRIDGE_END, BRIDGE_OUT_END en scrollState.js). El resto de umbrales siguen siendo tramos cortos de 50vh (salvo los dos de abajo). */
-.threshold[data-threshold="entrada>character-select"] { height: 180vh; }
+.threshold[data-threshold="entrada>character-select"] { height: 100vh; }
 /* 02→03 (velo) y 05→06 (aproximación a la puerta) no traen contenido propio: 10vh de alto = 110vh de recorrido (antes 150vh). */
 .threshold[data-threshold="character-select>asesoria-lab"],
 .threshold[data-threshold="proof-chen>reserva"] { height: 10vh; }
@@ -1198,7 +1198,7 @@ nav.nav li[data-id="book"] { margin-top: .9rem; padding-top: .35rem; border-top:
    pero más simple: una lista de filas numeradas que se despliegan. Sin tarjetas.
    ===================================================================================================== */
 /* El umbral 04→05 arranca tras la FAQ (ver Threshold.jsx `start`): tramo completo de velo + viaje de cámara. */
-.threshold[data-threshold="slot>proof-chen"] { height: 100vh; }
+.threshold[data-threshold="slot>proof-chen"] { height: 30vh; }
 
 .faq { --faq-grid: rgba(143, 179, 255, .05); position: relative; z-index: 2; isolation: isolate; pointer-events: auto; background: var(--bg); border-top: 1px solid var(--line);
   padding: clamp(4.5rem, 12vh, 7rem) max(1.25rem, env(safe-area-inset-right)) clamp(4.5rem, 10vh, 6.5rem) var(--pad-l); }
@@ -2543,3 +2543,65 @@ body:has(.pf[data-stage="3"]) .scta[data-chapter="proof-chen"] { opacity: 0; vis
 /* NAVEGACIÓN: el destino activo se lee a primera vista (barra de acento más gruesa, texto en peso 600 y subrayado de acento), sin cajas ni iconos. */
 nav.nav li[data-on="true"]::before { width: 2px; }
 nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var(--accent); }
+
+
+/* ===================================================================================================================
+   RECORRIDO C · VERSIÓN DE PRUEBA. Hero con modalidades y confianza, rutas rápidas en una fila y claim que no tapa los CTA.
+   =============================================================================================================== */
+.ent__mod { margin: .35rem 0 0; font-family: var(--ent-mono); font-size: clamp(.6875rem, 2.1vw, .8rem); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); text-shadow: 0 1px 8px rgba(0, 0, 0, .8); }
+.ent__confianza { margin: .55rem 0 0; font-family: var(--ent-mono); font-size: clamp(.625rem, 2vw, .75rem); letter-spacing: .08em; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .85); }
+.ent__links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0 .85rem; width: 100%; }
+.ent__links .ent__b2bLink { max-width: none; width: auto; }
+.ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 13.5rem); pointer-events: none; }
+.ent__actions { z-index: 5; }
+
+
+/* ===================================================================================================================
+   RECORRIDO C · BOTONES RECONOCIBLES. Todo lo que se puede pulsar tiene superficie, contorno, tamaño táctil, indicador
+   de dirección y respuesta al tocar. Mantiene la estética existente (esquinas rectas, mono en mayúsculas, acento azul).
+   Jerarquía: principal = relleno sólido; secundario = contorno + fondo translúcido; terciario = ficha pequeña de ruta.
+   Títulos y textos informativos no llevan contorno ni flecha.
+   =============================================================================================================== */
+.ent__explorar, .ent__b2bLink, .ex__estudio, .ex__reset, .exs__more, .pf__more, .pf__link, .xp__link, .es__close, .xp__close, .tr__clear, .foot__link {
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  min-height: 2.75rem; padding: 0 1rem; box-sizing: border-box;
+  border: 1px solid rgba(143, 179, 255, .55); background: rgba(5, 6, 8, .6);
+  text-decoration: none; cursor: pointer;
+  -webkit-tap-highlight-color: rgba(143, 179, 255, .28);
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .08s ease;
+}
+.ent__explorar:active, .ent__b2bLink:active, .ex__estudio:active, .ex__reset:active, .exs__more:active, .pf__more:active, .pf__link:active, .xp__link:active, .es__close:active, .xp__close:active, .tr__clear:active, .foot__link:active { transform: translateY(1px); background: rgba(143, 179, 255, .26); border-color: var(--accent); }
+.ent__explorar:focus-visible, .ent__b2bLink:focus-visible, .ex__estudio:focus-visible, .ex__reset:focus-visible, .exs__more:focus-visible, .pf__more:focus-visible, .pf__link:focus-visible, .xp__link:focus-visible, .es__close:focus-visible, .xp__close:focus-visible, .tr__clear:focus-visible, .foot__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (hover: hover) {
+  .ent__explorar:hover, .ent__b2bLink:hover, .ex__estudio:hover, .ex__reset:hover, .exs__more:hover, .pf__more:hover, .pf__link:hover, .xp__link:hover, .es__close:hover, .xp__close:hover, .tr__clear:hover, .foot__link:hover { background: rgba(143, 179, 255, .16); border-color: var(--accent); color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .ent__explorar, .ent__b2bLink, .ex__estudio, .ex__reset, .exs__more, .pf__more, .pf__link, .xp__link, .es__close, .xp__close, .tr__clear, .foot__link { transition: none; } }
+
+/* Indicadores de dirección cuando el texto no los lleva */
+.ent__links .ent__b2bLink::after, .foot__link::after, .ex__reset::after { content: '→'; font-family: var(--font-mono, monospace); }
+.pf__link::after { content: '↗'; font-family: var(--font-mono, monospace); }
+
+/* Hero: acción secundaria a todo el ancho y fila de rutas como fichas pequeñas */
+.ent__explorar { width: 100%; border-color: rgba(217, 221, 230, .6); }
+.ent__links { gap: .5rem; }
+.ent__links .ent__b2bLink { flex: 0 1 auto; min-height: 2.5rem; padding: 0 .8rem; font-family: var(--ent-mono); font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg); opacity: 1; }
+
+/* Acordeones (FAQ): respuesta visible al tocar */
+.faq__q:active, .fq1__q:active { background: rgba(143, 179, 255, .12); }
+@media (hover: hover) { .faq__q:hover, .fq1__q:hover { background: rgba(143, 179, 255, .08); } }
+
+
+/* ===================================================================================================================
+   RECORRIDO C · CONVERSIÓN. Barra fija con dos acciones: reservar (principal, sólida) y WhatsApp (secundaria, contorno).
+   =============================================================================================================== */
+.scta { gap: .4rem; }
+.scta__btn { display: inline-flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; box-sizing: border-box; cursor: pointer; }
+.scta__btn:not(.scta__btn--wa) { background: var(--fg); color: var(--bg); border-color: var(--fg); text-shadow: none; font-weight: 700; }
+.scta__btn--wa { min-height: 2.5rem; font-size: .8125rem; border: 1px solid rgba(143, 179, 255, .6); background: rgba(5, 6, 8, .85); color: var(--fg); }
+.scta__btn--wa::after { content: '↗'; margin-left: .45rem; }
+.scta__btn:active { transform: translateY(1px); }
+@media (hover: hover) { .scta__btn--wa:hover { background: rgba(143, 179, 255, .18); border-color: var(--accent); color: #fff; } }
+
+/* Condiciones junto a las tarifas: legibles, secundarias y sin parecer botones. */
+.tr__tarNota { list-style: none; margin: .65rem 0 0; padding: .6rem 0 0; border-top: 1px solid rgba(217, 221, 230, .18); display: grid; gap: .3rem; }
+.tr__tarNota li { font-size: .6875rem; line-height: 1.45; letter-spacing: .02em; color: var(--dim); }

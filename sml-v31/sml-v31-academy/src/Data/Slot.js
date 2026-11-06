@@ -93,7 +93,7 @@ export const PLANES_DESDE = 55; // «Planes mensuales · Desde 55 €/mes» (gru
 export const salidas = [
   { id: '1-1', formato: '1-1', nombre: '1:1', linea: 'Privado', precio: `${precioDe('1-1')} €/sesión` },
   { id: 'duo', formato: 'duo', nombre: 'PAREJAS', linea: '2 personas', precio: `${precioDe('duo')} €/persona/sesión` },
-  { id: 'grupo', formato: 'grupo', nombre: 'GRUPO REDUCIDO', linea: 'Máximo 4', precio: `${precioDe('grupo')} €/sesión · desde ${PLANES_DESDE} €/mes` },
+  { id: 'grupo', formato: 'grupo', nombre: 'GRUPO REDUCIDO', linea: 'Máximo 4', precio: `${precioDe('grupo')} €/persona/sesión · bonos 55 € y 95 €/mes` },
 ];
 // Texto de detalle de cada salida: el existente de Programs.js (existingPlans).
 export const desdeGrupo = existingPlans.find((p) => p.id === 'grupo')?.desde ?? '';
@@ -113,14 +113,14 @@ export const preguntas = [
 
 // ---- PRECIOS (todos salen de Programs.js → existingPlans / kitInicio; ninguno se calcula) ----
 export const sesionesPrecios = [
-  { id: 'sesion-privada', formato: '1-1',   nombre: 'SESIÓN PRIVADA',  precio: precioDe('1-1'),   unidad: '/sesión',          texto: 'Entrenamiento privado y personalizado.' },
+  { id: 'sesion-privada', formato: '1-1',   nombre: 'SESIÓN INDIVIDUAL',  precio: precioDe('1-1'),   unidad: '/sesión',          texto: 'Entrenamiento privado y personalizado.' },
   { id: 'parejas',        formato: 'duo',   nombre: 'PAREJAS',         precio: precioDe('duo'),   unidad: '/persona/sesión',  texto: 'Entrenamiento junto a otra persona.' },
-  { id: 'grupo',          formato: 'grupo', nombre: 'GRUPO REDUCIDO',  precio: precioDe('grupo'), unidad: '/sesión',          texto: 'Máximo 4 personas.' },
+  { id: 'grupo',          formato: 'grupo', nombre: 'GRUPO REDUCIDO',  precio: precioDe('grupo'), unidad: '/persona/sesión',          texto: 'Máximo 4 personas.' },
 ];
 export const planesMensuales = {
   titulo: 'PLANES MENSUALES',
   desde: PLANES_DESDE,
-  desdeNota: 'En grupo reducido, con frecuencia mensual. Los planes 1:1 van debajo.',
+  desdeNota: 'Bonos de grupo por persona: 55 € por 4 clases al mes o 95 € por 8 clases al mes. Los planes individuales van debajo.',
   nota: 'Los 30 € de la evaluación inicial se descuentan del primer pago mensual.',
   items: planes.map((p) => ({
     id: p.id, nombre: p.nombre.toUpperCase(), precio: p.precio, unidad: '/mes', sesionesSemana: p.sesionesSemana,
@@ -161,12 +161,12 @@ export const trainingUi = {
   hibridoReglas: hibrido.reglas,
   hibridoRegla: slot.combinacion.regla,
   tuCombinacion: slot.combinacion.tuCombinacion,
-  ctaSesion: 'RESERVAR SESIÓN PRIVADA',
+  ctaSesion: 'RESERVAR EVALUACIÓN',
   ctaParejas: 'ESCRIBIR PARA ENTRENAR EN PAREJAS',
   ctaPlan: 'EMPEZAR CON LA EVALUACIÓN',
   ctaHibrido: 'RESERVAR EVALUACIÓN',
   directoTitulo: 'ELECCIÓN DIRECTA',
-  directoNota: 'Sin pasos previos.',
+  directoNota: 'Sin pasos previos. Sesiones de 60 minutos · material incluido.',
   configurar: 'CONFIGURAR FRECUENCIA',
   configurarLinea: 'Combina 1:1 y grupo reducido en tu semana.',
   volverDirecto: 'ELEGIR DIRECTAMENTE',
@@ -181,3 +181,10 @@ export const trainingUi = {
   grupoAnclar: 'ANCLAR MI TRAMO EN GRUPO',
   evalTitulo: empezar.titulo, evalTexto: empezar.texto, evalCta: 'RESERVAR EVALUACIÓN',
 };
+
+// Condiciones visibles junto a las tarifas (no escondidas en el pie ni en la FAQ). Mismos criterios que la FAQ.
+export const condicionesTarifas = [
+  'Sesiones de 60 minutos · material incluido.',
+  'Bonos de grupo, por persona: 55 € por 4 clases al mes · 95 € por 8 clases al mes.',
+  'Zona A de Metro de Madrid: desplazamiento incluido. Fuera de zona A: +10 € por sesión (una sola vez en parejas y grupos).',
+];
