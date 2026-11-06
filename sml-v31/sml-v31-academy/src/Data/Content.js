@@ -74,12 +74,12 @@ export const entradaNarrativa = {
 // id = nombre técnico interno del módulo (Experience/<Id>). label = lo que ve el usuario.
 // p.ej. 'character-select' es el módulo interno; el usuario nunca ve esa palabra, ve "Descubrir".
 export const chapters = [
-  { id: 'entrada',          n: '01', label: 'Inicio',                vh: 140 },
-  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 165 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 65vh de meseta antes del umbral (antes 35: se entraba en el velo eligiendo)
-  { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 160 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
-  { id: 'slot',             n: '04', label: 'Entrenamiento',         vh: 280 }, // cuatro pasos (Elección directa · Frecuencia · Combinación · Resultado) sobre las piezas de la máquina 3D: pantalla fija; el primero ya es una elección completa (420 vh era para seis)
-  { id: 'proof-chen',       n: '05', label: 'Sobre Alex',            vh: 140 },
-  { id: 'reserva',          n: '06', label: 'Reserva',               vh: 160 }, // 60vh de llegada (antes 40): el umbral 05→06 cede ese tiempo a la puerta
+  { id: 'entrada',          n: '01', label: 'Inicio',                vh: 110 },
+  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 125 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 65vh de meseta antes del umbral (antes 35: se entraba en el velo eligiendo)
+  { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 120 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
+  { id: 'slot',             n: '04', label: 'Entrenamiento',         vh: 240 }, // cuatro pasos (Elección directa · Frecuencia · Combinación · Resultado) sobre las piezas de la máquina 3D: pantalla fija; el primero ya es una elección completa (420 vh era para seis)
+  { id: 'proof-chen',       n: '05', label: 'Sobre Alex',            vh: 110 },
+  { id: 'reserva',          n: '06', label: 'Reserva',               vh: 130 }, // 60vh de llegada (antes 40): el umbral 05→06 cede ese tiempo a la puerta
 ];
 
 export const chapterById = Object.fromEntries(chapters.map((c) => [c.id, c]));

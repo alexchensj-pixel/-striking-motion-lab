@@ -56,6 +56,9 @@ export default function StickyCTA() {
       {accion !== 'evaluacion' && (
         <button type="button" className="scta__btn" onClick={() => irAReservar()}>Reservar evaluación · {sesion.precio} €</button>
       )}
+      {(accion === 'descubrir' || accion === 'evaluacion') && (
+        <button type="button" className="scta__btn" onClick={() => goToSection('training')}>Ver precios ↓</button>
+      )}
       <a className="scta__btn scta__btn--wa" href={waLink('Hola, tengo una duda antes de reservar. ¿Puedes orientarme?')} target="_blank" rel="noopener noreferrer">Hablar por WhatsApp</a>
     </div>
   );
