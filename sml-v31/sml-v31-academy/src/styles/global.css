@@ -76,10 +76,10 @@ ul, ol { list-style: none; }
   display: flex; flex-direction: column; justify-content: center;
   padding: 3.5rem 1.25rem 3rem var(--pad-l);
 }
-.threshold { height: 20vh; position: relative; }
+.threshold { height: 50vh; position: relative; }
 /* Umbral HOME → EXPLORE: aloja el BRIDGE (cuerpo → combate → mapa), 180vh de scroll. Su progreso lo reparten Bridge.jsx / BridgeHall.jsx
    (BRIDGE_END, BRIDGE_OUT_END en scrollState.js). El resto de umbrales siguen siendo tramos cortos de 50vh (salvo los dos de abajo). */
-.threshold[data-threshold="entrada>character-select"] { height: 100vh; }
+.threshold[data-threshold="entrada>character-select"] { height: 180vh; }
 /* 02→03 (velo) y 05→06 (aproximación a la puerta) no traen contenido propio: 10vh de alto = 110vh de recorrido (antes 150vh). */
 .threshold[data-threshold="character-select>asesoria-lab"],
 .threshold[data-threshold="proof-chen>reserva"] { height: 10vh; }
@@ -1198,7 +1198,7 @@ nav.nav li[data-id="book"] { margin-top: .9rem; padding-top: .35rem; border-top:
    pero más simple: una lista de filas numeradas que se despliegan. Sin tarjetas.
    ===================================================================================================== */
 /* El umbral 04→05 arranca tras la FAQ (ver Threshold.jsx `start`): tramo completo de velo + viaje de cámara. */
-.threshold[data-threshold="slot>proof-chen"] { height: 30vh; }
+.threshold[data-threshold="slot>proof-chen"] { height: 100vh; }
 
 .faq { --faq-grid: rgba(143, 179, 255, .05); position: relative; z-index: 2; isolation: isolate; pointer-events: auto; background: var(--bg); border-top: 1px solid var(--line);
   padding: clamp(4.5rem, 12vh, 7rem) max(1.25rem, env(safe-area-inset-right)) clamp(4.5rem, 10vh, 6.5rem) var(--pad-l); }
