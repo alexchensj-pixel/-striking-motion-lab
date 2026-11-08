@@ -138,8 +138,8 @@ export const bridge = {
 // Los textos van en minúscula/normal: las versiones en mayúsculas (display) se aplican por CSS.
 export const seleccion = {
   // Eje de la escena (título) y cierre. La pregunta final NO responde nada: abre la siguiente fase.
-  pregunta: '¿Qué posibilidades existen?',
-  lead: 'Antes de elegir una disciplina, descubre cómo puedes entrenar.',
+  pregunta: 'Formas de entrenar',
+  lead: '',
   cierre: '¿Y qué tiene sentido para ti?',
 
   // Capa 1 — formas de vivir el entrenamiento.
