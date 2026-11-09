@@ -4,6 +4,7 @@ import App from './App/App.jsx';
 import LegalPage from './UI/Legal/LegalPage.jsx';
 import { RUTAS } from './Data/Legal.js';
 import './styles/global.css';
+import './styles/mobile-discovery.css';
 
 // MI SML (/mi-sml): zona privada del cliente, aplicación independiente de la experiencia 3D pública (sin canvas, sin scroll-scrub).
 // Se carga bajo demanda: la web pública no descarga nada de ella.

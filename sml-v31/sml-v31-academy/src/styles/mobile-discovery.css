@@ -1,0 +1,95 @@
+/* Mobile discovery: the 3D fighters remain the scene, while the choices become visible,
+   legible and tappable instead of remaining screen-reader-only. */
+@media (max-aspect-ratio: 11/10) {
+  .ex__panel {
+    background: linear-gradient(180deg, rgba(5, 6, 8, .88) 0%, rgba(5, 6, 8, .96) 100%) !important;
+    pointer-events: auto;
+  }
+
+  .ex__body[data-empty="true"] .ex__panel {
+    background: linear-gradient(180deg, rgba(5, 6, 8, .88) 0%, rgba(5, 6, 8, .96) 100%) !important;
+  }
+
+  .ex__scroll {
+    justify-content: flex-end;
+    overflow-y: auto;
+    pointer-events: auto;
+  }
+
+  /* The HTML selectors were hidden for every viewport in v30. Reveal them on touch screens. */
+  .exs__sr {
+    position: static !important;
+    display: grid;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    border: 0;
+  }
+
+  .ex__body[data-empty="true"] .exs__hint {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    min-height: 0;
+    margin: .35rem 0;
+  }
+
+  /* First choose how to train; then choose the discipline/personaje. */
+  .ex__body[data-empty="true"][data-focus="modos"] .exs__sel { display: none; }
+  .ex__body[data-empty="true"][data-focus="disciplinas"] .exs__proto { display: none; }
+
+  .exs__rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .45rem;
+  }
+
+  .exs__rail::before { display: none; }
+
+  .exs__rail li {
+    border: 1px solid var(--cx-line-hi);
+    background: rgba(5, 6, 8, .48);
+  }
+
+  .exs__rail button {
+    min-height: 3.1rem;
+    padding: .65rem .6rem;
+    border: 0;
+  }
+
+  .exs__rail button::before { display: none; }
+
+  .exs__discs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .45rem;
+  }
+
+  .exs__discs li {
+    border: 1px solid var(--cx-line-hi);
+    border-top: 2px solid var(--cx-line-hi);
+    background: rgba(5, 6, 8, .48);
+  }
+
+  .exs__discs button {
+    min-height: 4rem;
+    padding: .65rem .45rem;
+  }
+
+  .exs__sel,
+  .exs__proto {
+    margin-top: .75rem;
+  }
+
+  .exs__line,
+  .exs__cL {
+    max-width: none;
+  }
+}
