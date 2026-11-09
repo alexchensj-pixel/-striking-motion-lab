@@ -39,7 +39,8 @@ export default function StickyCTA() {
     return () => io.disconnect();
   }, []);
 
-  if (enHome) return null;
+  // En Método la evaluación ya tiene su CTA propio dentro del bloque; evita duplicarlo en la banda fija.
+  if (enHome || chapter === 'asesoria-lab') return null;
   let accion = null;
   if (enFaq) accion = 'reservar';
   else if (LOCAL_CTA.includes(chapter)) accion = null;
