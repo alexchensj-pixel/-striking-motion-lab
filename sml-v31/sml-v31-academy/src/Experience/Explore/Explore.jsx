@@ -7,6 +7,7 @@ import { estudio } from '../../Data/Estudio.js';
 import { FaqContextual } from '../Faq/Faq.jsx';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 import { prefersReducedMotion } from '../../Scene/Transitions/scrollState.js';
+import { useThresholdFade, smoothstep } from '../useThresholdFade.js';
 
 // EXPLORE (V22 · paso 3) — una única experiencia que fusiona el antiguo Bridge + Character Select + parte de Disciplines.
 //
@@ -55,7 +56,11 @@ const firstWord = (t) => t.split(' ')[0]; // etiqueta corta de la estación: sal
 //   v30: la SELECCIÓN vive en el 3D (Scene/Environment/ModeStations.jsx: estaciones 01–05 + sockets de disciplina + haz). Los botones de abajo
 //   son solo el acceso por teclado / lector de pantalla de esos mismos objetos (.exs__sr); el texto aparece como consecuencia de la selección.
 //   Nivel 1 (siempre): disciplina · concepto · acción.  Nivel 2: línea de la disciplina / del concepto.  Nivel 3 (solo si se pide): «Profundizar».
+// Una sola voz: el panel de Explore se retira al entrar en el umbral hacia Método.
+const exploreOpacity = (seg) => 1 - smoothstep(seg['character-select>asesoria-lab'] ?? 0, 0, 0.35);
+
 export default function Explore() {
+  useThresholdFade('character-select', exploreOpacity);
   const mode = useStore((s) => s.selectedTrainingMode);
   const selectMode = useStore((s) => s.selectTrainingMode);
   const discId = useStore((s) => s.selectedDiscipline);
