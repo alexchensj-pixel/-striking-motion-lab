@@ -137,7 +137,7 @@ function StepPlate({ s, i, on }) {
 }
 
 // 03→04: el copy de Método se apaga con la sala (0 % → 35 % del umbral), antes de que Entrenamiento ponga el suyo. Una sola voz.
-const methodOpacity = (seg) => 1 - smoothstep(seg['asesoria-lab>slot'] ?? 0, 0, 0.35);
+const methodOpacity = (seg) => smoothstep(seg['character-select>asesoria-lab'] ?? 0, 0.22, 0.48) * (1 - smoothstep(seg['asesoria-lab>slot'] ?? 0, 0, 0.35));
 
 export default function AsesoriaLab() {
   const flow = useFlow();
