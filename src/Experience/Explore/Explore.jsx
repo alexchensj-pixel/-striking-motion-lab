@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Chapter from '../Chapter.jsx';
+import { useThresholdFade, smoothstep } from '../useThresholdFade.js';
 import { useStore } from '../../App/store.js';
 import { disciplines } from '../../Data/Disciplines.js';
 import { seleccion, explore, hero } from '../../Data/Content.js';
@@ -8,25 +9,25 @@ import { FaqContextual } from '../Faq/Faq.jsx';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 import { prefersReducedMotion } from '../../Scene/Transitions/scrollState.js';
 
-// EXPLORE (V22 · paso 3) — una única experiencia que fusiona el antiguo Bridge + Character Select + parte de Disciplines.
+// EXPLORE (V22 Â· paso 3) â una Ãºnica experiencia que fusiona el antiguo Bridge + Character Select + parte de Disciplines.
 //
-//   ¿Cómo quieres entrenar?  →  selectedTrainingMode   (APRENDER · ENTRENAR · VIVIR EL ENTRENAMIENTO DE UN PELEADOR · SPARRING · COMPETIR)
-//   Después elegimos cómo.   →  selectedDiscipline     (BOXEO · K1 / KICKBOXING · MUAY THAI)
-//   selección                →  personaje / vídeo · qué es · cómo se entrena · qué desarrolla · glosario (solo la elegida)
+//   Â¿CÃ³mo quieres entrenar?  â  selectedTrainingMode   (APRENDER Â· ENTRENAR Â· VIVIR EL ENTRENAMIENTO DE UN PELEADOR Â· SPARRING Â· COMPETIR)
+//   DespuÃ©s elegimos cÃ³mo.   â  selectedDiscipline     (BOXEO Â· K1 / KICKBOXING Â· MUAY THAI)
+//   selecciÃ³n                â  personaje / vÃ­deo Â· quÃ© es Â· cÃ³mo se entrena Â· quÃ© desarrolla Â· glosario (solo la elegida)
 //
-// La SELECCIÓN es la causa; el scroll no decide nada:
-//   toque → store (selectedTrainingMode / selectedDiscipline) → UI (esta capa) + 3D (cámara, luz, personaje y vídeo lo leen del
+// La SELECCIÃN es la causa; el scroll no decide nada:
+//   toque â store (selectedTrainingMode / selectedDiscipline) â UI (esta capa) + 3D (cÃ¡mara, luz, personaje y vÃ­deo lo leen del
 //   mismo estado: Scene/Camera, Scene/Lighting/CharacterSelectLighting, Scene/Environment/Fighter + RosterGroup + blockouts).
-// Tocar al luchador en el 3D hace exactamente lo mismo que tocar su tarjeta (blockouts.jsx#CharacterHitArea → selectDiscipline).
+// Tocar al luchador en el 3D hace exactamente lo mismo que tocar su tarjeta (blockouts.jsx#CharacterHitArea â selectDiscipline).
 //
 // Las cinco formas NO son niveles (ni principiante / intermedio / avanzado): son formas distintas de entrenar.
-// Cualquiera de las dos decisiones puede cambiarse en cualquier momento y en cualquier orden; no hay animación que esperar.
+// Cualquiera de las dos decisiones puede cambiarse en cualquier momento y en cualquier orden; no hay animaciÃ³n que esperar.
 //
-// Composición: el panel (esta capa) y el 3D se reparten la pantalla — panel a la izquierda y 3D a la derecha en apaisado;
+// ComposiciÃ³n: el panel (esta capa) y el 3D se reparten la pantalla â panel a la izquierda y 3D a la derecha en apaisado;
 // 3D en la franja superior y panel debajo en vertical (Scene/Environment/cells.js#exploreRegion, global.css#.ex__panel).
-// Todo el texto sale de Data/Content.js (seleccion, explore) y Data/Disciplines.js: nada de información nueva.
+// Todo el texto sale de Data/Content.js (seleccion, explore) y Data/Disciplines.js: nada de informaciÃ³n nueva.
 
-// Vertical = pantalla con aspect < 1,1 (misma frontera que cells.js#EXPLORE_SPLIT_MIN_ASPECT). Solo ahí se muestra el vídeo
+// Vertical = pantalla con aspect < 1,1 (misma frontera que cells.js#EXPLORE_SPLIT_MIN_ASPECT). Solo ahÃ­ se muestra el vÃ­deo
 // en el panel: en apaisado el personaje ya es el propio 3D, a pantalla grande, a la derecha.
 function useStacked() {
   const query = '(min-aspect-ratio: 11/10)';
@@ -41,7 +42,7 @@ function useStacked() {
   return stacked;
 }
 
-// #rrggbb -> "r, g, b": el color de identidad de cada disciplina como luz translúcida (CSS var), sin color-mix().
+// #rrggbb -> "r, g, b": el color de identidad de cada disciplina como luz translÃºcida (CSS var), sin color-mix().
 function rgbTriplet(hex) {
   const h = hex.replace('#', '');
   const n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
@@ -49,36 +50,40 @@ function rgbTriplet(hex) {
 }
 
 const pad = (n) => String(n).padStart(2, '0');
-const firstWord = (t) => t.split(' ')[0]; // etiqueta corta de la estación: sale del propio título (Aprender · Entrenar · Vivir · Sparring · Competir)
+const firstWord = (t) => t.split(' ')[0]; // etiqueta corta de la estaciÃ³n: sale del propio tÃ­tulo (Aprender Â· Entrenar Â· Vivir Â· Sparring Â· Competir)
 
-// v29 · EXPLORE como SELECCIÓN DE PERSONAJE (no como documento). Misma fuente de estado y mismas acciones que antes; cambia la jerarquía:
-//   v30: la SELECCIÓN vive en el 3D (Scene/Environment/ModeStations.jsx: estaciones 01–05 + sockets de disciplina + haz). Los botones de abajo
-//   son solo el acceso por teclado / lector de pantalla de esos mismos objetos (.exs__sr); el texto aparece como consecuencia de la selección.
-//   Nivel 1 (siempre): disciplina · concepto · acción.  Nivel 2: línea de la disciplina / del concepto.  Nivel 3 (solo si se pide): «Profundizar».
+// v29 Â· EXPLORE como SELECCIÃN DE PERSONAJE (no como documento). Misma fuente de estado y mismas acciones que antes; cambia la jerarquÃ­a:
+//   v30: la SELECCIÃN vive en el 3D (Scene/Environment/ModeStations.jsx: estaciones 01â05 + sockets de disciplina + haz). Los botones de abajo
+//   son solo el acceso por teclado / lector de pantalla de esos mismos objetos (.exs__sr); el texto aparece como consecuencia de la selecciÃ³n.
+//   Nivel 1 (siempre): disciplina Â· concepto Â· acciÃ³n.  Nivel 2: lÃ­nea de la disciplina / del concepto.  Nivel 3 (solo si se pide): Â«ProfundizarÂ».
+const exploreOpacity = (seg) =>
+  1 - smoothstep(seg['character-select>asesoria-lab'] ?? 0, 0, 0.18);
+
 export default function Explore() {
+  useThresholdFade('character-select', exploreOpacity);
   const mode = useStore((s) => s.selectedTrainingMode);
   const selectMode = useStore((s) => s.selectTrainingMode);
   const discId = useStore((s) => s.selectedDiscipline);
   const selectDiscipline = useStore((s) => s.selectDiscipline);
   const focus = useStore((s) => s.exploreFocus); // 'modos' (puerta DESCUBRIR) | 'disciplinas' (puerta DISCIPLINAS)
   const stacked = useStacked();
-  const [deep, setDeep] = useState(false);     // Nivel 3 de la disciplina (qué es · cómo · desarrolla · glosario)
+  const [deep, setDeep] = useState(false);     // Nivel 3 de la disciplina (quÃ© es Â· cÃ³mo Â· desarrolla Â· glosario)
   const [modeDeep, setModeDeep] = useState(false); // Nivel 3 del concepto (texto largo de la forma de entrenar)
 
   const active = disciplines.find((d) => d.id === discId) || null;
   const forma = seleccion.formas.find((f) => f.id === mode) || null;
   const modeTitle = mode ? explore.modosTitulo[mode] : null;
 
-  // Cambiar de personaje o de concepto cierra el nivel 3 anterior: la información es consecuencia de la selección, no un resto.
+  // Cambiar de personaje o de concepto cierra el nivel 3 anterior: la informaciÃ³n es consecuencia de la selecciÃ³n, no un resto.
   useEffect(() => { setDeep(false); }, [discId]);
   useEffect(() => { setModeDeep(false); }, [mode]);
 
   const style = active ? { '--ex-accent': active.accent, '--ex-rgb': rgbTriplet(active.accent) } : undefined;
 
-  // El ORDEN de percepción lo decide la puerta (exploreFocus), no el scroll. Mismas dos secciones, mismo estado:
-  //   DESCUBRIR   (modos)       → 1 CÓMO QUIERES ENTRENAR (formas) · 2 QUÉ QUIERES ENTRENAR (disciplinas)
-  //   DISCIPLINAS (disciplinas) → el 3D manda: primero el roster de luchadores; las formas quedan después.
-  // PERSONAJE — selector de disciplina. Tocar al luchador en el 3D hace lo mismo (blockouts.jsx#CharacterHitArea).
+  // El ORDEN de percepciÃ³n lo decide la puerta (exploreFocus), no el scroll. Mismas dos secciones, mismo estado:
+  //   DESCUBRIR   (modos)       â 1 CÃMO QUIERES ENTRENAR (formas) Â· 2 QUÃ QUIERES ENTRENAR (disciplinas)
+  //   DISCIPLINAS (disciplinas) â el 3D manda: primero el roster de luchadores; las formas quedan despuÃ©s.
+  // PERSONAJE â selector de disciplina. Tocar al luchador en el 3D hace lo mismo (blockouts.jsx#CharacterHitArea).
   const discSection = (
     <section className="exs__sel" aria-label={explore.disciplinasTitulo}>
       <ul className="exs__discs exs__sr">
@@ -98,7 +103,7 @@ export default function Explore() {
       <p className={active ? 'exs__line' : 'exs__line exs__hint'} aria-live="polite">{active ? active.linea : explore.intro}</p>
       {active && (
         <button type="button" className="exs__more" aria-expanded={deep} aria-controls={`ex-detail-${active.id}`} onClick={() => setDeep((v) => !v)}>
-          {deep ? explore.cerrar : explore.profundizar} <i aria-hidden="true">{deep ? '−' : '+'}</i>
+          {deep ? explore.cerrar : explore.profundizar} <i aria-hidden="true">{deep ? 'â' : '+'}</i>
         </button>
       )}
       {active && deep && (
@@ -108,7 +113,7 @@ export default function Explore() {
     </section>
   );
 
-  // PROTOCOLO — las cinco formas de entrenar como regla 01–05 del sistema; solo la activa explica su contenido.
+  // PROTOCOLO â las cinco formas de entrenar como regla 01â05 del sistema; solo la activa explica su contenido.
   const modeSection = (
     <section className="exs__proto" aria-label={seleccion.pregunta}>
       <ol className="exs__rail exs__sr">
@@ -131,7 +136,7 @@ export default function Explore() {
             <p className="exs__cC">{forma.concepto}</p>
             <p className="exs__cL">{explore.modos[forma.id]}</p>
             <button type="button" className="exs__more" aria-expanded={modeDeep} onClick={() => setModeDeep((v) => !v)}>
-              {modeDeep ? explore.cerrar : explore.profundizar} <i aria-hidden="true">{modeDeep ? '−' : '+'}</i>
+              {modeDeep ? explore.cerrar : explore.profundizar} <i aria-hidden="true">{modeDeep ? 'â' : '+'}</i>
             </button>
             {modeDeep && (
               <div className="exs__cD">
@@ -158,16 +163,16 @@ export default function Explore() {
           <div className="ex__scroll">
             <header className="exs__head">
               <h2 className="ex__title">{explore.titulo}</h2>
-              <button type="button" className="ex__estudio" onClick={() => goToSection('estudio')}>{estudio.marca} →</button>
+              <button type="button" className="ex__estudio" onClick={() => goToSection('estudio')}>{estudio.marca} â</button>
             </header>
 
             {focus === 'disciplinas' ? <>{discSection}{modeSection}</> : <>{modeSection}{discSection}</>}
-            {/* V27 · paso 7: objeción de quien llega sin saber qué quiere (puerta DESCUBRIR). La puerta DISCIPLINAS es de quien ya sabe: no se le añade. */}
-            {focus === 'modos' && <FaqContextual q="¿Puedo empezar completamente desde cero?" />}
-            {/* Entre las dos puertas, sin pasar por el menú: quien llega por DISCIPLINAS sin saber qué quiere descubre; quien descubre puede ver las disciplinas. */}
+            {/* V27 Â· paso 7: objeciÃ³n de quien llega sin saber quÃ© quiere (puerta DESCUBRIR). La puerta DISCIPLINAS es de quien ya sabe: no se le aÃ±ade. */}
+            {focus === 'modos' && <FaqContextual q="Â¿Puedo empezar completamente desde cero?" />}
+            {/* Entre las dos puertas, sin pasar por el menÃº: quien llega por DISCIPLINAS sin saber quÃ© quiere descubre; quien descubre puede ver las disciplinas. */}
             {focus === 'disciplinas'
-              ? <button type="button" className="ex__estudio" onClick={() => goToSection('explore')}>{hero.noSe.pre} → {hero.noSe.accion}</button>
-              : <button type="button" className="ex__estudio" onClick={() => goToSection('disciplinas')}>Disciplinas →</button>}
+              ? <button type="button" className="ex__estudio" onClick={() => goToSection('explore')}>{hero.noSe.pre} â {hero.noSe.accion}</button>
+              : <button type="button" className="ex__estudio" onClick={() => goToSection('disciplinas')}>Disciplinas â</button>}
           </div>
         </div>
       </div>
@@ -175,7 +180,7 @@ export default function Explore() {
   );
 }
 
-// NIVEL 3 de la disciplina elegida (solo existe tras «Profundizar»): qué es · cómo se entrena · qué desarrolla · glosario. Cajón interno de la escena.
+// NIVEL 3 de la disciplina elegida (solo existe tras Â«ProfundizarÂ»): quÃ© es Â· cÃ³mo se entrena Â· quÃ© desarrolla Â· glosario. CajÃ³n interno de la escena.
 function DisciplineDetail({ discipline: d, stacked, onReset }) {
   const b = explore.bloques;
   return (
@@ -207,8 +212,8 @@ function DisciplineDetail({ discipline: d, stacked, onReset }) {
   );
 }
 
-// Vídeo local de la disciplina (el mismo asset «-cell» que usa el 3D), sobre negro: `mix-blend-mode: screen` lo funde con el fondo.
-// Un único pase silencioso; el fotograma fijo (poster) se queda si el móvil bloquea el autoplay. Un toque lo repite.
+// VÃ­deo local de la disciplina (el mismo asset Â«-cellÂ» que usa el 3D), sobre negro: `mix-blend-mode: screen` lo funde con el fondo.
+// Un Ãºnico pase silencioso; el fotograma fijo (poster) se queda si el mÃ³vil bloquea el autoplay. Un toque lo repite.
 function DisciplineMedia({ discipline: d, label }) {
   const ref = useRef(null);
   const replay = () => {
@@ -229,7 +234,7 @@ function DisciplineMedia({ discipline: d, label }) {
         preload="metadata"
         autoPlay={!prefersReducedMotion}
         onClick={replay}
-        aria-label={`${d.name}: vídeo del personaje (toca para repetir)`}
+        aria-label={`${d.name}: vÃ­deo del personaje (toca para repetir)`}
       />
     </div>
   );
