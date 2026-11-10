@@ -104,7 +104,7 @@ export default function Entrada() {
               Todas por goToSection: DESCUBRIR desde aquí recorre el Bridge (animado); RESERVAR y B2B saltan directo, sin atravesar capítulos. */}
           <div className="ent__actions">
             <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>{hero.ctaReservar}</button>
-            <button type="button" className="ent__explorar" onClick={() => goToSection('explore')}>{hero.ctaExplorar}</button>
+            <button type="button" className="ent__explorar" onClick={() => goToSection('explore')}><span>{hero.ctaExplorar}</span><svg className="ent__ctaIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <div className="ent__links">
               <button type="button" className="ent__b2bLink" onClick={() => goToSection('training')}>{hero.ctaPrecios}</button>
               <button type="button" className="ent__b2bLink" onClick={() => goToSection('training')}>{hero.ctaGrupos}</button>

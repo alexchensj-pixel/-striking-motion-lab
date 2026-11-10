@@ -2618,3 +2618,109 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
 .ent__links .ent__b2bLink { max-width: none; width: auto; }
 .ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 13.5rem); pointer-events: none; }
 .ent__actions { z-index: 5; }
+
+
+/* HOME · revisión de legibilidad móvil y jerarquía visual (noviembre 2026). */
+.ent__hero {
+  width: min(92vw, 46rem);
+}
+.ent__marca { display: none; } /* La marca ya está presente en la navegación; evitamos un segundo eyebrow. */
+.ent__titulo {
+  line-height: 1.08;
+  letter-spacing: .035em;
+  margin: 0;
+}
+.ent__disc {
+  margin: 16px 0 0;
+  color: var(--accent);
+  font-size: clamp(.75rem, 2.5vw, .9rem);
+  letter-spacing: .12em;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.ent__mod {
+  margin: 8px 0 0;
+  color: #d5d8de;
+  font-family: var(--ent-sans);
+  font-size: clamp(.8125rem, 2.5vw, .9375rem);
+  font-weight: 500;
+  letter-spacing: .025em;
+  line-height: 1.45;
+  text-transform: none;
+}
+.ent__confianza {
+  margin: 16px 0 0;
+  color: #d0d4da;
+  font-size: clamp(.75rem, 2.2vw, .8125rem);
+  letter-spacing: .025em;
+  line-height: 1.5;
+}
+.ent__actions {
+  width: min(92vw, 24rem);
+  gap: 8px;
+}
+.ent__reservar,
+.ent__explorar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  font-family: var(--ent-mono);
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1.35;
+  text-align: center;
+  text-transform: uppercase;
+}
+.ent__reservar {
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
+}
+.ent__explorar {
+  color: #fff;
+  background: rgba(8, 9, 11, .58);
+  border: 1px solid var(--accent);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .9);
+}
+.ent__explorar:hover,
+.ent__explorar:focus-visible {
+  background: rgba(224, 90, 43, .16);
+  text-decoration: none;
+}
+.ent__ctaIcon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.ent__links { gap: 8px 16px; margin-top: 8px; }
+.ent__b2bLink { color: #c7cbd2; opacity: .9; }
+
+/* La foto de acción sustituye el fondo de laboratorio casi imperceptible: retrato real, con viñeta negra. */
+.photo { mix-blend-mode: normal; }
+.photo__img {
+  object-position: 50% 38%;
+  filter: brightness(.62) contrast(1.12) saturate(.68);
+}
+.photo__shade {
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.22) 46%, rgba(0,0,0,.52) 100%),
+    radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 18%, rgba(0,0,0,.58) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,.5) 0%, rgba(0,0,0,.08) 34%, rgba(0,0,0,.18) 65%, rgba(0,0,0,.72) 100%);
+}
+@media (max-width: 700px) {
+  .ent__hero { top: 4.25rem; width: 92vw; }
+  .ent__titulo { letter-spacing: .025em; line-height: 1.1; }
+  .ent__disc { font-size: .75rem; letter-spacing: .09em; }
+  .ent__mod { font-size: .8125rem; color: #e0e3e8; }
+  .ent__confianza { color: #d8dce2; font-size: .75rem; }
+  .ent__actions { width: 92vw; gap: 8px; bottom: 56px; }
+  .ent__reservar, .ent__explorar { min-height: 52px; width: 100%; font-size: .75rem; letter-spacing: .065em; }
+  .photo__img { object-position: 50% 34%; }
+}

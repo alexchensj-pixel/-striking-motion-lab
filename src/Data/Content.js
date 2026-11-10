@@ -42,14 +42,14 @@ export const hero = {
   // Recorrido C (prueba): rutas rápidas, modalidades y confianza en el primer pantallazo.
   ctaPrecios: 'Precios →',
   ctaGrupos: 'Parejas y grupos →',
-  modalidades: 'Individual · Parejas · Grupos reducidos',
+  modalidades: 'Madrid · Sesiones privadas · Parejas y grupos reducidos',
   confianza: `${ratingTexto} · 3.º en K1 −57 kg, Copa de España 2025`,
   // V22 — mensaje principal de HOME (visible desde el primer fotograma; no depende de ninguna animación ni del scroll).
   marca: 'Striking Motion Lab',
   titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
   disciplinasLinea: 'Boxeo · K1 · Muay Thai',
   ctaReservar: 'Reservar evaluación · 30 €',
-  ctaExplorar: 'No sé qué necesito → Descubrir',
+  ctaExplorar: 'No sé qué necesito · Descubrir',
   contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
   // Sin uso en pantalla. Reescrito: la web no recomienda disciplina automáticamente.

@@ -36,7 +36,7 @@ export default function PhotoBackdrop() {
 
   return (
     <div ref={rootRef} className="photo" aria-hidden="true">
-      <img ref={imgRef} className="photo__img" src={image.heroLab} alt="" decoding="async" />
+      <img ref={imgRef} className="photo__img" src={image.chenRing} alt="" decoding="async" />
       <div className="photo__shade" />
     </div>
   );
