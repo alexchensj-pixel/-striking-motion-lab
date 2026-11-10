@@ -38,7 +38,7 @@ export const layoutK = (aspect) => 1 - (1 - PORTRAIT_LAYOUT.k) * portraitAmount(
 // Las proporciones se corresponden con global.css (.ex__panel).
 export const EXPLORE_SPLIT_MIN_ASPECT = 1.1;
 export const EXPLORE_SPLIT_FX = 0.6;   // fracción del ancho que ocupa el 3D en apaisado
-export const EXPLORE_STACK_FY = 0.32;  // fracción del alto que ocupa el 3D en vertical
+export const EXPLORE_STACK_FY = 0.42;  // móvil: escena 3D protagonista, separada del panel de decisión
 export function exploreRegion(width, height) {
   const aspect = width / Math.max(height, 1);
   if (aspect >= EXPLORE_SPLIT_MIN_ASPECT) return { split: true, fx: EXPLORE_SPLIT_FX, fy: 1, cx: 1 - EXPLORE_SPLIT_FX / 2, cy: 0.5 };

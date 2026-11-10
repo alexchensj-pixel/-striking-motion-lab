@@ -511,9 +511,9 @@ dd { margin-top: .15rem; }
 
 /* VERTICAL (móvil / tablet vertical): 3D arriba, panel debajo con scroll propio. Mismo corte que cells.js (aspect 1,1). */
 @media (max-aspect-ratio: 11/10) {
-  .ex__glow { top: 0; right: 0; bottom: auto; left: 0; width: auto; height: 32%; }
+  .ex__glow { top: 0; right: 0; bottom: auto; left: 0; width: auto; height: 42%; }
   .ex__panel {
-    top: 32%; left: 0; right: 0; bottom: 0; width: auto; min-width: 0; max-width: none;
+    top: 42%; left: 0; right: 0; bottom: 0; width: auto; min-width: 0; max-width: none;
     background: linear-gradient(180deg, rgba(5, 6, 8, 0) 0, rgba(5, 6, 8, .94) 1.6rem, rgba(5, 6, 8, .97) 100%);
   }
   .ex__scroll { padding: 1.8rem 1.25rem 6rem 1.25rem; }
@@ -2543,3 +2543,30 @@ body:has(.pf[data-stage="3"]) .scta[data-chapter="proof-chen"] { opacity: 0; vis
 /* NAVEGACIÓN: el destino activo se lee a primera vista (barra de acento más gruesa, texto en peso 600 y subrayado de acento), sin cajas ni iconos. */
 nav.nav li[data-on="true"]::before { width: 2px; }
 nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var(--accent); }
+
+
+/* Mobile scene hierarchy: the fighters occupy their own clean stage; all copy and controls start below it.
+   This intentionally overrides the legacy v30b overlay rules above. */
+@media (max-aspect-ratio: 11/10) {
+  #character-select .ex__glow { height: 42% !important; }
+  #character-select .ex__panel {
+    top: 42% !important;
+    background: #050608 !important;
+    pointer-events: auto !important;
+  }
+  #character-select .ex__body[data-empty="true"] .ex__panel {
+    background: #050608 !important;
+  }
+  #character-select .ex__scroll {
+    justify-content: flex-start !important;
+    pointer-events: auto !important;
+    padding-top: 1.25rem;
+  }
+  #character-select .ex__scroll > .exs__head {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin-bottom: .75rem;
+  }
+}
