@@ -52,15 +52,14 @@ export const BRIDGE_END = 0.7;
 export const BRIDGE_OUT_DURATION = 0.12;
 export const BRIDGE_OUT_END = BRIDGE_END + BRIDGE_OUT_DURATION;
 
-// Inicio del reveal de los luchadores dentro del umbral HOME → EXPLORE (0..1 del progreso del umbral): justo cuando el Bridge
-// ha salido del todo (BRIDGE_OUT_END). Llega a 1 al final del umbral (REVEAL_FULL), donde empieza el capítulo EXPLORE.
-export const REVEAL_START = BRIDGE_OUT_END;
+// Inicio del reveal de los luchadores dentro del umbral HOME → EXPLORE. Sin Bridge intermedio: empieza con la transición
+// y llega a 1 al final del umbral, donde comienza el capítulo EXPLORE.
+export const REVEAL_START = 0;
 export const REVEAL_FULL = 1;
 
 // Visibilidad de los 3 luchadores (EXPLORE) y su vitrina: 0 = invisibles, 1 = visibles del todo.
-// Regla: mientras la Entrada (01) no haya terminado su propio recorrido (progreso < 1, que es justo cuando su HUD ya se ha
-// difuminado del todo), reveal = 0 sin excepción; y tampoco hay reveal mientras dura el Bridge (umbral < REVEAL_START).
-// Después se revela con un smoothstep sobre el progreso del umbral
+// Regla: mientras la Entrada (01) no haya terminado su propio recorrido (progreso < 1), reveal = 0. Después los personajes
+// se revelan con un smoothstep sobre todo el umbral corto
 // HOME → EXPLORE (determinista y reversible: al subir el scroll se ocultan otra vez exactamente por el mismo camino).
 // Tras un salto directo a EXPLORE (navegación por sección) el umbral queda en 1: reveal = 1.
 export function getCharactersReveal() {

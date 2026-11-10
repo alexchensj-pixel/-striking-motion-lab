@@ -14,12 +14,13 @@ import { useStore } from '../../App/store.js';
 // la transición, el HUD ya apunta al capítulo de llegada. Reversible: al subir el scroll de vuelta al inicio
 // del umbral (progress === 0), vuelve a marcar `from`.
 //  activeFrom: progreso (0..1) del umbral a partir del cual el HUD/sección pasan a `to`. Por defecto 0 (en cuanto empieza). El umbral
-//  HOME → EXPLORE lo retrasa hasta REVEAL_START: mientras dura el Bridge seguimos en HOME (el Bridge es su epílogo, no EXPLORE).
+//  HOME → EXPLORE usa un tramo compacto: los personajes se revelan durante esta transición directa.
 //  start: cuándo arranca el progreso del umbral (por defecto, en cuanto asoma por abajo). El umbral 04→05 lo retrasa
 //  hasta 'top top' porque la FAQ (opaca) va justo antes: así el velo y el viaje de cámara no ocurren detrás ni encima de ella.
 export default function Threshold({ from, to, start = 'top bottom', activeFrom = 0, children }) {
   const ref = useRef(null);
   const key = `${from}>${to}`;
+  const compactHomeExplore = from === 'entrada' && to === 'character-select';
 
   useLayoutEffect(() => {
     const update = (self) => {
@@ -37,7 +38,7 @@ export default function Threshold({ from, to, start = 'top bottom', activeFrom =
   }, [key, from, to, start, activeFrom]);
 
   return (
-    <div ref={ref} className="threshold" data-threshold={key} aria-hidden="true">
+    <div ref={ref} className="threshold" data-threshold={key} style={compactHomeExplore ? { height: '30vh' } : undefined} aria-hidden="true">
       {children}
     </div>
   );
