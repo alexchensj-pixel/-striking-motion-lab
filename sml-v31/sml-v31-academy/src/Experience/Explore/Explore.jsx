@@ -162,7 +162,7 @@ export default function Explore() {
         <div className="ex__panel">
           <div className="ex__scroll">
             <header className="exs__head">
-              <h2 className="ex__title">{explore.titulo}</h2>
+              <h2 className="ex__title">Descubrir</h2>
               <button type="button" className="ex__estudio" onClick={() => goToSection('estudio')}>{estudio.marca} →</button>
             </header>
 
