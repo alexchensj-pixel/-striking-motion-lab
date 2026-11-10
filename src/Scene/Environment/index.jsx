@@ -2,9 +2,6 @@ import { anchorZ } from '../Camera/waypoints.js';
 import { chapters } from '../../Data/Content.js';
 import { Pillars, Room, Reels, Archive, Door } from './blockouts.jsx';
 import EntradaWorld from './Entrada/EntradaWorld.jsx';
-import BridgeHall from './Bridge/BridgeHall.jsx';
-// BridgeHall (Environment/Bridge/) es el recinto 3D del Bridge (Tyson / McGregor, foto de la nave). No es un capítulo: se monta una sola vez,
-// en coordenadas de mundo, y solo es visible durante el tramo del umbral HOME → EXPLORE que ocupa el Bridge (ver su useFrame).
 
 const blockouts = {
   'entrada': EntradaWorld, // Escena 01 real (corredor, portales, título 3D…) — ver Environment/Entrada/
@@ -25,7 +22,6 @@ export default function Environment() {
         <planeGeometry args={[300, 300]} />
         <meshStandardMaterial color="#07090d" roughness={1} />
       </mesh>
-      <BridgeHall transitionOnly />
       {chapters.map((c, i) => {
         const B = blockouts[c.id];
         return (
