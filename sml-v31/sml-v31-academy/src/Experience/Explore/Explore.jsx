@@ -57,7 +57,8 @@ const firstWord = (t) => t.split(' ')[0]; // etiqueta corta de la estación: sal
 //   son solo el acceso por teclado / lector de pantalla de esos mismos objetos (.exs__sr); el texto aparece como consecuencia de la selección.
 //   Nivel 1 (siempre): disciplina · concepto · acción.  Nivel 2: línea de la disciplina / del concepto.  Nivel 3 (solo si se pide): «Profundizar».
 // Una sola voz: el panel de Explore se retira al entrar en el umbral hacia Método.
-const exploreOpacity = (seg) => 1 - smoothstep(seg['character-select>asesoria-lab'] ?? 0, 0, 0.35);
+// Descubrir permanece durante todo su capítulo; al comenzar el umbral hacia Método se retira enseguida para que nunca se monten ambos titulares.
+const exploreOpacity = (seg) => 1 - smoothstep(seg['character-select>asesoria-lab'] ?? 0, 0, 0.08);
 
 export default function Explore() {
   useThresholdFade('character-select', exploreOpacity);
