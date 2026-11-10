@@ -124,8 +124,10 @@ function CharacterHitArea({ discipline }) {
 
   const handleClick = (e) => {
     e.stopPropagation();
-    // Solo dentro de EXPLORE: estos planos invisibles existen siempre en el mundo y un toque en otra sección no debe fijar una decisión.
-    if (!isExploreActive()) return;
+    // El 3D se puede elegir en cuanto el luchador ya es visible, incluso durante el último umbral.
+    // La cámara conserva su gate independiente: no cambia de encuadre hasta entrar realmente en EXPLORE.
+    // getCharactersReveal() vale 0 durante HOME y crece con el mismo scroll que revela el personaje.
+    if (!isExploreActive() && getCharactersReveal() < 0.2) return;
     if (useStore.getState().selectedDiscipline !== id) selectDiscipline(id);
   };
 
