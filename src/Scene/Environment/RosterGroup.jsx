@@ -241,13 +241,14 @@ export default function RosterGroup() {
     // sc = 1 (escritorio) esto reproduce exactamente el xTarget de siempre.
     geo.forEach((g, i) => {
       const c = CHAR_CROPS[i];
-      const sc = c.lateral ? MathUtils.lerp(1, LATERAL_SCALE_PORTRAIT, portrait) : 1;
+      const sc = (c.lateral ? MathUtils.lerp(1, LATERAL_SCALE_PORTRAIT, portrait) : 1) * 0.9;
+      const verticalOffset = (1 - sc) * (g.cy - g.h / 2) - 0.08;
       const xTarget = cellX(c.cell) * k - g.offset * sc;
       const x = xTarget * reveal;
       const mg = mainGroups.current[i];
       const rg = reflGroups.current[i];
-      if (mg) { mg.position.x = x; mg.scale.set(sc, sc, 1); }
-      if (rg) { rg.position.x = x; rg.scale.set(sc, sc, 1); }
+      if (mg) { mg.position.x = x; mg.position.y = verticalOffset; mg.scale.set(sc, sc, 1); }
+      if (rg) { rg.position.x = x; rg.position.y = -verticalOffset; rg.scale.set(sc, sc, 1); }
       const dy = -g.feetGap * portrait; // pies al mismo suelo en móvil vertical (0 en escritorio)
       if (mainMeshes.current[i]) mainMeshes.current[i].position.y = g.cy + dy;
       if (reflMeshes.current[i]) reflMeshes.current[i].position.y = CELL.feetY + g.cy + dy;

@@ -78,7 +78,7 @@ export const existingPlans = [
 ];
 
 // Kit opcional (no se suma automáticamente; se decide al reservar).
-export const kitInicio = { nombre: 'Kit de Inicio', precio: 65, contenido: 'Guantes + vendas + bucal' };
+export const kitInicio = { nombre: 'Kit de Inicio', precio: 65, precioSinPlan: 89.99, contenido: 'Guantes + vendas + bucal' };
 
 // Utilidad de lectura de `variables`; hoy no la llama ningún componente (Data/Slot.js construye sus etiquetas con LABELS).
 export function labelFor(variableId, optionId) {

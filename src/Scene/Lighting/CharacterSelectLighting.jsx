@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color, MathUtils } from 'three';
-import { getCharactersReveal } from '../Transitions/scrollState.js';
+import { getCharactersReveal, prefersReducedMotion } from '../Transitions/scrollState.js';
 import { anchorZ } from '../Camera/waypoints.js';
 import { CELL, cellX, layoutK, portraitAmount, exploreLayoutAspect } from '../Environment/cells.js';
 import { useStore } from '../../App/store.js';
@@ -34,35 +34,44 @@ export default function CharacterSelectLighting() {
   // (halo sobre esa posición) y menos en las otras dos — nunca a cero, siguen visibles.
   const boost = useRef(disciplines.map(() => 1));
   const keyBoost = useRef(disciplines.map(() => 0));
+  const revealSweep = useRef({ started: false, startedAt: 0, complete: false });
   const tint = useRef(new Color(TOP_NEUTRAL)).current;
   const accent = useRef(new Color()).current;
 
   useFrame(({ size }, dt) => {
     const reveal = getCharactersReveal();
     const focused = useStore.getState().selectedDiscipline; // V22: la disciplina elegida en EXPLORE
+    if (reveal > 0.02 && !revealSweep.current.started) {
+      revealSweep.current.started = true;
+      if (!prefersReducedMotion && !focused) revealSweep.current.startedAt = performance.now();
+      else revealSweep.current.complete = true;
+    }
+    if (focused && revealSweep.current.startedAt) revealSweep.current.complete = true;
+    const sweepElapsed = revealSweep.current.startedAt ? performance.now() - revealSweep.current.startedAt : Infinity;
+    const sweepIndex = !revealSweep.current.complete && sweepElapsed < 1500 ? Math.floor(sweepElapsed / 500) : -1;
     // Layout responsive (cells.js): en móvil vertical los tres se acercan entre sí y cada luz los sigue (misma x
     // que su vitrina). La atenuación de los no enfocados es menos marcada en móvil. En escritorio: k = 1.
     const aspect = exploreLayoutAspect(size.width, size.height);
     const k = layoutK(aspect);
     const dimBoost = MathUtils.lerp(0.45, 0.68, portraitAmount(aspect));
     disciplines.forEach((d, i) => {
-      const isFocus = focused === d.id;
+      const isFocus = focused === d.id || sweepIndex === i;
       const dim = focused && !isFocus;
-      boost.current[i] = MathUtils.damp(boost.current[i], isFocus ? 1.85 : dim ? dimBoost : 1, 4, dt);
+      boost.current[i] = MathUtils.damp(boost.current[i], isFocus ? 2.15 : dim ? dimBoost : 1, 4, dt);
       keyBoost.current[i] = MathUtils.damp(keyBoost.current[i], isFocus ? 1 : 0, 5, dt);
       const l = rims.current[i];
       if (l) {
-        l.intensity = 14 * reveal * boost.current[i];
+        l.intensity = 18 * reveal * boost.current[i];
         l.position.x = cellX(i) * k;
       }
       const key = keys.current[i];
       if (key) {
-        key.intensity = 58 * reveal * keyBoost.current[i];
+        key.intensity = 70 * reveal * keyBoost.current[i];
         key.position.x = cellX(i) * k;
       }
     });
     if (top.current) {
-      top.current.intensity = reveal * (focused ? 4.2 : 6);
+      top.current.intensity = reveal * (focused ? 5.2 : 8.2);
       // Ambientación: con una disciplina elegida, el relleno cenital vira hacia su color de identidad (muy sutil).
       const acc = disciplines.find((d) => d.id === focused)?.accent;
       tint.set(TOP_NEUTRAL);
