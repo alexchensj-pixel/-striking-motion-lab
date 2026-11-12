@@ -1,9 +1,8 @@
-import { anchorZ } from '../Scene/Camera/waypoints.js';
-import { chapters } from '../Data/Content.js';
-import { Pillars, Room, Reels, Archive, Door } from '../Scene/Environment/blockouts.jsx';
-import EntradaWorld from '../Scene/Environment/Entrada/EntradaWorld.jsx';
-import BridgeHall from '../Scene/Environment/Bridge/BridgeHall.jsx';
-import { useStore } from '../App/store.js';
+import { anchorZ } from '../legacy/Scene/Camera/waypoints.js';
+import { chapters } from '../legacy/Data/Content.js';
+import { Pillars, Room, Reels, Archive, Door } from '../legacy/Scene/Environment/blockouts.jsx';
+import EntradaWorld from '../legacy/Scene/Environment/Entrada/EntradaWorld.jsx';
+import { useStore } from '../legacy/App/store.js';
 
 const blockouts = {
   entrada: EntradaWorld,
@@ -30,7 +29,6 @@ export default function MemoryEnvironment() {
         <planeGeometry args={[300, 300]} />
         <meshStandardMaterial color="#07090d" roughness={1} />
       </mesh>
-      <BridgeHall transitionOnly />
       {mounted.map(({ chapter, index }) => {
         const Blockout = blockouts[chapter.id];
         if (!Blockout) return null;

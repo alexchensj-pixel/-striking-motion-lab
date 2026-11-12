@@ -1,11 +1,11 @@
 import React, { Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import CameraRig from '../Scene/Camera/index.jsx';
-import Lighting from '../Scene/Lighting/index.jsx';
+import CameraRig from '../legacy/Scene/Camera/index.jsx';
+import Lighting from '../legacy/Scene/Lighting/index.jsx';
 import Environment from './MemoryEnvironment.jsx';
-import { segmentKeys } from '../Data/Content.js';
-import { scrollState, setSegment, prefersReducedMotion } from '../Scene/Transitions/scrollState.js';
-import { useStore } from '../App/store.js';
+import { segmentKeys } from '../legacy/Data/Content.js';
+import { scrollState, setSegment, prefersReducedMotion } from '../legacy/Scene/Transitions/scrollState.js';
+import { useStore } from '../legacy/App/store.js';
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
@@ -47,11 +47,9 @@ const chapterFor = (key, progress) => {
 };
 
 // La transición y la selección se gobiernan por el scroll real del tramo explore-dwell (340svh en styles.css).
-// 18% Bridge, 18% revelado de luchadores y 64% de permanencia (~2 pantallas) para seleccionar sin que un
-// solo deslizamiento la consuma.
+// 18% revelado de luchadores y 82% de permanencia para seleccionar sin que un solo deslizamiento consuma la escena.
 const EXPLORE_START = 0.78;
 const EXPLORE_END = 0.90;
-const BRIDGE_SHARE = 0.18;
 const REVEAL_SHARE = 0.18;
 
 const smoothstep = (t) => {
@@ -99,14 +97,10 @@ export default function LegacyWorld({ exploreOpen = false }) {
         // El reveal 3D sigue ligado al recorrido real y reversible del usuario.
         if (insideExplore) {
           const dwellProgress = clamp((y - exploreTop) / exploreHeight);
-          if (dwellProgress >= BRIDGE_SHARE + REVEAL_SHARE) selectionSeen = true;
+          if (dwellProgress >= REVEAL_SHARE) selectionSeen = true;
           const sequenceProgress = prefersReducedMotion || selectionSeen
             ? 1
-            : dwellProgress <= BRIDGE_SHARE
-              ? 0.82 * smoothstep(dwellProgress / BRIDGE_SHARE)
-              : dwellProgress <= BRIDGE_SHARE + REVEAL_SHARE
-                ? 0.82 + 0.18 * smoothstep((dwellProgress - BRIDGE_SHARE) / REVEAL_SHARE)
-                : 1;
+            : smoothstep(dwellProgress / REVEAL_SHARE);
           setSegment('entrada', 1);
           const routeProgress = EXPLORE_START + (EXPLORE_END - EXPLORE_START) * sequenceProgress;
           lastChapter = applyRoute(ROUTES[0], routeProgress, lastChapter);
