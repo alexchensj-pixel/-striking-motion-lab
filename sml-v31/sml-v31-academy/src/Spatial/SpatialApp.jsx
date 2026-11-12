@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import LegacyWorld from './LegacyWorld.jsx';
+import Chapter from '../Experience/Chapter.jsx';
+import Threshold from '../Scene/Transitions/Threshold.jsx';
 import ExploreOverlay from './ExploreOverlay.jsx';
 import {
   site, hero, advisorySubstages, evaluacionInicial,
@@ -24,6 +26,8 @@ const navItems = [
   ['entrenamiento', 'Precios'], ['alex', 'Sobre Alex'], ['reserva', 'Reservar'],
   ['empresas', 'Empresas'],
 ];
+const chapterTarget = { inicio: 'entrada', metodo: 'asesoria-lab', entrenamiento: 'slot', alex: 'proof-chen', reserva: 'reserva', empresas: 'empresas' };
+const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot: 'entrenamiento', 'proof-chen': 'alex', reserva: 'reserva' };
 const spatialHeroTitle = ['Tu técnica.', 'Tu estrategia.', 'Tu forma de combatir.'];
 const spatialHeroContext = 'Entrenamiento privado en Madrid · Análisis técnico · Seguimiento personal';
 const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
@@ -75,11 +79,11 @@ function App() {
 
   useEffect(() => {
     const ids = navItems.map(([id]) => id);
-    const nodes = ids.map((id) => document.getElementById(id)).filter(Boolean);
+    const nodes = ids.map((id) => document.getElementById(chapterTarget[id] || id)).filter(Boolean);
     if (!('IntersectionObserver' in window)) return undefined;
     const observer = new IntersectionObserver((entries) => {
       const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActive(visible.target.id);
+      if (visible) setActive(activeNavForChapter[visible.target.id] || visible.target.id);
     }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, .15, .35, .6] });
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
@@ -98,7 +102,7 @@ function App() {
 
   useEffect(() => {
     const updateProgress = () => {
-      const section = document.getElementById('metodo');
+      const section = document.getElementById('asesoria-lab');
       if (section) {
         const rect = section.getBoundingClientRect();
         const travel = Math.max(1, rect.height - window.innerHeight);
@@ -119,9 +123,9 @@ function App() {
     setMenuOpen(false);
     window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id } }));
     requestAnimationFrame(() => {
-      const target = document.getElementById(id);
+      const target = document.getElementById(chapterTarget[id] || id);
       if (!target) return;
-      if (id === 'metodo') {
+      if (id === 'metodo' || id === 'asesoria-lab') {
         // Método activa su ruta 3D en el borde real de la sección; scrollIntoView respeta scroll-padding-top y se quedaba 90px antes.
         const top = target.getBoundingClientRect().top + window.scrollY;
         window.scrollTo({ top: top + 2, behavior: 'smooth' });
@@ -133,7 +137,7 @@ function App() {
   const openExplore = () => {
     setExploreOpen(true);
     requestAnimationFrame(() => {
-      const node = document.querySelector('.explore-dwell');
+      const node = document.getElementById('character-select');
       if (!node) return;
       const root = document.documentElement;
       const previousBehavior = root.style.scrollBehavior;
@@ -176,7 +180,8 @@ function App() {
     </header>
 
     <main id="contenido">
-      <section id="inicio" className="hero journey-section">
+      <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
+        <div id="inicio" className="hero journey-section">
         <img className="hero-photo" src={image.heroLab} alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
         <p className="hero-overline">{hero.kicker}</p>
         <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < hero.titulo.length - 1 && <br/>}</React.Fragment>)}</h1>
@@ -190,13 +195,17 @@ function App() {
         <div className="hero-proof">{hero.confianza}</div>
         <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
         <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
-      </section>
+        </div>
+      </Chapter>
 
+      <Threshold from="entrada" to="character-select" activeFrom={0} />
+      <Chapter id="character-select" className="spatial-chapter spatial-chapter--selection">
+        <div className="explore-dwell" aria-hidden="true" />
+      </Chapter>
+      <Threshold from="character-select" to="asesoria-lab" />
 
-
-      <section className={exploreOpen ? "explore-dwell is-open" : "explore-dwell"} role="region" aria-label="Selección de disciplinas y formas de entrenamiento" aria-hidden={!exploreOpen} />
-
-      <section id="metodo" className="method-section journey-section">
+      <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method">
+      <div id="metodo" className="method-section journey-section">
         <div className="method-stage">
           <div className="method-copy">
             <p className="eyebrow">UN PROCESO PERSONAL</p>
@@ -214,7 +223,7 @@ function App() {
             </div>
           </div>
           <div className="method-stations" aria-label="Cinco pasos del método">
-            {advisorySubstages.slice(1).map((step, i) => <button type="button" className={activeMethodIndex === i ? 'method-station active' : 'method-station'} key={step.id} aria-current={activeMethodIndex === i ? 'step' : undefined} onClick={() => { const section = document.getElementById('metodo'); if (section) { const travel = section.offsetHeight - window.innerHeight; window.scrollTo({ top: section.offsetTop + travel * ((i + .5) / 5), behavior: 'smooth' }); } }}>
+            {advisorySubstages.slice(1).map((step, i) => <button type="button" className={activeMethodIndex === i ? 'method-station active' : 'method-station'} key={step.id} aria-current={activeMethodIndex === i ? 'step' : undefined} onClick={() => { const section = document.getElementById('asesoria-lab'); if (section) { const travel = section.offsetHeight - window.innerHeight; window.scrollTo({ top: section.offsetTop + travel * ((i + .5) / 5), behavior: 'smooth' }); } }}>
               <span className="station-number">{step.num}</span><span className="station-content"><strong>{step.n}</strong>{activeMethodIndex === i && <><span className="station-description">{step.texto}</span>{step.elementos && <span className="station-tags">{step.elementos.join(' · ')}</span>}{step.destacada && <span className="station-highlight">{step.destacada}</span>}</>}</span>
               {step.etiqueta && activeMethodIndex !== i && <small>{step.etiqueta}</small>}
             </button>)}
@@ -222,9 +231,12 @@ function App() {
           </div>
           <span className="method-coordinate">LAB / 03 — {String(activeMethodIndex + 1).padStart(2, '0')} : 05</span>
         </div>
-      </section>
+        </div>
+      </Chapter>
 
-      <section id="entrenamiento" className="journey-section content-section pricing-section">
+      <Threshold from="asesoria-lab" to="slot" />
+      <Chapter id="slot" className="spatial-chapter spatial-chapter--pricing">
+      <div id="entrenamiento" className="journey-section content-section pricing-section">
         <div className="section-meta"><span>03 / 05</span><span>ENTRENAMIENTO · FORMATOS Y PRECIOS</span></div>
         <p className="eyebrow">ELIGE CÓMO ENTRENAR</p><h2 className="pricing-title">Entrenamiento diseñado alrededor de ti.</h2>
         <p className="pricing-social" aria-label="Valoración en Google: 5,0 estrellas y 18 reseñas">{site.rating.valor.replace('.', ',')} ★ · {site.rating.resenas} reseñas</p>
@@ -291,16 +303,21 @@ function App() {
             <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><a href={waLink('Hola, quiero consultar si hay grupo reducido compatible con mi zona y disponibilidad.')} target="_blank" rel="noopener noreferrer">Consultar grupos en mi zona <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a><p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article><button type="button" className="text-cta group-finder-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar buscador' : 'Buscar un grupo por zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} />}
           </>}
         </div>
-      </section>
-
-      <section id="alex" className="journey-section content-section founder-section">
+      </div>
+      </Chapter>
+      <Threshold from="slot" to="proof-chen" />
+      <Chapter id="proof-chen" className="spatial-chapter spatial-chapter--founder">
+      <div id="alex" className="journey-section content-section founder-section">
         <div className="section-meta"><span>04 / 05</span><span>SOBRE ALEX</span></div>
         <p className="eyebrow">COACH / COMPETIDOR</p><h2>Experiencia dentro y fuera del ring.</h2>
         <div className="founder-human"><figure><img src={image.chenAzotea} alt="Alex, entrenador de Striking Motion Lab" loading="lazy"/><figcaption>Alex · Entrenador</figcaption></figure><figure><img src={image.chenRing} alt="Alex compitiendo en el ring" loading="lazy"/><figcaption>Experiencia en competición · FEKM / WAKO</figcaption></figure></div>
         {dossierItems.filter((item) => item.id !== 'metodo').map((item) => <article className="proof-card" key={item.id}><small>{item.label}</small>{item.titulo && <h3>{item.titulo}</h3>}{item.datos?.map(([a, b]) => <p key={a}><b>{a}:</b> {b}</p>)}{item.texto?.map((line, i) => <p key={i}>{line}</p>)}{item.resenas?.map((review, i) => <blockquote key={i}>“{review}”</blockquote>)}{item.enlace && <a href={item.enlace.href} target="_blank" rel="noopener noreferrer">{item.enlace.label} ↗</a>}</article>)}
-      </section>
+        </div>
+      </Chapter>
 
-      <section id="reserva" className="journey-section content-section booking-section">
+      <Threshold from="proof-chen" to="reserva" />
+      <Chapter id="reserva" className="spatial-chapter spatial-chapter--booking">
+      <div id="reserva-content" className="journey-section content-section booking-section">
         <div className="section-meta"><span>05 / 05</span><span>RESERVA</span></div>
         <p className="eyebrow">{reserva.subtitulo}</p><h2>{reserva.titulo}</h2><p className="lead">{reserva.texto}</p>
         <div className="booking-grid"><article><h3>{reserva.caminos.directo.titulo}</h3><p>{reserva.caminos.directo.accion}</p><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer">Elegir día y hora ↗</a></article><article><h3>{reserva.caminos.dudas.titulo}</h3><p>{reserva.caminos.dudas.accion}</p><a className="secondary-cta" href={waLink(cierre.mensajeAsesoria)} target="_blank" rel="noopener noreferrer">Pedir asesoramiento ↗</a></article></div>
@@ -309,7 +326,7 @@ function App() {
         <div className="faq"><h3>Preguntas frecuentes</h3>{faq.map((item, i) => <article key={item.q}><button type="button" aria-expanded={faqOpen === i} onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}>{item.q}<span>{faqOpen === i ? '−' : '+'}</span></button>{faqOpen === i && <p>{item.a}</p>}</article>)}</div>
       </section>
 
-      <section id="empresas" className="journey-section content-section business-section">
+      <div id="empresas" className="journey-section content-section business-section">
         <style>{`.business-section .b2b-intro{max-width:760px;margin-bottom:34px}.business-section .b2b-offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0 46px}.business-section .b2b-offer{border:1px solid rgba(255,255,255,.13);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));padding:24px;min-height:190px}.business-section .b2b-offer .eyebrow{margin-bottom:14px}.business-section .b2b-offer h3{font-size:clamp(20px,2.5vw,28px);margin:0 0 10px}.business-section .b2b-offer p{color:rgba(241,241,238,.72);line-height:1.65;margin:0}.business-section .b2b-case{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:28px;padding:28px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);margin:24px 0 34px}.business-section .b2b-facts{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0}.business-section .b2b-fact strong{display:block;font-size:30px;color:#e05a2b}.business-section .b2b-fact span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(241,241,238,.65)}.business-section .b2b-proposals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 30px}.business-section .b2b-proposal{padding:20px;border:1px solid rgba(255,255,255,.12)}.business-section .b2b-proposal p{color:rgba(241,241,238,.7);line-height:1.6}.business-section .b2b-process{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}.business-section .b2b-process article{border-left:2px solid #e05a2b;padding:4px 14px}.business-section .b2b-process strong{display:block;margin-bottom:7px}.business-section .b2b-process span{font-size:14px;line-height:1.55;color:rgba(241,241,238,.68)}.business-section .b2b-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}@media(max-width:680px){.business-section .b2b-offers,.business-section .b2b-proposals,.business-section .b2b-case,.business-section .b2b-process{grid-template-columns:1fr}.business-section .b2b-offer{min-height:0}.business-section .b2b-case{gap:12px}.business-section .b2b-facts{gap:18px}}`}</style>
         <div className="section-meta"><span>BUSINESS / B2B</span><span>PRIVATE EXPERIENCES · MADRID</span></div>
         <div className="b2b-intro">
@@ -341,7 +358,8 @@ function App() {
         <div className="b2b-process"><article><strong>01 · Diseñamos</strong><span>Definimos objetivo, audiencia, duración, aforo y espacio.</span></article><article><strong>02 · Producimos</strong><span>SML aporta entrenador, material y coordinación de la experiencia.</span></article><article><strong>03 · Activamos</strong><span>El partner aporta espacio y acceso al público; ejecutamos y ajustamos el formato.</span></article></div>
         <p>{empresas.ayuda}</p>
         <div className="b2b-actions"><a className="primary-cta" href={waLink('Hola, quiero diseñar una experiencia B2B con SML. Tipo de proyecto: empresa / hotel / evento / marca.')} target="_blank" rel="noopener noreferrer">Diseñar una experiencia ↗</a><a className="secondary-cta" href={waLink('Hola, quiero recibir información sobre formatos y colaboración B2B.')} target="_blank" rel="noopener noreferrer">Solicitar dossier ↗</a></div>
-      </section>
+      </div>
+      </Chapter>
     </main>
 
     <footer className="footer footer-complete">

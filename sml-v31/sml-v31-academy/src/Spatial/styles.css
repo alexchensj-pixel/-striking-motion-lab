@@ -112,8 +112,8 @@ main{position:relative;z-index:2}
 }
 
 /* MÉTODO · recorrido sticky de cinco estaciones sincronizado con la máquina 3D */
-.method-section{height:250vh;min-height:250svh;padding:0!important;position:relative}
-.method-stage{position:sticky;top:0;height:100vh;height:100svh;min-height:620px;display:grid;grid-template-columns:minmax(340px,42%) minmax(320px,1fr);align-items:center;gap:clamp(28px,5vw,84px);padding:clamp(100px,12vh,132px) clamp(28px,7vw,112px) 64px;overflow:hidden;isolation:isolate}
+.method-section{height:100%;min-height:100svh;padding:0!important;position:relative}
+.method-stage{position:relative;top:auto;height:100%;min-height:100svh;display:grid;grid-template-columns:minmax(340px,42%) minmax(320px,1fr);align-items:center;gap:clamp(28px,5vw,84px);padding:clamp(100px,12vh,132px) clamp(28px,7vw,112px) 64px;overflow:hidden;isolation:isolate}
 .method-copy{position:relative;z-index:2;max-width:560px;align-self:center;text-shadow:0 2px 20px #08090be0}
 .method-copy h2{font:800 clamp(2.1rem,4.1vw,4.3rem)/.98 'Barlow Condensed',sans-serif;letter-spacing:-.025em;text-transform:uppercase;max-width:11ch;margin:18px 0 24px}
 .method-evaluation{max-width:430px;padding:17px 19px 18px;border:1px solid rgba(224,90,43,.72);background:rgba(10,12,15,.88);backdrop-filter:blur(12px)}
@@ -249,7 +249,8 @@ main :is(a, button, input, select, textarea, [role="button"]) { pointer-events: 
 
 
 /* HOME hero refinement — applied to the immersive root actually built by Netlify. */
-.hero { isolation: isolate; gap: 8px; background: #0b0c0f; }
+.hero { isolation: isolate; gap: 8px; background: transparent; }
+.hero-photo { display:none !important; }
 .hero-photo { position: absolute; z-index: -2; inset: 0 0 0 auto; display: block; width: auto; height: min(100%, 1147px); max-width: min(72vw, 1374px); object-fit: cover; object-position: right center; opacity: .98; filter: brightness(.88) contrast(1.16) saturate(1.02); pointer-events: none; }
 .hero::before { z-index: -1; background: linear-gradient(90deg, rgba(8,9,11,.82) 0%, rgba(8,9,11,.62) 34%, rgba(8,9,11,.22) 70%, rgba(8,9,11,.30) 100%), linear-gradient(0deg, rgba(8,9,11,.60), transparent 56%, rgba(8,9,11,.22)); }
 .hero > :not(.hero-photo) { position: relative; z-index: 2; }
@@ -504,3 +505,35 @@ main :is(a, button, input, select, textarea, [role="button"]) { pointer-events: 
   overflow: visible;
 }
 
+
+
+/* TRUE SPATIAL CHAPTERS — original SML sticky scene architecture. */
+.spatial-chapter { position:relative; perspective:1500px; transform-style:preserve-3d; }
+.spatial-chapter > .stage { position:sticky; top:0; height:100svh; min-height:560px; overflow:hidden; isolation:isolate; transform-style:preserve-3d; background:transparent; }
+.spatial-chapter .journey-section { min-height:100%; height:100%; border:0; background:transparent; transform-style:preserve-3d; }
+.spatial-chapter .journey-section::before { background:linear-gradient(90deg,rgba(5,6,8,.34),rgba(5,6,8,.08) 50%,rgba(5,6,8,.28)); }
+.spatial-chapter--entry .hero { display:flex; align-items:flex-start; justify-content:center; flex-direction:column; padding:120px clamp(24px,8vw,120px) 90px; }
+.spatial-chapter--entry .hero h1,.spatial-chapter--entry .hero-overline,.spatial-chapter--entry .hero-context,.spatial-chapter--entry .hero-offer,.spatial-chapter--entry .hero-actions { transform:translateZ(72px); }
+.spatial-chapter--entry .hero-proof,.spatial-chapter--entry .hero-quicklinks { transform:translateZ(36px); }
+.spatial-chapter--method .method-stage { transform-style:preserve-3d; }
+.spatial-chapter--method .method-copy { transform:translateZ(58px); }
+.spatial-chapter--method .method-stations { transform:translateZ(24px) rotateY(-2deg); }
+.spatial-chapter--pricing .content-section,.spatial-chapter--founder .content-section,.spatial-chapter--booking .content-section { overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:rgba(224,90,43,.65) transparent; }
+.spatial-chapter--pricing .training-card { background:linear-gradient(145deg,rgba(24,28,34,.74),rgba(9,11,14,.58)); backdrop-filter:blur(9px); transform-style:preserve-3d; }
+.spatial-chapter--pricing .training-card:nth-child(1) { transform:translateZ(18px) rotateY(2deg); }
+.spatial-chapter--pricing .training-card:nth-child(2) { transform:translateZ(54px); }
+.spatial-chapter--pricing .training-card:nth-child(3) { transform:translateZ(18px) rotateY(-2deg); }
+.spatial-chapter--booking .business-section { min-height:100%; height:auto; padding-top:36px; border-top:1px solid rgba(255,255,255,.12); }
+.spatial-chapter--booking .business-section > * { transform:translateZ(18px); }
+.threshold[data-threshold="entrada>character-select"] { height:18vh !important; min-height:90px; }
+.spatial-chapter--selection > .stage { pointer-events:none; }
+.world { z-index:0; }
+main { position:relative; z-index:2; perspective:1500px; transform-style:preserve-3d; }
+@media(max-width:760px){
+ .spatial-chapter > .stage { min-height:520px; }
+ .spatial-chapter--entry .hero { padding:100px 22px 72px; }
+ .spatial-chapter--method .method-stage { display:flex; flex-direction:column; justify-content:flex-start; overflow-y:auto; }
+ .spatial-chapter--method .method-copy,.spatial-chapter--method .method-stations { transform:none; width:100%; max-width:none; }
+ .spatial-chapter--pricing .content-section,.spatial-chapter--founder .content-section,.spatial-chapter--booking .content-section { padding:92px 20px 32px; }
+ .spatial-chapter--pricing .training-card:nth-child(n) { transform:none; }
+}
