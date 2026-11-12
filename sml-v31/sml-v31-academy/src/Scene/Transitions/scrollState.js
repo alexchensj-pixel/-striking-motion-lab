@@ -43,6 +43,8 @@ const smoothstep = (x, a, b) => {
 };
 
 // Bridge eliminado: el umbral Entrada → Selección revela directamente a los luchadores.
+// Compatibilidad de build: BridgeHall legacy puede seguir resolviéndose como módulo, pero ya no se monta en el recorrido nuevo.
+export const BRIDGE_END = 0.7;
 export const REVEAL_START = 0;
 export const REVEAL_FULL = 1;
 
