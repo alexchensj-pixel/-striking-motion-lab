@@ -1,14 +1,16 @@
-// Spatial integration preview: final review build.
 import React, { useEffect, useRef, useState } from 'react';
-import LegacyWorld from './scene/LegacyWorld.jsx';
-import ExploreOverlay from './scene/ExploreOverlay.jsx';
+import LegacyWorld from './LegacyWorld.jsx';
+import ExploreOverlay from './ExploreOverlay.jsx';
 import {
   site, hero, advisorySubstages, evaluacionInicial,
   dossierItems, reserva, faq, empresas, cierre, waLink
-} from './legacy/Data/Content.js';
-import { image, eci, entrenamientoMedia } from './legacy/Data/Media.js';
-import { existingPlans, kitInicio } from './legacy/Data/Programs.js';
-import { RUTAS } from './legacy/Data/Legal.js';
+} from '../Data/Content.js';
+import { image, eci, entrenamientoMedia } from '../Data/Media.js';
+import { existingPlans, kitInicio } from '../Data/Programs.js';
+import { RUTAS } from '../Data/Legal.js';
+import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
+import './styles.css';
+import './conversion.css';
 
 class SpatialBoundary extends React.Component {
   constructor(props) { super(props); this.state = { failed: false }; }
@@ -66,6 +68,7 @@ function App() {
   const [faqOpen, setFaqOpen] = useState(-1);
   const [showPlanComparison, setShowPlanComparison] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [showGroupFinder, setShowGroupFinder] = useState(false);
   const [activeService, setActiveService] = useState('grupos');
   const methodProgress = useRef(0);
   const [activeMethodIndex, setActiveMethodIndex] = useState(0);
@@ -285,7 +288,7 @@ function App() {
           </>}
           {activeService === 'grupos' && <>
             <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO EN EQUIPO</p><h3 className="subsection-title">Grupo reducido.</h3></div><p>Entrenamiento compartido, con atención técnica y un máximo de cuatro personas.</p></div>
-            <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><a href={waLink('Hola, quiero consultar si hay grupo reducido compatible con mi zona y disponibilidad.')} target="_blank" rel="noopener noreferrer">Consultar grupos en mi zona <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a><p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article>
+            <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><a href={waLink('Hola, quiero consultar si hay grupo reducido compatible con mi zona y disponibilidad.')} target="_blank" rel="noopener noreferrer">Consultar grupos en mi zona <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a><p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article><button type="button" className="text-cta group-finder-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar buscador' : 'Buscar un grupo por zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} />}
           </>}
         </div>
       </section>

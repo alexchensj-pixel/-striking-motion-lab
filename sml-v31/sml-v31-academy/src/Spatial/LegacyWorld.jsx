@@ -1,11 +1,11 @@
 import React, { Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import CameraRig from '../legacy/Scene/Camera/index.jsx';
-import Lighting from '../legacy/Scene/Lighting/index.jsx';
+import CameraRig from '../Scene/Camera/index.jsx';
+import Lighting from '../Scene/Lighting/index.jsx';
 import Environment from './MemoryEnvironment.jsx';
-import { segmentKeys } from '../legacy/Data/Content.js';
-import { scrollState, setSegment, prefersReducedMotion } from '../legacy/Scene/Transitions/scrollState.js';
-import { useStore } from '../legacy/App/store.js';
+import { segmentKeys } from '../Data/Content.js';
+import { scrollState, setSegment, prefersReducedMotion } from '../Scene/Transitions/scrollState.js';
+import { useStore } from '../App/store.js';
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 

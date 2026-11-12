@@ -1,8 +1,8 @@
-import { anchorZ } from '../legacy/Scene/Camera/waypoints.js';
-import { chapters } from '../legacy/Data/Content.js';
-import { Pillars, Room, Reels, Archive, Door } from '../legacy/Scene/Environment/blockouts.jsx';
-import EntradaWorld from '../legacy/Scene/Environment/Entrada/EntradaWorld.jsx';
-import { useStore } from '../legacy/App/store.js';
+import { anchorZ } from '../Scene/Camera/waypoints.js';
+import { chapters } from '../Data/Content.js';
+import { Pillars, Room, Reels, Archive, Door } from '../Scene/Environment/blockouts.jsx';
+import EntradaWorld from '../Scene/Environment/Entrada/EntradaWorld.jsx';
+import { useStore } from '../App/store.js';
 
 const blockouts = {
   entrada: EntradaWorld,
