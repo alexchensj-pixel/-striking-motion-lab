@@ -537,3 +537,9 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--pricing .content-section,.spatial-chapter--founder .content-section,.spatial-chapter--booking .content-section { padding:92px 20px 32px; }
  .spatial-chapter--pricing .training-card:nth-child(n) { transform:none; }
 }
+
+/* Chapter transitions and the final dual-panel scene. */
+.threshold { position:relative; height:14vh; min-height:72px; pointer-events:none; }
+.spatial-chapter--booking > .stage { overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:rgba(224,90,43,.6) transparent; }
+.spatial-chapter--booking .booking-section,.spatial-chapter--booking .business-section { flex:0 0 auto; }
+.spatial-chapter--booking .business-section { min-height:100svh; }
