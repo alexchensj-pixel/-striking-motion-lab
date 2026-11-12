@@ -12,7 +12,6 @@ import { existingPlans, kitInicio } from '../Data/Programs.js';
 import { RUTAS } from '../Data/Legal.js';
 import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
 import './styles.css';
-import './conversion.css';
 
 class SpatialBoundary extends React.Component {
   constructor(props) { super(props); this.state = { failed: false }; }
