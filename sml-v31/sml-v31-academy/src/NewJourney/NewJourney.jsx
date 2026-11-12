@@ -97,7 +97,7 @@ export default function NewJourney() {
 
       <div className="nj-progress-rail"><span style={{ transform: `scaleY(${progress.current || 0})` }}/></div>
       <div className="nj-chapter-indicator"><span>0{active + 1}</span><i/>03</div>
-      <footer className="nj-footer"><span>© {new Date().getFullYear()} STRIKING MOTION LAB</span><span>MOVE WITH INTENT / 1% BETTER EVERYDAY</span><a href="https://www.instagram.com/strikingmotionlab/" target="_blank" rel="noreferrer">INSTAGRAM ↗</a><span><a href={RUTAS.privacidad}>PRIVACIDAD</a> · <a href={RUTAS.aviso}>AVISO LEGAL</a> · <a href="/mi-sml">MI SML</a></span></footer>
+      <footer className="nj-footer"><span>© {new Date().getFullYear()} STRIKING MOTION LAB</span><span>MOVE WITH INTENT / 1% BETTER EVERYDAY</span><a href="https://www.instagram.com/strikingmotionlab/" target="_blank" rel="noreferrer">INSTAGRAM ↗</a><span><a href={RUTAS.privacidad}>PRIVACIDAD</a> · <a href={RUTAS.aviso}>AVISO LEGAL</a> · <a href="/academia">ACADEMIA</a> · <a href="/mi-sml">MI SML</a></span></footer>
     </div>
   );
 }
