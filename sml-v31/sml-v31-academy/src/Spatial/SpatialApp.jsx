@@ -1,3 +1,4 @@
+// Spatial integration preview: final review build.
 import React, { useEffect, useRef, useState } from 'react';
 import LegacyWorld from './scene/LegacyWorld.jsx';
 import ExploreOverlay from './scene/ExploreOverlay.jsx';
