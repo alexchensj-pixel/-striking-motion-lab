@@ -64,25 +64,25 @@ export const REVEAL_FULL = 1;
 // HOME → EXPLORE (determinista y reversible: al subir el scroll se ocultan otra vez exactamente por el mismo camino).
 // Tras un salto directo a EXPLORE (navegación por sección) el umbral queda en 1: reveal = 1.
 export function getCharactersReveal() {
-  const introProgress = scrollState.segments['entrada'] ?? 0;
-  if (introProgress < 1) return 0;
-  const thresholdProgress = scrollState.segments['entrada>character-select'] ?? 0;
-  return smoothstep(thresholdProgress, REVEAL_START, REVEAL_FULL);
+  const { key } = scrollState.current;
+  if (key === 'character-select') return 1;
+  const selectionProgress = scrollState.segments['slot>character-select'] ?? 0;
+  return smoothstep(selectionProgress, 0, 1);
 }
 
 // ¿Está la persona en EXPLORE? True dentro del capítulo y también justo en su inicio: un salto directo a la sección
 // (navigation.js#jumpTo) deja el scroll EXACTAMENTE en el borde superior del capítulo, donde el progreso del capítulo aún
 // es 0 y el tramo activo sigue siendo el umbral HOME → EXPLORE (al 100 %). Ambos casos son EXPLORE.
 export function isExploreActive() {
-  const { key, progress } = scrollState.current;
-  return key === 'character-select' || (key === 'entrada>character-select' && progress >= 0.999);
+  const { key } = scrollState.current;
+  return key === 'character-select' || key === 'slot>character-select';
 }
 
 // Progreso CRUDO (0..1, sin curva) del mismo umbral que gobierna getCharactersReveal(): lo necesita
 // AthleteSlots.jsx para interpolar posición/tamaño (no solo opacidad) mientras la escuadra se convierte
 // en la vitrina — determinista y reversible, viene directo del scroll real (Threshold.jsx → setSegment).
 export function getEntranceToSelectProgress() {
-  return scrollState.segments['entrada>character-select'] ?? 0;
+  return scrollState.segments['slot>character-select'] ?? 0;
 }
 
 // Opacidad del fondo fotográfico de la Entrada (heroLab / PhotoBackdrop). Pertenece SOLO a la Escena 01:
