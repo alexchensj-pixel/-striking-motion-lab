@@ -45,29 +45,57 @@ function makeDrumTexture() {
   c.width = S * 6; c.height = H;
   const g = c.getContext('2d');
   FACES.forEach((id, k) => {
-    const cx = (k + 0.5) * S;
-    g.fillStyle = k % 2 === 0 ? PALETTE.plate : PALETTE.graphite; // placa técnica: las mismas materias que la máquina de 03
-    g.fillRect(k * S, 0, S, H);
-    g.fillStyle = id === '1-1' ? '#e9edf1' : id === 'duo' ? '#a8b0bb' : '#737a85'; // filetes: mismas «materias» que los huecos
-    g.fillRect(k * S + 6, 0, 2, H);
-    g.fillRect(k * S + S - 8, 0, 2, H);
-    g.save();
-    g.translate(cx, H / 2);
-    g.rotate(Math.PI / 2);
+    const x = k * S, cx = x + S / 2;
+    const grad = g.createLinearGradient(x, 0, x + S, H);
+    grad.addColorStop(0, '#352515');
+    grad.addColorStop(0.18, '#8c642e');
+    grad.addColorStop(0.48, '#c49a50');
+    grad.addColorStop(0.72, '#765126');
+    grad.addColorStop(1, '#241a10');
+    g.fillStyle = grad;
+    g.fillRect(x, 0, S, H);
+    // Pátina oscura y filetes de latón envejecido.
+    g.fillStyle = 'rgba(16,12,8,.42)';
+    g.fillRect(x + 5, 0, 5, H); g.fillRect(x + S - 10, 0, 5, H);
+    g.strokeStyle = 'rgba(239,198,115,.8)'; g.lineWidth = 2;
+    g.strokeRect(x + 14, 12, S - 28, H - 24);
+    g.strokeStyle = 'rgba(45,29,13,.72)'; g.lineWidth = 1;
+    g.strokeRect(x + 20, 18, S - 40, H - 36);
+    // Roseta grabada y líneas radiales: cada cara parece una placa de un mecanismo antiguo.
+    g.save(); g.translate(cx, H / 2);
+    for (let a = 0; a < 16; a++) {
+      g.save(); g.rotate(a * Math.PI / 8);
+      g.strokeStyle = 'rgba(245,211,145,.28)'; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(0, -145); g.lineTo(0, -116); g.stroke();
+      g.restore();
+    }
+    g.strokeStyle = 'rgba(245,211,145,.42)'; g.lineWidth = 2;
+    g.beginPath(); g.arc(0, 0, 108, 0, Math.PI * 2); g.stroke();
+    g.beginPath(); g.arc(0, 0, 101, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = 'rgba(22,15,8,.7)';
+    [[-100,-145],[100,-145],[-100,145],[100,145]].forEach(([rx,ry]) => {
+      g.beginPath(); g.arc(rx, ry, 5, 0, Math.PI*2); g.fill();
+      g.strokeStyle = 'rgba(244,205,126,.9)'; g.lineWidth = 1.5; g.stroke();
+    });
+    g.restore();
+    g.save(); g.translate(cx, H / 2); g.rotate(Math.PI / 2);
     if (MIRROR) g.scale(-1, 1);
     g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.fillStyle = ink(0.88);
-    g.font = `300 ${id === 'duo' ? 68 : 100}px ${SANS}`;
-    spaced(g, LABEL[id], 0, -12, id === 'duo' ? 8 : 10, H - 40);
-    g.strokeStyle = ink(0.6); g.lineWidth = 2; g.beginPath(); g.moveTo(-20, 44); g.lineTo(20, 44); g.stroke();
-    g.fillStyle = ink(0.6);
-    g.font = `400 24px ${MONO}`;
-    spaced(g, SUB[id], 0, 80, 6, H - 60);
+    g.shadowColor = 'rgba(0,0,0,.8)'; g.shadowBlur = 5; g.shadowOffsetY = 2;
+    g.fillStyle = '#f4dfad';
+    g.font = `600 ${id === 'duo' ? 58 : 88}px ${SANS}`;
+    spaced(g, LABEL[id], 0, -10, id === 'duo' ? 7 : 9, H - 48);
+    g.shadowBlur = 0; g.shadowOffsetY = 0;
+    g.strokeStyle = 'rgba(35,22,10,.85)'; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(-28, 42); g.lineTo(28, 42); g.stroke();
+    g.strokeStyle = 'rgba(250,220,157,.85)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(-25, 44); g.lineTo(25, 44); g.stroke();
+    g.fillStyle = '#e6c786'; g.font = `500 22px ${MONO}`;
+    spaced(g, SUB[id], 0, 78, 5, H - 68);
     g.restore();
   });
   const t = new CanvasTexture(c);
-  t.colorSpace = SRGBColorSpace;
-  t.anisotropy = 4;
+  t.colorSpace = SRGBColorSpace; t.anisotropy = 8;
   return t;
 }
 
@@ -115,6 +143,7 @@ export default function HybridRack() {
     leverKnob: new SphereGeometry(0.1, 20, 16),
     leverBase: (() => { const g = new CylinderGeometry(0.1, 0.1, 0.1, 20); g.rotateZ(Math.PI / 2); return g; })(),
     clickLed: new SphereGeometry(0.035, 12, 10),
+    rivet: new SphereGeometry(0.018, 12, 10),
     shadow: new PlaneGeometry(3.4, 1.8),
   }), []);
 
@@ -133,6 +162,8 @@ export default function HybridRack() {
       plinth: new MeshStandardMaterial({ color: PALETTE.graphiteDark, metalness: 0.5, roughness: 0.55, ...e, ...fade }),
       body: new MeshStandardMaterial({ color: PALETTE.graphite, metalness: 0.65, roughness: 0.4, ...e, ...fade }),
       steel: new MeshStandardMaterial({ color: PALETTE.steel, metalness: 1, roughness: 0.3, ...e, ...fade }),
+    brass: new MeshStandardMaterial({ color: '#b8873e', metalness: 0.92, roughness: 0.27, envMap: env.texture, envMapIntensity: 1.25, ...fade }),
+    gold: new MeshStandardMaterial({ color: '#e0b866', metalness: 0.95, roughness: 0.2, envMap: env.texture, envMapIntensity: 1.35, ...fade }),
       aluminum: new MeshStandardMaterial({ color: PALETTE.aluminum, metalness: 0.9, roughness: 0.5, ...e, ...fade }),
       dark: new MeshStandardMaterial({ color: PALETTE.graphiteDark, metalness: 0.5, roughness: 0.55, ...e, ...fade }),
       drum: new MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: new Color('#ffffff'), emissiveIntensity: 0.55, metalness: 0.35, roughness: 0.5, ...fade }),
@@ -161,7 +192,7 @@ export default function HybridRack() {
     stepDrum(dt);
     const d = slotState.drum;
 
-    [mats.plinth, mats.body, mats.steel, mats.aluminum, mats.dark, mats.drum, mats.pip, mats.clickLed, mats.red, mats.redDim].forEach((m) => { m.opacity = g; });
+    [mats.plinth, mats.body, mats.steel, mats.brass, mats.gold, mats.aluminum, mats.dark, mats.drum, mats.pip, mats.clickLed, mats.red, mats.redDim].forEach((m) => { m.opacity = g; });
     mats.glass.opacity = 0.24 * g;
     mats.shadow.opacity = 0.55 * g;
 
@@ -240,24 +271,28 @@ export default function HybridRack() {
         <mesh geometry={geo.upright} material={mats.body} position={[LEN / 2 + 0.17, 0.775, 0]} />
         <group position={[0, DRUM_Y - 0.91, 0]}>
           <mesh ref={drum} geometry={geo.drum} material={mats.drum} />
-          <mesh geometry={geo.flange} material={mats.steel} position={[-LEN / 2, 0, 0]} />
-          <mesh geometry={geo.flange} material={mats.steel} position={[LEN / 2, 0, 0]} />
-          <mesh geometry={geo.hub} material={mats.dark} />
+          <mesh geometry={geo.flange} material={mats.brass} position={[-LEN / 2, 0, 0]} />
+          <mesh geometry={geo.flange} material={mats.brass} position={[LEN / 2, 0, 0]} />
+          <mesh geometry={geo.hub} material={mats.brass} />
 
           {/* cubiertas superior e inferior: dejan solo la ventana de lectura */}
           <mesh geometry={geo.cowlTop} material={mats.body} position={[0, WIN_H / 2 + 0.25, R - 0.14]} />
           <mesh geometry={geo.cowlBot} material={mats.body} position={[0, -(WIN_H / 2 + 0.25), R - 0.14]} />
           {/* ventana: cristal + marco + aguja */}
           <mesh geometry={geo.glass} material={mats.glass} position={[0, 0, R + 0.1]} />
-          <mesh geometry={geo.frameH} material={mats.steel} position={[0, WIN_H / 2 + 0.0175, R + 0.1]} />
-          <mesh geometry={geo.frameH} material={mats.steel} position={[0, -WIN_H / 2 - 0.0175, R + 0.1]} />
-          <mesh geometry={geo.frameV} material={mats.steel} position={[-(LEN / 2 + 0.06), 0, R + 0.1]} />
-          <mesh geometry={geo.frameV} material={mats.steel} position={[LEN / 2 + 0.06, 0, R + 0.1]} />
+          <mesh geometry={geo.frameH} material={mats.gold} position={[0, WIN_H / 2 + 0.0175, R + 0.1]} />
+          <mesh geometry={geo.frameH} material={mats.gold} position={[0, -WIN_H / 2 - 0.0175, R + 0.1]} />
+          <mesh geometry={geo.frameV} material={mats.gold} position={[-(LEN / 2 + 0.06), 0, R + 0.1]} />
+          <mesh geometry={geo.frameV} material={mats.gold} position={[LEN / 2 + 0.06, 0, R + 0.1]} />
+          {[-1, 1].map((side) => [-1, 1].map((vertical) => (
+            <mesh key={`${side}-${vertical}`} geometry={geo.rivet} material={mats.gold}
+              position={[side * (LEN / 2 + 0.06), vertical * (WIN_H / 2 + 0.0175), R + 0.135]} />
+          )))}
           <mesh ref={needle} geometry={geo.needle} material={mats.red} position={[-(LEN / 2 + 0.01), 0, R + 0.12]} rotation-z={Math.PI / 4} />
 
           {/* tres pilotos (uno por modalidad) y LED de clic, sobre la cubierta superior */}
           {mats.pilots.map((m, i) => (
-            <mesh key={i} geometry={geo.pilot} material={m} position={[(i - 1) * 0.26, WIN_H / 2 + 0.42, R + 0.125]} />
+            <mesh key={i} geometry={geo.pilot} material={mats.brass} position={[(i - 1) * 0.26, WIN_H / 2 + 0.42, R + 0.125]} />
           ))}
           <mesh geometry={geo.clickLed} material={mats.clickLed} position={[LEN / 2 - 0.04, WIN_H / 2 + 0.42, R + 0.125]} />
         </group>
