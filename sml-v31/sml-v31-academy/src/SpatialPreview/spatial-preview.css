@@ -1,0 +1,37 @@
+/* Spatial visual layer applied to the real SML experience. Layout and functionality stay owned by the original components. */
+.sml-spatial-preview {
+  --sml-spatial-bg: #101114;
+  --sml-spatial-panel: #17191d;
+  --sml-spatial-metal: #3b4048;
+  --sml-spatial-orange: #e05a2b;
+  color: #f1f1ee;
+  background: var(--sml-spatial-bg);
+  font-family: 'DM Sans', 'Inter Tight', sans-serif;
+  isolation: isolate;
+}
+.sml-spatial-preview :is(h1, h2, h3, .display, .title, .chapter-title) {
+  font-family: 'Barlow Condensed', 'Big Shoulders Display', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.sml-spatial-preview :is(button, a) {
+  -webkit-tap-highlight-color: transparent;
+}
+.sml-spatial-preview :focus-visible {
+  outline: 2px solid var(--sml-spatial-orange);
+  outline-offset: 4px;
+}
+.sml-spatial-preview ::selection {
+  color: #101114;
+  background: var(--sml-spatial-orange);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sml-spatial-preview *,
+  .sml-spatial-preview *::before,
+  .sml-spatial-preview *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
