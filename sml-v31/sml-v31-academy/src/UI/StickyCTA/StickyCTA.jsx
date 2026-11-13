@@ -15,7 +15,6 @@ const LOCAL_CTA = ['reserva']; // Reserva ES la reserva: sin CTA fijo redundante
 export default function StickyCTA() {
   const chapter = useStore((s) => s.activeChapter);
   const enHome = useStore((s) => s.activeSection === 'home');
-  const focus = useStore((s) => s.exploreFocus); // 'modos' (DESCUBRIR) | 'disciplinas' (DISCIPLINAS)
   // ENTRENAMIENTO: «Elegir mi entrenamiento» solo mientras no hay nada elegido; con un formato o una frecuencia ya aparecen los CTA propios de la placa (no se duplican).
   const eligiendo = useStore((s) => !s.selectedFormat && !s.selectedFrequency);
   const [enFaq, setEnFaq] = useState(false);
@@ -43,7 +42,6 @@ export default function StickyCTA() {
   let accion = null;
   if (enFaq) accion = 'reservar';
   else if (LOCAL_CTA.includes(chapter)) accion = null;
-  else if (chapter === 'character-select') accion = 'descubrir';
   else if (chapter === 'asesoria-lab') accion = 'evaluacion';
   else if (chapter === 'slot') accion = eligiendo ? 'entrenamiento' : null;
   else if (chapter === 'proof-chen') accion = 'reservar';
@@ -52,12 +50,6 @@ export default function StickyCTA() {
   return (
     <div className="scta" data-chapter={chapter} data-cta={accion}>
       {/* El texto y el destino coinciden: desde DISCIPLINAS, «Descubrir mi entrenamiento» lleva a DESCUBRIR; ya dentro de DESCUBRIR, el paso siguiente es el MÉTODO. */}
-      {accion === 'descubrir' && focus === 'disciplinas' && (
-        <button type="button" className="scta__btn" onClick={() => goToSection('explore')}>Descubrir mi entrenamiento</button>
-      )}
-      {accion === 'descubrir' && focus !== 'disciplinas' && (
-        <button type="button" className="scta__btn" onClick={() => goToSection('method')}>Ver el método</button>
-      )}
       {accion === 'evaluacion' && (
         <button type="button" className="scta__btn" onClick={() => irAReservar()}>Reservar evaluación · {sesion.precio} €</button>
       )}
