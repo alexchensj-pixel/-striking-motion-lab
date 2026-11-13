@@ -1,6 +1,7 @@
 import SceneCanvas from '../Scene/SceneCanvas.jsx';
 import TransitionVeil from '../Scene/Transitions/TransitionVeil.jsx';
 import Experience from '../Experience/index.jsx';
+import Explore from '../Experience/Explore/Explore.jsx';
 import Navigation from '../UI/Navigation/Navigation.jsx';
 import HUD from '../UI/HUD/HUD.jsx';
 import Controls from '../UI/Controls/Controls.jsx';
@@ -17,6 +18,7 @@ export default function App() {
     <>
       <SceneCanvas />
       <Experience />
+      <Explore />
       <Footer />
       <TransitionVeil />
       <HUD />

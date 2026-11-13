@@ -13,8 +13,8 @@ export const SECTIONS = ['home', 'disciplinas', 'explore', 'method', 'estudio', 
 // Capítulo 3D que ilustra cada sección. null = no es un tramo de la película (EXPERIENCES abre el recorrido B2B existente).
 export const SECTION_CHAPTER = {
   home: 'entrada',
-  disciplinas: 'character-select', // DISCIPLINAS: mismo capítulo que explore, foco 'disciplinas'
-  explore: 'character-select',     // DESCUBRIR: foco 'modos'
+  disciplinas: null,
+  explore: null,
   method: 'asesoria-lab',
   estudio: null, // overlay propio (Experience/Estudio): como Experiences, no toca capítulos, cámara ni scroll
   training: 'slot',
@@ -27,12 +27,10 @@ export const SECTION_CHAPTER = {
 // character-select lo comparten 'disciplinas' y 'explore': por scroll manda 'explore' (se fija explícito para no depender del orden).
 export const CHAPTER_SECTION = {
   ...Object.fromEntries(Object.entries(SECTION_CHAPTER).filter(([, c]) => c).map(([s, c]) => [c, s])),
-  'character-select': 'explore',
 };
 
 // Sección que corresponde a un capítulo, respetando el foco de character-select (DISCIPLINAS vs DESCUBRIR).
-export const sectionForChapter = (chapter, exploreFocus) =>
-  chapter === 'character-select' && exploreFocus === 'disciplinas' ? 'disciplinas' : (CHAPTER_SECTION[chapter] ?? null);
+export const sectionForChapter = (chapter) => CHAPTER_SECTION[chapter] ?? null;
 
 // HASH ↔ sección. 'home' = sin hash. #empresas (B2B) y #estudio los escriben sus propios overlays (replaceState).
 export const SECTION_HASH = {

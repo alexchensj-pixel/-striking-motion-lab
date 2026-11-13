@@ -12,10 +12,13 @@ export const useStore = create((set) => ({
 
   // Capítulo 3D en pantalla (lo marca el scroll). Mientras el B2B está abierto, la sección es EXPERIENCES y el scroll no la cambia.
   activeChapter: 'entrada',
+  exploreOpen: false,
+  openExplore: (focus = 'modos') => set({ exploreOpen: true, estudioOpen: false, b2bOpen: false, exploreFocus: focus, activeSection: focus === 'disciplinas' ? 'disciplinas' : 'explore' }),
+  closeExplore: () => set((s) => ({ exploreOpen: false, activeSection: sectionForChapter(s.activeChapter) ?? 'home' })),
   // character-select lo comparten DISCIPLINAS y DESCUBRIR: si la persona venía de 'disciplinas' se conserva; en cualquier otro caso
   // (home por scroll/Bridge, otra sección) pasa a 'explore' y el foco vuelve a 'modos'.
   setActiveChapter: (id) => set((s) => {
-    if (s.b2bOpen || s.estudioOpen) return { activeChapter: id };
+    if (s.b2bOpen || s.estudioOpen || s.exploreOpen) return { activeChapter: id };
     if (id === 'character-select') {
       const section = s.activeSection === 'disciplinas' ? 'disciplinas' : 'explore';
       return { activeChapter: id, activeSection: section, exploreFocus: section === 'disciplinas' ? 'disciplinas' : 'modos' };
