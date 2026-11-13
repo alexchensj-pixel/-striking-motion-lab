@@ -2613,3 +2613,42 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
 .ent__links .ent__b2bLink { max-width: none; width: auto; }
 .ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 13.5rem); pointer-events: none; }
 .ent__actions { z-index: 5; }
+
+
+/* HERO · tipografía integrada en el espacio 3D (referencia sml-new-skeleton).
+   Sin tarjetas, fondos, bordes ni superficies detrás del texto. */
+#entrada .ent__hero,
+#entrada .ent__hero::before,
+#entrada .ent__hero::after {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#entrada .ent__hero {
+  left: clamp(24px, 8vw, 124px);
+  top: clamp(7rem, 17vh, 11rem);
+  transform: none;
+  width: min(86vw, 76rem);
+  max-width: 76rem;
+  padding: 0;
+  text-align: left;
+}
+#entrada .ent__titulo {
+  font-size: clamp(3.6rem, 10.8vw, 9.5rem);
+  line-height: .79;
+  letter-spacing: -.035em;
+  text-shadow: 0 12px 55px rgba(0,0,0,.48);
+}
+#entrada .ent__marca,
+#entrada .ent__disc,
+#entrada .ent__mod,
+#entrada .ent__confianza {
+  text-shadow: 0 2px 18px rgba(0,0,0,.78);
+}
+@media (max-width: 700px) {
+  #entrada .ent__hero { left: 22px; top: clamp(6rem, 13vh, 8rem); width: calc(100vw - 44px); }
+  #entrada .ent__titulo { font-size: clamp(3.35rem, 13.5vw, 6.2rem); line-height: .84; letter-spacing: -.025em; }
+}
