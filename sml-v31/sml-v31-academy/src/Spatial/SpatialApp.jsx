@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import LegacyWorld from './LegacyWorld.jsx';
 import Chapter from '../Experience/Chapter.jsx';
 import Threshold from '../Scene/Transitions/Threshold.jsx';
-import ExploreOverlay from './ExploreOverlay.jsx';
 import {
   site, hero, advisorySubstages, evaluacionInicial,
   dossierItems, reserva, faq, empresas, cierre, waLink
@@ -66,7 +65,6 @@ const planComparisonRows = [
 
 function App() {
   const [active, setActive] = useState('inicio');
-  const [exploreOpen, setExploreOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(-1);
   const [showPlanComparison, setShowPlanComparison] = useState(false);
@@ -133,18 +131,6 @@ function App() {
       }
     });
   };
-  const openExplore = () => {
-    setExploreOpen(true);
-    requestAnimationFrame(() => {
-      const node = document.getElementById('character-select');
-      if (!node) return;
-      const root = document.documentElement;
-      const previousBehavior = root.style.scrollBehavior;
-      root.style.scrollBehavior = 'auto';
-      window.scrollTo(0, node.getBoundingClientRect().top + window.scrollY);
-      root.style.scrollBehavior = previousBehavior;
-    });
-  };
   const formatPlans = existingPlans.filter((plan) => plan.tipo === 'formato');
   const monthlyPlans = existingPlans.filter((plan) => plan.tipo === 'mensual');
   const individualFormat = formatPlans.find((plan) => plan.id === '1-1');
@@ -162,8 +148,7 @@ function App() {
 
   return <>
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
-    <SpatialBoundary><LegacyWorld exploreOpen={exploreOpen} /></SpatialBoundary>
-    <ExploreOverlay onContinue={() => go('metodo')} />
+    <SpatialBoundary><LegacyWorld /></SpatialBoundary>
     <div className="grain" aria-hidden="true" />
     <header className="topbar">
       <a className="brand" href="#inicio" onClick={(e) => { e.preventDefault(); go('inicio'); }} aria-label="Striking Motion Lab, inicio">
@@ -189,7 +174,6 @@ function App() {
         <div className="hero-actions">
           <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
           <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método</button>
-          <button className="secondary-cta explore-open-cta" type="button" onClick={openExplore}>Descubre tu disciplina</button>
         </div>
         <div className="hero-proof">{hero.confianza}</div>
         <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
@@ -197,11 +181,7 @@ function App() {
         </div>
       </Chapter>
 
-      <Threshold from="entrada" to="character-select" activeFrom={0} />
-      <Chapter id="character-select" className="spatial-chapter spatial-chapter--selection">
-        <div className="explore-dwell" aria-hidden="true" />
-      </Chapter>
-      <Threshold from="character-select" to="asesoria-lab" />
+      <Threshold from="entrada" to="asesoria-lab" />
 
       <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method">
       <div id="metodo" className="method-section journey-section">
