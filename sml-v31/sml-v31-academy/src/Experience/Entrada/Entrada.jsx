@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import Chapter from '../Chapter.jsx';
-import PhotoBackdrop from '../../Scene/PhotoBackdrop.jsx';
 import { gsap } from '../../Scene/Transitions/gsap.js';
 import { hero, entradaNarrativa } from '../../Data/Content.js';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
@@ -70,7 +69,6 @@ export default function Entrada() {
 
   return (
     <>
-      <PhotoBackdrop />
       <Chapter id="entrada" onProgress={(p) => { rawRef.current = p; }} className="ent">
         <div ref={rootRef}>
           {/* MENSAJE PRINCIPAL — visible al entrar. h1 real: qué es SML, qué ofrece, dónde está. */}
