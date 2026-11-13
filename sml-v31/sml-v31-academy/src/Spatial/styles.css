@@ -643,3 +643,53 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
     min-height: 64px;
   }
 }
+
+
+/* MOBILE COMPOSITION FIX · DOM content stays on a clean plane above the spatial world. */
+@media (max-width: 760px) {
+  main, .spatial-chapter, .spatial-chapter > .stage, .spatial-chapter .journey-section {
+    perspective: none !important;
+    transform: none !important;
+    transform-style: flat !important;
+    isolation: auto;
+  }
+  .spatial-chapter > .stage { overflow: visible !important; clip-path: none !important; }
+  .spatial-chapter--entry .hero {
+    position: relative; isolation: isolate; display: flex; flex-direction: column;
+    align-items: flex-start; justify-content: center; gap: 12px; width: 100%;
+    min-height: 100svh; height: auto; padding: 104px 24px 48px;
+    overflow: visible;
+    background: linear-gradient(180deg,rgba(5,6,8,.94) 0%,rgba(5,6,8,.86) 58%,rgba(5,6,8,.78) 100%);
+  }
+  .spatial-chapter--entry .hero-photo {
+    z-index: -2; width: 100%; height: 100%; max-width: none; object-fit: cover;
+    object-position: 62% center; opacity: .28;
+  }
+  .spatial-chapter--entry .hero::before {
+    z-index: -1;
+    background: linear-gradient(180deg,rgba(5,6,8,.32) 0%,rgba(5,6,8,.16) 48%,rgba(5,6,8,.48) 100%);
+  }
+  .spatial-chapter--entry .hero > :not(.hero-photo) { position: relative; z-index: 1; max-width: 100%; }
+  .spatial-chapter--entry .hero-overline {
+    margin: 0 0 4px; white-space: normal; font-size: 10px; line-height: 1.4; letter-spacing: .13em;
+  }
+  .spatial-chapter--entry .hero h1 {
+    width: 100%; max-width: 100%; margin: 0;
+    font-family: 'Big Shoulders Display', sans-serif !important;
+    font-size: clamp(48px, 12vw, 58px); font-weight: 900;
+    line-height: .94; letter-spacing: -.015em; text-wrap: initial;
+    overflow-wrap: normal; word-break: normal; hyphens: none;
+  }
+  .spatial-chapter--entry .hero-context { max-width: 34ch; margin: 4px 0 0; font-size: 15px; line-height: 1.5; }
+  .spatial-chapter--entry .hero-offer { margin: 4px 0 0; font-size: 13px; line-height: 1.5; }
+  .spatial-chapter--entry .hero-offer span { font-size: 12px; line-height: 1.5; }
+  .spatial-chapter--entry .hero-actions {
+    display: flex; flex-direction: column; align-items: stretch; width: 100%;
+    max-width: 420px; gap: 8px; margin: 10px 0 0;
+  }
+  .spatial-chapter--entry .hero-actions .primary-cta,
+  .spatial-chapter--entry .hero-actions .secondary-cta { width: 100%; min-height: 52px; white-space: normal; }
+  .spatial-chapter--entry .hero-proof, .spatial-chapter--entry .hero-quicklinks,
+  .spatial-chapter--entry .scroll-cue { max-width: 100%; margin-top: 4px; }
+  .spatial-chapter--entry .hero-quicklinks { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+}
