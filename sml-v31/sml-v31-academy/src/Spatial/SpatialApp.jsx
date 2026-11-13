@@ -126,7 +126,6 @@ function App() {
 
   const go = (id) => {
     setActive(id);
-    setExploreOpen(false);
     setMenuOpen(false);
     window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id } }));
     requestAnimationFrame(() => {
