@@ -1330,11 +1330,7 @@ nav.nav li[data-id="book"] { margin-top: .9rem; padding-top: .35rem; border-top:
   position: absolute; left: 50%; top: clamp(4.5rem, 14vh, 8rem); transform: translateX(-50%);
   width: min(92vw, 46rem); box-sizing: border-box; padding: 0 .25rem; text-align: center; pointer-events: none;
 }
-/* Velo suave detrás del título: la lectura no depende de lo que haya en el 3D (más marcado en móvil). */
-.ent__hero::before {
-  content: ''; position: absolute; inset: -2.5rem -12% -2rem; z-index: -1;
-  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .55) 0, rgba(0, 0, 0, .3) 55%, rgba(0, 0, 0, 0) 78%);
-}
+/* Hero copy sits directly in the 3D scene; no backing panel or veil. */
 .ent__marca { margin: 0 0 .6rem; font-family: var(--ent-mono); font-size: .75rem; letter-spacing: .28em; text-transform: uppercase; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .8); }
 .ent__titulo {
   margin: 0; font-family: var(--ent-title); font-weight: 900; text-transform: uppercase; color: #fff;
@@ -1366,7 +1362,6 @@ nav.nav li[data-id="book"] { margin-top: .9rem; padding-top: .35rem; border-top:
 }
 @media (max-width: 700px) {
   .ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 12.5rem); }
-  .ent__hero::before { background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .68) 0, rgba(0, 0, 0, .42) 58%, rgba(0, 0, 0, 0) 80%); }
   /* En móvil el mensaje manda: el fondo fotográfico baja de intensidad (el laboratorio 3D sigue montado). */
   .photo { opacity: .4; }
 
