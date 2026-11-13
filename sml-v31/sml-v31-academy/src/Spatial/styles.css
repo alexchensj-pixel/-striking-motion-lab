@@ -674,3 +674,17 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--entry .hero-proof,.spatial-chapter--entry .hero-quicklinks,.spatial-chapter--entry .scroll-cue { max-width:100%; margin-top:4px; text-shadow:0 2px 12px rgba(0,0,0,.8); }
  .spatial-chapter--entry .hero-quicklinks { display:flex; flex-wrap:wrap; gap:8px 14px; }
 }
+
+
+/* RESERVA RÁPIDA · calendario sincronizado + acceso persistente */
+.booking-calendar{margin:30px 0 38px;padding:clamp(18px,3vw,30px);border:1px solid rgba(224,90,43,.42);background:linear-gradient(145deg,rgba(20,22,27,.94),rgba(8,9,12,.86));}
+.booking-calendar-heading{max-width:720px;margin-bottom:20px}
+.booking-calendar-heading h3{font-size:clamp(25px,3vw,38px);margin:8px 0}
+.booking-calendar-heading p{color:var(--muted);line-height:1.65}
+.booking-calendar .rs__calendly-frame{width:100%;min-width:320px;height:760px;overflow:hidden}
+.booking-calendar .rs__calendly-frame iframe{width:100%!important;min-width:320px!important;height:760px!important;border:0!important}
+.booking-grid--secondary{grid-template-columns:minmax(0,1fr)!important;max-width:560px}
+.quick-booking{position:fixed;z-index:80;right:24px;bottom:24px;display:flex;align-items:center;gap:22px;padding:15px 19px;border:1px solid rgba(255,255,255,.2);background:#e05a2b;color:#fff;font:700 11px/1.1 inherit;letter-spacing:.13em;box-shadow:0 12px 38px rgba(0,0,0,.34);cursor:pointer}
+.quick-booking span:last-child{font-size:18px;line-height:10px}
+.quick-booking:focus-visible{outline:2px solid #fff;outline-offset:4px}
+@media(max-width:760px){.booking-calendar{margin:22px -2px 30px;padding:14px}.booking-calendar .rs__calendly-frame,.booking-calendar .rs__calendly-frame iframe{height:720px!important}.quick-booking{right:14px;bottom:calc(14px + env(safe-area-inset-bottom));left:14px;justify-content:space-between;padding:16px 19px}.booking-grid--secondary{grid-template-columns:1fr!important}}

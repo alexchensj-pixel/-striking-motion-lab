@@ -10,6 +10,7 @@ import { image, eci, entrenamientoMedia } from '../Data/Media.js';
 import { existingPlans, kitInicio } from '../Data/Programs.js';
 import { RUTAS } from '../Data/Legal.js';
 import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
+import Calendly from '../Experience/Reserva/Calendly.jsx';
 import './styles.css';
 
 class SpatialBoundary extends React.Component {
@@ -73,6 +74,7 @@ function App() {
   const [activeService, setActiveService] = useState('grupos');
   const methodProgress = useRef(0);
   const [activeMethodIndex, setActiveMethodIndex] = useState(0);
+  const [bookingVisible, setBookingVisible] = useState(false);
 
   useEffect(() => {
     const ids = navItems.map(([id]) => id);
@@ -83,6 +85,14 @@ function App() {
       if (visible) setActive(activeNavForChapter[visible.target.id] || visible.target.id);
     }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, .15, .35, .6] });
     nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const target = document.getElementById('reserva');
+    if (!target || !('IntersectionObserver' in window)) return undefined;
+    const observer = new IntersectionObserver(([entry]) => setBookingVisible(entry.isIntersecting), { rootMargin: '-15% 0px -15% 0px' });
+    observer.observe(target);
     return () => observer.disconnect();
   }, []);
 
@@ -163,6 +173,7 @@ function App() {
       <span className="top-index">SPATIAL EXPERIENCE / 001</span>
     </header>
 
+    {!bookingVisible && <button className="quick-booking" type="button" onClick={() => go('reserva')}><span>VER HORARIOS</span><span aria-hidden="true">↗</span></button>}
     <main id="contenido">
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
         <div id="inicio" className="hero journey-section">
@@ -299,7 +310,11 @@ function App() {
       <div id="reserva-content" className="journey-section content-section booking-section">
         <div className="section-meta"><span>05 / 05</span><span>RESERVA</span></div>
         <p className="eyebrow">{reserva.subtitulo}</p><h2>{reserva.titulo}</h2><p className="lead">{reserva.texto}</p>
-        <div className="booking-grid"><article><h3>{reserva.caminos.directo.titulo}</h3><p>{reserva.caminos.directo.accion}</p><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer">Elegir día y hora ↗</a></article><article><h3>{reserva.caminos.dudas.titulo}</h3><p>{reserva.caminos.dudas.accion}</p><a className="secondary-cta" href={waLink(cierre.mensajeAsesoria)} target="_blank" rel="noopener noreferrer">Pedir asesoramiento ↗</a></article></div>
+        <div className="booking-calendar" aria-label="Calendario de disponibilidad y reservas">
+          <div className="booking-calendar-heading"><span className="eyebrow">DISPONIBILIDAD EN TIEMPO REAL</span><h3>Elige día y hora.</h3><p>Consulta los huecos libres y confirma tu sesión directamente. El calendario está sincronizado con mi agenda.</p></div>
+          <Calendly url={site.calendly} fallbackHref={site.calendlyBase} />
+        </div>
+        <div className="booking-grid booking-grid--secondary"><article><h3>{reserva.caminos.dudas.titulo}</h3><p>{reserva.caminos.dudas.accion}</p><a className="secondary-cta" href={waLink(cierre.mensajeAsesoria)} target="_blank" rel="noopener noreferrer">Pedir asesoramiento ↗</a></article></div>
         <h3 className="subsection-title">Antes, durante y después</h3><ol className="booking-steps">{reserva.despues.map((item, i) => <li key={i}>{item}</li>)}</ol>
         <aside className="what-to-bring"><p className="eyebrow">MATERIAL OPCIONAL</p><h3>Tu propio kit de entrenamiento.</h3><p>Yo llevo el material necesario para las sesiones. Si prefieres tener el tuyo, puedes adquirir el kit completo: guantes, vendas y bucal.</p><p><strong>Kit completo: {money(kitInicio.precioSinPlan)}.</strong> Con un plan mensual: <strong>{money(kitInicio.precio)}.</strong></p></aside>
         <div className="faq"><h3>Preguntas frecuentes</h3>{faq.map((item, i) => <article key={item.q}><button type="button" aria-expanded={faqOpen === i} onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}>{item.q}<span>{faqOpen === i ? '−' : '+'}</span></button>{faqOpen === i && <p>{item.a}</p>}</article>)}</div>
