@@ -750,3 +750,21 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
     gap: 8px 14px;
   }
 }
+
+
+/* MOBILE · Entrenamiento (capítulo slot): el wrapper real es .chapter, no .spatial-chapter.
+   En móvil, el stage debe crecer con el contenido para que la evaluación y su CTA no queden
+   recortados por la pantalla sticky de escritorio. */
+@media (max-width: 760px) {
+  .chapter[data-chapter="slot"] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .chapter[data-chapter="slot"] > .stage {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: 100svh;
+    overflow: visible !important;
+  }
+}
