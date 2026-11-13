@@ -10,7 +10,6 @@ import { goToSection, irAReservar } from '../../Scene/Transitions/navigation.js'
 // El logo / home es el SML del HUD (no se duplica aquí). ESTUDIO DE COMBATE no es sección principal: se abre desde Explore (y Método).
 // EMPRESAS pasa por goToSection('experiences'), que cierra lo que haya encima, gestiona el historial y llama a openB2B (lógica B2B intacta).
 const MAIN = [
-  { id: 'disciplinas', label: 'Disciplinas', target: 'disciplinas' },
   { id: 'method', label: 'Método', target: 'method' },
   { id: 'training', label: 'Entrenamiento', target: 'training' },
   { id: 'founder', label: 'Sobre Chen', target: 'founder' },

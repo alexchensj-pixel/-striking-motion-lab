@@ -2538,3 +2538,51 @@ body:has(.pf[data-stage="3"]) .scta[data-chapter="proof-chen"] { opacity: 0; vis
 /* NAVEGACIÓN: el destino activo se lee a primera vista (barra de acento más gruesa, texto en peso 600 y subrayado de acento), sin cajas ni iconos. */
 nav.nav li[data-on="true"]::before { width: 2px; }
 nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var(--accent); }
+
+
+/* ENTRADA · full-bleed, sin columna interior ni marco lateral. */
+#entrada .stage {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  padding: 0 !important;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+#entrada .ent__hero {
+  left: clamp(22px, 7vw, 112px);
+  right: clamp(22px, 7vw, 112px);
+  top: clamp(7rem, 16vh, 10rem);
+  width: auto;
+  max-width: none;
+  padding: 0;
+  transform: none;
+  text-align: left;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+#entrada .ent__hero::before,
+#entrada .ent__hero::after { content: none !important; }
+#entrada .ent__titulo {
+  font-size: clamp(3.5rem, 10.8vw, 9.5rem);
+  line-height: .82;
+  letter-spacing: -.035em;
+  text-shadow: 0 12px 55px rgba(0,0,0,.48);
+}
+@media (max-width: 700px) {
+  #entrada .stage { padding: 0 !important; }
+  #entrada .ent__hero {
+    left: 22px;
+    right: 22px;
+    top: clamp(6.5rem, 13vh, 8rem);
+    width: auto;
+  }
+  #entrada .ent__titulo {
+    font-size: clamp(3.1rem, 12.8vw, 5.7rem);
+    line-height: .86;
+    letter-spacing: -.025em;
+  }
+}

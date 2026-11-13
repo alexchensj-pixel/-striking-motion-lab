@@ -1,9 +1,7 @@
 import { Fragment } from 'react';
-import { chapters } from '../Data/Content.js';
+import { scrollChapters } from '../Data/Content.js';
 import Threshold from '../Scene/Transitions/Threshold.jsx';
 import Entrada from './Entrada/Entrada.jsx';
-import { REVEAL_START } from '../Scene/Transitions/scrollState.js';
-import Explore from './Explore/Explore.jsx';
 import AsesoriaLab from './AsesoriaLab/AsesoriaLab.jsx';
 import Slot from './Slot/Slot.jsx';
 import ProofChen from './ProofChen/ProofChen.jsx';
@@ -12,7 +10,6 @@ import Faq from './Faq/Faq.jsx';
 
 const views = {
   'entrada': Entrada,
-  'character-select': Explore, // sección EXPLORE (V22): Character Select + Disciplines. El Bridge NO está aquí: vive en el umbral HOME → EXPLORE
   'asesoria-lab': AsesoriaLab,
   'slot': Slot,
   'proof-chen': ProofChen,
@@ -23,9 +20,9 @@ const views = {
 export default function Experience() {
   return (
     <main className="experience">
-      {chapters.map((c, i) => {
+      {scrollChapters.map((c, i) => {
         const View = views[c.id];
-        const next = chapters[i + 1];
+        const next = scrollChapters[i + 1];
         return (
           <Fragment key={c.id}>
             <View />
@@ -36,7 +33,6 @@ export default function Experience() {
                 from={c.id}
                 to={next.id}
                 start={c.id === 'slot' ? 'top top' : undefined}
-                activeFrom={c.id === 'entrada' ? REVEAL_START : undefined}
               >
               </Threshold>
             )}
