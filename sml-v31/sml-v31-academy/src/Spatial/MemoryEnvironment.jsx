@@ -1,3 +1,4 @@
+import { useThree } from '@react-three/fiber';
 import { anchorZ } from '../Scene/Camera/waypoints.js';
 import { chapters } from '../Data/Content.js';
 import {
@@ -23,10 +24,15 @@ const blockouts = {
 };
 
 export default function MemoryEnvironment() {
+  const { size } = useThree();
+  const portrait = size.width / Math.max(1, size.height) < 0.8;
+  // The distant floor grid is a spatial backdrop. Lower it on portrait screens
+  // so its perspective horizon does not run through the hero service copy.
+  const backdropFloorY = portrait ? -0.9 : 0;
   return (
     <>
-      <gridHelper args={[300, 150, '#1b2233', '#0e1320']} position={[0, 0, -200]} />
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, -200]}>
+      <gridHelper args={[300, 150, '#1b2233', '#0e1320']} position={[0, backdropFloorY, -200]} />
+      <mesh rotation-x={-Math.PI / 2} position={[0, backdropFloorY - 0.02, -200]}>
         <planeGeometry args={[300, 300]} />
         <meshStandardMaterial color="#07090d" roughness={1} />
       </mesh>
