@@ -2615,40 +2615,53 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
 .ent__actions { z-index: 5; }
 
 
-/* HERO · tipografía integrada en el espacio 3D (referencia sml-new-skeleton).
-   Sin tarjetas, fondos, bordes ni superficies detrás del texto. */
-#entrada .ent__hero,
-#entrada .ent__hero::before,
-#entrada .ent__hero::after {
-  background: transparent !important;
-  border: 0 !important;
-  outline: 0 !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+/* ENTRADA · full-bleed: el texto pertenece al espacio, no a una columna enmarcada. */
+#entrada .stage {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  padding: 0 !important;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 #entrada .ent__hero {
-  left: clamp(24px, 8vw, 124px);
-  top: clamp(7rem, 17vh, 11rem);
-  transform: none;
-  width: min(86vw, 76rem);
-  max-width: 76rem;
+  left: clamp(22px, 7vw, 112px);
+  right: clamp(22px, 7vw, 112px);
+  top: clamp(7rem, 16vh, 10rem);
+  width: auto;
+  max-width: none;
   padding: 0;
+  transform: none;
   text-align: left;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
+#entrada .ent__hero::before,
+#entrada .ent__hero::after { content: none !important; }
 #entrada .ent__titulo {
-  font-size: clamp(3.6rem, 10.8vw, 9.5rem);
-  line-height: .79;
+  font-size: clamp(3.5rem, 10.8vw, 9.5rem);
+  line-height: .82;
   letter-spacing: -.035em;
   text-shadow: 0 12px 55px rgba(0,0,0,.48);
 }
 #entrada .ent__marca,
 #entrada .ent__disc,
 #entrada .ent__mod,
-#entrada .ent__confianza {
-  text-shadow: 0 2px 18px rgba(0,0,0,.78);
-}
+#entrada .ent__confianza { text-shadow: 0 2px 18px rgba(0,0,0,.78); }
 @media (max-width: 700px) {
-  #entrada .ent__hero { left: 22px; top: clamp(6rem, 13vh, 8rem); width: calc(100vw - 44px); }
-  #entrada .ent__titulo { font-size: clamp(3.35rem, 13.5vw, 6.2rem); line-height: .84; letter-spacing: -.025em; }
+  #entrada .stage { padding: 0 !important; }
+  #entrada .ent__hero {
+    left: 22px;
+    right: 22px;
+    top: clamp(6.5rem, 13vh, 8rem);
+    width: auto;
+  }
+  #entrada .ent__titulo {
+    font-size: clamp(3.1rem, 12.8vw, 5.7rem);
+    line-height: .86;
+    letter-spacing: -.025em;
+  }
 }

@@ -49,7 +49,6 @@ export const hero = {
   titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
   disciplinasLinea: 'Boxeo · K1 · Muay Thai',
   ctaReservar: 'Reservar evaluación · 30 €',
-  ctaExplorar: 'No sé qué necesito → Descubrir',
   contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
   // Sin uso en pantalla. Reescrito: la web no recomienda disciplina automáticamente.
