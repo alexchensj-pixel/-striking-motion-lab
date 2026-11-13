@@ -1,9 +1,18 @@
 import { anchorZ } from '../Scene/Camera/waypoints.js';
 import { chapters } from '../Data/Content.js';
-import { Pillars, Room, Reels, Archive, Door } from '../Scene/Environment/blockouts.jsx';
+import {
+  Pillars,
+  Room,
+  Reels,
+  Archive,
+  Door,
+} from '../Scene/Environment/blockouts.jsx';
 import EntradaWorld from '../Scene/Environment/Entrada/EntradaWorld.jsx';
-import { useStore } from '../App/store.js';
 
+// Keep every original spatial room mounted throughout the camera journey.
+// The previous active-chapter window caused rooms to disappear at transitions
+// and exposed empty stretches whenever scroll/camera progress got ahead of the
+// active chapter observer. The original SML environment keeps these rooms alive.
 const blockouts = {
   entrada: EntradaWorld,
   'character-select': Pillars,
@@ -13,15 +22,7 @@ const blockouts = {
   reserva: Door,
 };
 
-// Keep the active chapter and its two transition neighbors. Unmounting distant
-// chapters lets React Three Fiber dispose their geometries, materials and textures.
 export default function MemoryEnvironment() {
-  const activeChapter = useStore((state) => state.activeChapter);
-  const activeIndex = Math.max(0, chapters.findIndex((chapter) => chapter.id === activeChapter));
-  const mounted = chapters
-    .map((chapter, index) => ({ chapter, index }))
-    .filter(({ index }) => Math.abs(index - activeIndex) <= 1);
-
   return (
     <>
       <gridHelper args={[300, 150, '#1b2233', '#0e1320']} position={[0, 0, -200]} />
@@ -29,11 +30,11 @@ export default function MemoryEnvironment() {
         <planeGeometry args={[300, 300]} />
         <meshStandardMaterial color="#07090d" roughness={1} />
       </mesh>
-      {mounted.map(({ chapter, index }) => {
-        const Blockout = blockouts[chapter.id];
+      {chapters.map(({ id }, index) => {
+        const Blockout = blockouts[id];
         if (!Blockout) return null;
         return (
-          <group key={chapter.id} position={[0, 0, anchorZ(index)]}>
+          <group key={id} position={[0, 0, anchorZ(index)]}>
             <Blockout />
           </group>
         );
