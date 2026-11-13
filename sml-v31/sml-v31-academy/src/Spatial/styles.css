@@ -543,3 +543,103 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 .spatial-chapter--booking > .stage { overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:rgba(224,90,43,.6) transparent; }
 .spatial-chapter--booking .booking-section,.spatial-chapter--booking .business-section { flex:0 0 auto; }
 .spatial-chapter--booking .business-section { min-height:100svh; }
+
+
+/* MOBILE REPAIR · natural document flow; keep the spatial world behind the content.
+   The previous sticky 100svh stage trapped long chapters inside overflow:hidden,
+   so normal page scrolling exposed empty parts of the fixed 3D background. */
+@media (max-width: 760px) {
+  .spatial-chapter {
+    height: auto !important;
+    min-height: 0;
+  }
+  .spatial-chapter > .stage {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+  .spatial-chapter .journey-section {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  /* Keep the discovery interval because the 3D character interaction uses it. */
+  .spatial-chapter--selection {
+    height: 165svh !important;
+    min-height: 165svh;
+  }
+  .spatial-chapter--selection > .stage {
+    height: 100%;
+    min-height: 165svh;
+    overflow: visible;
+  }
+
+  /* Entry: fit the full headline inside the phone viewport. */
+  .spatial-chapter--entry .hero {
+    min-height: 100svh;
+    padding: 100px 22px 64px;
+  }
+  .spatial-chapter--entry .hero h1 {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(36px, 10.5vw, 48px);
+    line-height: .98;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  .spatial-chapter--entry .hero h1,
+  .spatial-chapter--entry .hero-overline,
+  .spatial-chapter--entry .hero-context,
+  .spatial-chapter--entry .hero-offer,
+  .spatial-chapter--entry .hero-actions,
+  .spatial-chapter--entry .hero-proof,
+  .spatial-chapter--entry .hero-quicklinks {
+    transform: none !important;
+  }
+
+  /* Method: no 300svh child trapped inside a one-screen clipped stage. */
+  .spatial-chapter--method .method-section {
+    height: auto !important;
+    min-height: 100svh;
+  }
+  .spatial-chapter--method .method-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    padding: 100px 18px 44px;
+    gap: 22px;
+  }
+  .spatial-chapter--method .method-copy,
+  .spatial-chapter--method .method-stations {
+    width: 100%;
+    max-width: none;
+    transform: none !important;
+  }
+  .spatial-chapter--method .method-copy h2 {
+    max-width: 16ch;
+  }
+
+  /* Long commercial chapters scroll with the document, not inside nested panes. */
+  .spatial-chapter--pricing .content-section,
+  .spatial-chapter--founder .content-section,
+  .spatial-chapter--booking .content-section {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    padding: 96px 20px 40px;
+  }
+  .spatial-chapter--booking .business-section {
+    min-height: 100svh;
+    height: auto;
+  }
+  .threshold {
+    height: 10vh;
+    min-height: 64px;
+  }
+}
