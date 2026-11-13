@@ -53,9 +53,13 @@ export const REVEAL_FULL = 1;
 // Tras un salto directo a EXPLORE (navegación por sección) el umbral queda en 1: reveal = 1.
 export function getCharactersReveal() {
   const introProgress = scrollState.segments['entrada'] ?? 0;
-  if (introProgress < 1) return 0;
   const thresholdProgress = scrollState.segments['entrada>character-select'] ?? 0;
-  return smoothstep(thresholdProgress, REVEAL_START, REVEAL_FULL);
+  // Empieza a revelar las vitrinas durante el último 16% del corredor y continúa
+  // desde ese mismo valor en el umbral 01→02. La curva es reversible y evita
+  // pasar de un corredor vacío a los tres luchadores apareciendo de golpe.
+  const approachReveal = 0.24 * smoothstep(introProgress, 0.84, 1);
+  const transitionReveal = smoothstep(thresholdProgress, REVEAL_START, REVEAL_FULL);
+  return approachReveal + (1 - approachReveal) * transitionReveal;
 }
 
 // ¿Está la persona en EXPLORE? True dentro del capítulo y también justo en su inicio: un salto directo a la sección
