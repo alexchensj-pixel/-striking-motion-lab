@@ -13,7 +13,7 @@ const Academia = lazy(() => import('./Academy/Academia.jsx'));
 const SpatialApp = lazy(() => import('./Spatial/SpatialApp.jsx'));
 
 // Rutas legales (/privacidad, /aviso-legal): páginas independientes, sin canvas 3D. Netlify ya sirve index.html para cualquier ruta (netlify.toml).
-const ruta = window.location.pathname.replace(/\\/$/, '') || '/';
+const ruta = window.location.pathname.replace(/\/$/, '') || '/';
 const legalTipo = ruta === RUTAS.privacidad ? 'privacidad' : ruta === RUTAS.aviso ? 'aviso' : null;
 const esMiSML = ruta === '/mi-sml' || ruta.startsWith('/mi-sml/');
 const esAcademia = ruta === '/academia' || ruta.startsWith('/academia/');
