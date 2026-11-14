@@ -1,0 +1,36 @@
+.sml-booking{width:100%;color:var(--text,#f2efe8);font:inherit}
+.sml-booking__intro{margin:0 0 1.25rem}
+.sml-booking__eyebrow{display:block;color:var(--accent,#c58a52);font-size:.68rem;letter-spacing:.16em;font-weight:700;margin-bottom:.45rem}
+.sml-booking__intro p,.sml-booking__muted{color:rgba(242,239,232,.62);font-size:.88rem;line-height:1.55;margin:.35rem 0}
+.sml-booking__layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(220px,.85fr);gap:clamp(1rem,3vw,2rem);align-items:start}
+.sml-booking__calendar,.sml-booking__times{min-width:0}
+.sml-booking__month{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.sml-booking__month h3,.sml-booking__times h3{font-size:1rem;font-weight:600;text-transform:capitalize;margin:0}
+.sml-booking__month button{width:2.25rem;height:2.25rem;border:1px solid rgba(242,239,232,.16);border-radius:50%;background:transparent;color:inherit;font-size:1.35rem;cursor:pointer}
+.sml-booking__month button:disabled{opacity:.35}
+.sml-booking__grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.28rem}
+.sml-booking__weekday{font-size:.68rem;color:rgba(242,239,232,.48);text-align:center;padding:.45rem 0}
+.sml-booking__day{position:relative;aspect-ratio:1;border:1px solid transparent;border-radius:50%;background:transparent;color:rgba(242,239,232,.38);font:inherit;font-size:.82rem;display:grid;place-items:center}
+.sml-booking__day.is-outside{opacity:.2}
+.sml-booking__day.is-available{color:var(--text,#f2efe8);border-color:rgba(197,138,82,.42);cursor:pointer}
+.sml-booking__day.is-available i,.sml-booking__legend i{position:absolute;bottom:.18rem;width:4px;height:4px;border-radius:50%;background:var(--accent,#c58a52)}
+.sml-booking__day.is-selected{background:var(--accent,#c58a52);color:#171411;border-color:var(--accent,#c58a52)}
+.sml-booking__day.is-selected i{background:#171411}
+.sml-booking__day:focus-visible,.sml-booking button:focus-visible,.sml-booking input:focus-visible{outline:2px solid var(--accent,#c58a52);outline-offset:3px}
+.sml-booking__legend{position:relative;padding-left:1rem;margin-top:.9rem;color:rgba(242,239,232,.52);font-size:.68rem}
+.sml-booking__legend i{left:0;top:50%;transform:translateY(-50%)}
+.sml-booking__times{border-left:1px solid rgba(242,239,232,.12);padding-left:clamp(1rem,2vw,1.5rem);min-height:15rem}
+.sml-booking__times h3{margin:.3rem 0 1rem}
+.sml-booking__time-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;max-height:16rem;overflow:auto}
+.sml-booking__time-list button{padding:.65rem .4rem;border:1px solid rgba(242,239,232,.2);border-radius:2px;background:transparent;color:inherit;font:inherit;font-size:.82rem;cursor:pointer}
+.sml-booking__time-list button.is-picked{border-color:var(--accent,#c58a52);background:rgba(197,138,82,.14);color:var(--text,#f2efe8)}
+.sml-booking__form{display:grid;gap:.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(242,239,232,.13)}
+.sml-booking__chosen{font-size:.78rem;color:var(--accent,#c58a52);margin:0}
+.sml-booking__form label{display:grid;gap:.35rem;color:rgba(242,239,232,.72);font-size:.72rem}
+.sml-booking__form input{width:100%;box-sizing:border-box;padding:.7rem .75rem;border:1px solid rgba(242,239,232,.2);border-radius:2px;background:rgba(255,255,255,.035);color:inherit;font:inherit;font-size:.85rem}
+.sml-booking__submit{padding:.8rem 1rem;border:0;border-radius:2px;background:var(--accent,#c58a52);color:#171411;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer}
+.sml-booking__submit:disabled{opacity:.6;cursor:wait}
+.sml-booking__error{color:#ef9b91;font-size:.8rem;margin:.8rem 0}
+.sml-booking__success{padding:.8rem 1rem;margin:0 0 1rem;border-left:2px solid var(--accent,#c58a52);background:rgba(197,138,82,.1);font-size:.84rem}
+.sml-booking__foot{margin:1rem 0 0;color:rgba(242,239,232,.42);font-size:.68rem;line-height:1.5}
+@media(max-width:620px){.sml-booking__layout{grid-template-columns:1fr;gap:1.5rem}.sml-booking__times{border-left:0;border-top:1px solid rgba(242,239,232,.12);padding:1.1rem 0 0;min-height:0}.sml-booking__grid{gap:.2rem}.sml-booking__day{font-size:.78rem}.sml-booking__time-list{grid-template-columns:repeat(3,minmax(0,1fr));max-height:13rem}}
