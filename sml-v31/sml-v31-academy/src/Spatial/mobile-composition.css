@@ -140,3 +140,14 @@
     padding-right: 16px;
   }
 }
+
+/* Preserve the actual 3D lab on portrait screens: the section overlay must not flatten the world into a near-black panel. */
+@media (max-width: 700px) {
+  #asesoria-lab .method-section {
+    background: linear-gradient(180deg, rgba(7, 9, 13, 0.22), rgba(7, 9, 13, 0.34)) !important;
+  }
+
+  #asesoria-lab .method-section::before {
+    background: linear-gradient(180deg, rgba(7, 9, 13, 0.06), rgba(7, 9, 13, 0.16)) !important;
+  }
+}
