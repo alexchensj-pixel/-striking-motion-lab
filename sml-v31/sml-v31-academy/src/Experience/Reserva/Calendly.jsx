@@ -53,8 +53,13 @@ export default function Calendly({ url, fallbackHref }) {
 
   return (
     <div className="rs__calendly">
+      <a className="rs__calendly-mobile" href={url || fallbackHref} target="_blank" rel="noopener noreferrer">
+        <span className="rs__calendly-mobile-k">RESERVA DIRECTA · CALENDARIO EN TIEMPO REAL</span>
+        <span className="rs__calendly-mobile-main">Elegir día y hora <span aria-hidden="true">↗</span></span>
+        <span className="rs__calendly-mobile-note">Se abrirá el calendario de reserva para confirmar tu sesión.</span>
+      </a>
       <div ref={ref} className="rs__calendly-frame" />
-      {failed && <p className="ph-text">No se ha podido cargar el calendario. <a className="link" href={fallbackHref} target="_blank" rel="noopener noreferrer">Abrir calendario y reservar</a></p>}
+      {failed && <p className="ph-text">No se ha podido cargar el calendario integrado. <a className="link" href={fallbackHref} target="_blank" rel="noopener noreferrer">Abrir calendario y reservar</a></p>}
     </div>
   );
 }

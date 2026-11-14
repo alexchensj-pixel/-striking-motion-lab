@@ -2564,3 +2564,21 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
   #entrada .ent__support { max-width:19rem; font-size:.76rem; }
   #entrada .ent__actions { width:min(100%,22rem); margin-top:1rem; }
 }
+
+
+/* Reserva · Calendly: integración responsive sin simular estilos dentro del iframe externo. */
+.rs__calendly { width: 100%; min-width: 0; }
+.rs__calendly-frame { width: 100%; min-width: 0; overflow: hidden; }
+.rs__calendly-mobile { display: none; }
+@media (max-width: 700px) {
+  .rs__calendly-frame { display: none; }
+  .rs__calendly-mobile {
+    display: grid; gap: .65rem; width: 100%; margin: 1.5rem 0 .75rem; padding: 1.15rem 0;
+    border-top: 1px solid rgba(224, 90, 43, .7); border-bottom: 1px solid rgba(217, 221, 230, .2);
+    color: var(--fg); text-decoration: none; text-align: left;
+  }
+  .rs__calendly-mobile-k { font-family: var(--font-mono); font-size: .67rem; letter-spacing: .13em; color: #e9825d; }
+  .rs__calendly-mobile-main { display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-family: var(--font-display); font-size: clamp(1.55rem, 7vw, 2.1rem); font-weight: 800; line-height: 1.05; text-transform: uppercase; }
+  .rs__calendly-mobile-main span { color: #e9825d; font-family: var(--font-sans); font-size: 1.5rem; }
+  .rs__calendly-mobile-note { color: var(--dim); font-family: var(--font-sans); font-size: .9rem; line-height: 1.45; }
+}
