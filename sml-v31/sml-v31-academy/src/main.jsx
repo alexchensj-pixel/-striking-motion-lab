@@ -9,14 +9,16 @@ import './styles/global.css';
 // Se carga bajo demanda: la web pública no descarga nada de ella.
 const MiSML = lazy(() => import('./Client/MiSML.jsx'));
 const Academia = lazy(() => import('./Academy/Academia.jsx'));
+const SpatialPreview = lazy(() => import('./SpatialPreview/SpatialPreview.jsx'));
 
 // Rutas legales (/privacidad, /aviso-legal): páginas independientes, sin canvas 3D. Netlify ya sirve index.html para cualquier ruta (netlify.toml).
 const ruta = window.location.pathname.replace(/\/+$/, '') || '/';
 const legalTipo = ruta === RUTAS.privacidad ? 'privacidad' : ruta === RUTAS.aviso ? 'aviso' : null;
 const esMiSML = ruta === '/mi-sml' || ruta.startsWith('/mi-sml/');
 const esAcademia = ruta === '/academia' || ruta.startsWith('/academia/');
+const esSpatialPreview = ruta === '/spatial-preview' || ruta.startsWith('/spatial-preview/');
 
-if (!legalTipo && !esMiSML && !esAcademia) {
+if (!legalTipo && !esMiSML && !esAcademia && !esSpatialPreview) {
   // El scroll ES la navegación: siempre arrancamos en la entrada.
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
@@ -27,6 +29,7 @@ createRoot(document.getElementById('root')).render(
     {esMiSML
       ? <Suspense fallback={null}><MiSML /></Suspense>
       : esAcademia ? <Suspense fallback={null}><Academia /></Suspense>
+      : esSpatialPreview ? <Suspense fallback={null}><SpatialPreview /></Suspense>
       : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
   </React.StrictMode>
 );

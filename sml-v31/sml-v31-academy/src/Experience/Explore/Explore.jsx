@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import Chapter from '../Chapter.jsx';
 import { useStore } from '../../App/store.js';
 import { disciplines } from '../../Data/Disciplines.js';
-import { seleccion, explore, hero } from '../../Data/Content.js';
+import { explore } from '../../Data/Content.js';
 import { estudio } from '../../Data/Estudio.js';
-import { FaqContextual } from '../Faq/Faq.jsx';
 import { goToSection } from '../../Scene/Transitions/navigation.js';
 import { prefersReducedMotion } from '../../Scene/Transitions/scrollState.js';
 
@@ -56,29 +55,19 @@ const firstWord = (t) => t.split(' ')[0]; // etiqueta corta de la estación: sal
 //   son solo el acceso por teclado / lector de pantalla de esos mismos objetos (.exs__sr); el texto aparece como consecuencia de la selección.
 //   Nivel 1 (siempre): disciplina · concepto · acción.  Nivel 2: línea de la disciplina / del concepto.  Nivel 3 (solo si se pide): «Profundizar».
 export default function Explore() {
-  const mode = useStore((s) => s.selectedTrainingMode);
-  const selectMode = useStore((s) => s.selectTrainingMode);
   const discId = useStore((s) => s.selectedDiscipline);
   const selectDiscipline = useStore((s) => s.selectDiscipline);
-  const focus = useStore((s) => s.exploreFocus); // 'modos' (puerta DESCUBRIR) | 'disciplinas' (puerta DISCIPLINAS)
   const stacked = useStacked();
-  const [deep, setDeep] = useState(false);     // Nivel 3 de la disciplina (qué es · cómo · desarrolla · glosario)
-  const [modeDeep, setModeDeep] = useState(false); // Nivel 3 del concepto (texto largo de la forma de entrenar)
-
+  const [deep, setDeep] = useState(false);
   const active = disciplines.find((d) => d.id === discId) || null;
-  const forma = seleccion.formas.find((f) => f.id === mode) || null;
-  const modeTitle = mode ? explore.modosTitulo[mode] : null;
 
-  // Cambiar de personaje o de concepto cierra el nivel 3 anterior: la información es consecuencia de la selección, no un resto.
   useEffect(() => { setDeep(false); }, [discId]);
-  useEffect(() => { setModeDeep(false); }, [mode]);
 
-  const style = active ? { '--ex-accent': active.accent, '--ex-rgb': rgbTriplet(active.accent) } : undefined;
+  const style = active ? {
+    '--ex-accent': active.accent,
+    '--ex-rgb': rgbTriplet(active.accent),
+  } : undefined;
 
-  // El ORDEN de percepción lo decide la puerta (exploreFocus), no el scroll. Mismas dos secciones, mismo estado:
-  //   DESCUBRIR   (modos)       → 1 CÓMO QUIERES ENTRENAR (formas) · 2 QUÉ QUIERES ENTRENAR (disciplinas)
-  //   DISCIPLINAS (disciplinas) → el 3D manda: primero el roster de luchadores; las formas quedan después.
-  // PERSONAJE — selector de disciplina. Tocar al luchador en el 3D hace lo mismo (blockouts.jsx#CharacterHitArea).
   const discSection = (
     <section className="exs__sel" aria-label={explore.disciplinasTitulo}>
       <ul className="exs__discs exs__sr">
@@ -101,73 +90,23 @@ export default function Explore() {
           {deep ? explore.cerrar : explore.profundizar} <i aria-hidden="true">{deep ? '−' : '+'}</i>
         </button>
       )}
-      {active && deep && (
-        <DisciplineDetail key={active.id} discipline={active} stacked={stacked} onReset={() => { setDeep(false); selectDiscipline(null); }} />
-      )}
+      {active && deep && <DisciplineDetail key={active.id} discipline={active} stacked={stacked} onReset={() => { setDeep(false); selectDiscipline(null); }} />}
       {active && !deep && stacked && <DisciplineMedia discipline={active} label={explore.bloques.personaje} />}
-    </section>
-  );
-
-  // PROTOCOLO — las cinco formas de entrenar como regla 01–05 del sistema; solo la activa explica su contenido.
-  const modeSection = (
-    <section className="exs__proto" aria-label={seleccion.pregunta}>
-      <ol className="exs__rail exs__sr">
-        {seleccion.formas.map((f, i) => {
-          const on = f.id === mode;
-          return (
-            <li key={f.id} data-on={on}>
-              <button type="button" aria-pressed={on} aria-label={`${explore.modosTitulo[f.id]}. ${f.concepto}`} onClick={() => selectMode(on ? null : f.id)}>
-                <span className="exs__n">{pad(i + 1)}</span>
-                <span className="exs__w">{firstWord(explore.modosTitulo[f.id])}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
-      <div className="exs__concept" aria-live="polite">
-        {forma ? (
-          <>
-            <p className="exs__cT">{modeTitle}</p>
-            <p className="exs__cC">{forma.concepto}</p>
-            <p className="exs__cL">{explore.modos[forma.id]}</p>
-            <button type="button" className="exs__more" aria-expanded={modeDeep} onClick={() => setModeDeep((v) => !v)}>
-              {modeDeep ? explore.cerrar : explore.profundizar} <i aria-hidden="true">{modeDeep ? '−' : '+'}</i>
-            </button>
-            {modeDeep && (
-              <div className="exs__cD">
-                <p className="ex__text">{forma.texto}</p>
-                {forma.destacada && <p className="ex__hl">{forma.destacada.map((line) => <span key={line}>{line}</span>)}</p>}
-                {forma.etiquetas && <ul className="ex__tags">{forma.etiquetas.map((t) => <li key={t}>{t}</li>)}</ul>}
-                {forma.cierre && <p className="ex__text ex__text--soft">{forma.cierre}</p>}
-              </div>
-            )}
-          </>
-        ) : (
-          <p className="exs__cL exs__hint">{explore.notaModos}</p>
-        )}
-      </div>
     </section>
   );
 
   return (
     <Chapter id="character-select" className="ex">
-      <div className="ex__body" data-empty={!active && !forma ? 'true' : undefined} data-picked={active ? active.id : 'none'} data-focus={focus} data-deep={deep || undefined} style={style}>
+      <div className="ex__body" data-empty={!active ? 'true' : undefined} data-picked={active ? active.id : 'none'} data-focus="disciplinas" data-deep={deep || undefined} style={style}>
         <div className="ex__glow" aria-hidden="true" />
-
         <div className="ex__panel">
           <div className="ex__scroll">
             <header className="exs__head">
               <h2 className="ex__title">{explore.titulo}</h2>
               <button type="button" className="ex__estudio" onClick={() => goToSection('estudio')}>{estudio.marca} →</button>
             </header>
-
-            {focus === 'disciplinas' ? <>{discSection}{modeSection}</> : <>{modeSection}{discSection}</>}
-            {/* V27 · paso 7: objeción de quien llega sin saber qué quiere (puerta DESCUBRIR). La puerta DISCIPLINAS es de quien ya sabe: no se le añade. */}
-            {focus === 'modos' && <FaqContextual q="¿Puedo empezar completamente desde cero?" />}
-            {/* Entre las dos puertas, sin pasar por el menú: quien llega por DISCIPLINAS sin saber qué quiere descubre; quien descubre puede ver las disciplinas. */}
-            {focus === 'disciplinas'
-              ? <button type="button" className="ex__estudio" onClick={() => goToSection('explore')}>{hero.noSe.pre} → {hero.noSe.accion}</button>
-              : <button type="button" className="ex__estudio" onClick={() => goToSection('disciplinas')}>Disciplinas →</button>}
+            {discSection}
+            <button type="button" className="ex__estudio" onClick={() => goToSection('method')}>Continuar al método →</button>
           </div>
         </div>
       </div>

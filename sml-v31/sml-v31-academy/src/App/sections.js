@@ -8,7 +8,7 @@
 // el scroll / la cámara se colocan como consecuencia. Este módulo no importa nada (lo leen el store y la navegación).
 // PASO 1 (mapa explorable): 'disciplinas' es una PUERTA más, no un capítulo 3D nuevo. Comparte capítulo con 'explore' (DESCUBRIR);
 // lo que las distingue es el foco (store.exploreFocus: 'disciplinas' | 'modos').
-export const SECTIONS = ['home', 'disciplinas', 'explore', 'method', 'estudio', 'training', 'experiences', 'founder', 'book'];
+export const SECTIONS = ['home', 'training', 'disciplinas', 'explore', 'method', 'estudio', 'experiences', 'founder', 'book'];
 
 // Capítulo 3D que ilustra cada sección. null = no es un tramo de la película (EXPERIENCES abre el recorrido B2B existente).
 export const SECTION_CHAPTER = {
@@ -46,9 +46,9 @@ export const HASH_SECTION = Object.fromEntries(Object.entries(SECTION_HASH).map(
 //  goToSection('explore') desde el hero, el footer y Estudio. No se elimina ni se esconde: solo no compite con el menú.
 //  kind 'section' → goToSection(target) · kind 'action' → irAReservar().
 export const NAV_ITEMS = [
+  { id: 'training',    label: 'Entrenamiento', kind: 'section', target: 'training' },
   { id: 'disciplinas', label: 'Disciplinas', kind: 'section', target: 'disciplinas' },
   { id: 'method',      label: 'Método',      kind: 'section', target: 'method' },
-  { id: 'training',    label: 'Entrenamiento', kind: 'section', target: 'training' },
   { id: 'founder',     label: 'Sobre Chen',  kind: 'section', target: 'founder' },
   { id: 'experiences', label: 'Empresas',    kind: 'section', target: 'experiences' },
   { id: 'book',        label: 'Reservar',    kind: 'action' },

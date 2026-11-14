@@ -68,20 +68,20 @@ export const entradaNarrativa = {
 // p.ej. 'character-select' es el módulo interno; el usuario nunca ve esa palabra, ve "Descubrir".
 export const chapters = [
   { id: 'entrada',          n: '01', label: 'Inicio',                vh: 210 },
-  { id: 'character-select', n: '02', label: 'Descubrir',             vh: 165 }, // EXPLORE (V22): una sola pantalla de decisión (sin película); 65vh de meseta antes del umbral (antes 35: se entraba en el velo eligiendo)
-  { id: 'asesoria-lab',     n: '03', label: 'Método',                 vh: 250 }, // V22 · paso 4: cinco pasos densos (antes 360vh); en móvil el capítulo fluye (sin pin)
-  { id: 'slot',             n: '04', label: 'Entrenamiento',         vh: 280 }, // cuatro pasos (Elección directa · Frecuencia · Combinación · Resultado) sobre las piezas de la máquina 3D: pantalla fija; el primero ya es una elección completa (420 vh era para seis)
-  { id: 'proof-chen',       n: '05', label: 'Sobre Chen',            vh: 260 },
-  { id: 'reserva',          n: '06', label: 'Reserva',               vh: 160 }, // 60vh de llegada (antes 40): el umbral 05→06 cede ese tiempo a la puerta
+  { id: 'slot',             n: '02', label: 'Entrenamiento',         vh: 280 }, // Orden del recorrido espacial: entrenamiento antes de explorar disciplinas.
+  { id: 'character-select', n: '03', label: 'Disciplinas',            vh: 165 }, // Selección directa; sin Bridge intermedio.
+  { id: 'asesoria-lab',     n: '04', label: 'Método',                 vh: 250 },
+  { id: 'proof-chen',       n: '05', label: 'Sobre Chen',             vh: 260 },
+  { id: 'reserva',          n: '06', label: 'Reserva',                vh: 160 },
 ];
 
 export const chapterById = Object.fromEntries(chapters.map((c) => [c.id, c]));
 
 // Umbrales narrativos entre capítulos (tramo de scroll con velo + viaje de cámara).
 export const thresholdLabels = {
-  'entrada>character-select': 'Entrada al mundo del combate',
-  'character-select>asesoria-lab': 'De la selección al protocolo',
-  'asesoria-lab>slot': 'Del protocolo a la configuración',
+  'entrada>slot': 'Entrar al entrenamiento',
+  'slot>character-select': 'Explorar disciplinas',
+  'character-select>asesoria-lab': 'De la selección al método',
   'slot>proof-chen': 'Resolución · evidencia',
   'proof-chen>reserva': 'Acceso',
 };
@@ -91,38 +91,7 @@ export const segmentKeys = chapters.flatMap((c, i) =>
   i < chapters.length - 1 ? [c.id, `${c.id}>${chapters[i + 1].id}`] : [c.id]
 );
 
-// --- Bridge · escena narrativa HOME → EXPLORE (CUERPO → COMBATE → MAPA → STRIKING → DISCIPLINAS) ---
-// Vive DENTRO del umbral 'entrada>character-select' (ver Threshold.jsx + Experience/Entrada/Bridge.jsx): no es un capítulo nuevo,
-// no tiene sala 3D propia (Scene/Environment/Bridge/BridgeHall.jsx envuelve el tramo final del corredor de Entrada) y los tres
-// luchadores permanecen ocultos mientras dura (BRIDGE_END / BRIDGE_OUT_END en Scene/Transitions/scrollState.js).
-// Copy cerrado: no se reescribe ni se resume aquí. EXPLORE NO lo repite (no hay mapa plegado en Explore): el mapa se cuenta una sola vez, aquí.
-export const bridge = {
-  // Bloque 1 · EL CUERPO: el cuerpo condiciona la forma de combatir; Tyson y McGregor, como ejemplos opuestos.
-  cuerpo: {
-    titulo: ['CADA PERSONA TIENE UNAS CARACTERÍSTICAS FÍSICAS DIFERENTES.'],
-    apoyo: 'Altura, alcance, movilidad, coordinación, velocidad, etc.',
-  },
-  ejemplos: {
-    casos: [
-      { nombre: 'PIENSA EN MIKE TYSON:', texto: 'DISTANCIA CORTA, EXPLOSIVIDAD, MOVIMIENTOS COMPACTOS.' },
-      { nombre: 'O EN CONOR McGREGOR:', texto: 'ALCANCE, DISTANCIA Y TRABAJO DE PIERNAS.' },
-    ],
-  },
-  // Bloque 2 · EL COMBATE: de ambos ejemplos → no existe una única manera de combatir.
-  combate: {
-    texto: 'PERO NO TODAS LAS PERSONAS COMBATEN DE LA MISMA FORMA.',
-  },
-  // Bloque 3 · EL MAPA: se revela capa a capa, de arriba abajo (misma pila con profundidad de siempre).
-  mapa: {
-    pasos: [
-      'COMBATE',
-      'ARTES MARCIALES / DEPORTES DE COMBATE',
-      'STRIKING + GRAPPLING',
-      'STRIKING',
-      'BOXEO · K1 / KICKBOXING · MUAY THAI',
-    ],
-  },
-};
+// El recorrido desde Inicio a Disciplinas es directo: no existe una escena Bridge intermedia.
 
 // --- 02 Descubrir ---
 // Escena 02 = "¿Qué posibilidades existen?". Se lee desde la pregunta del cliente ("si entro aquí, ¿cómo puedo
