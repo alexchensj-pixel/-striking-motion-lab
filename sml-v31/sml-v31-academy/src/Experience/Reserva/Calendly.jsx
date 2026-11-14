@@ -45,7 +45,8 @@ export default function Calendly() {
     (async () => {
       try {
         const all = [];
-        for (let cursor = new Date(rangeStart); cursor < rangeEnd;) {
+        // Saltar semanas históricas y comenzar siempre en un instante futuro.
+        for (let cursor = new Date(Math.max(rangeStart.getTime(), Date.now() + 60_000)); cursor < rangeEnd;) {
           const next = new Date(cursor); next.setDate(next.getDate() + 7);
           const end = next < rangeEnd ? next : rangeEnd;
           all.push(...await loadRange(cursor, end, controller.signal));
