@@ -23,8 +23,7 @@ export default async (request) => {
   if (
     !Number.isFinite(requestedStart.getTime()) ||
     !Number.isFinite(end.getTime()) ||
-    end <= requestedStart ||
-    end.getTime() - requestedStart.getTime() > MAX_RANGE_MS
+    end <= requestedStart
   ) {
     return Response.json(
       { error: "Rango de fechas no válido." },
@@ -32,8 +31,8 @@ export default async (request) => {
     );
   }
 
-  // El calendario dibuja semanas completas, incluidas las que ya han pasado.
-  // Esas semanas deben devolver una lista vacía, no un error para todo el mes.
+  // Las semanas completas del calendario pueden empezar en el pasado.
+  // Si toda la semana ya pasó, se devuelve una lista vacía.
   if (end.getTime() <= now) {
     return Response.json(
       { collection: [] },
@@ -41,13 +40,20 @@ export default async (request) => {
     );
   }
 
-  // Si el intervalo empieza en el pasado pero termina en el futuro,
-  // consulta Calendly desde un minuto después de ahora.
+  // Si el intervalo empieza en el pasado, consulta Calendly desde un minuto
+  // después de ahora. Valida la duración efectiva, no la parte ya transcurrida.
   const start = new Date(Math.max(requestedStart.getTime(), now + 60_000));
-  if (end <= start) {
+  if (end.getTime() <= start.getTime()) {
     return Response.json(
       { collection: [] },
       { headers: { "Cache-Control": "no-store" } }
+    );
+  }
+
+  if (end.getTime() - start.getTime() > MAX_RANGE_MS) {
+    return Response.json(
+      { error: "Rango de fechas no válido." },
+      { status: 400 }
     );
   }
 
