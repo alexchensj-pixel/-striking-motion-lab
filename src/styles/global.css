@@ -1327,11 +1327,7 @@ nav.nav li[data-id="book"] { margin-top: .9rem; padding-top: .35rem; border-top:
   position: absolute; left: 50%; top: clamp(4.5rem, 14vh, 8rem); transform: translateX(-50%);
   width: min(92vw, 46rem); box-sizing: border-box; padding: 0 .25rem; text-align: center; pointer-events: none;
 }
-/* Velo suave detrás del título: la lectura no depende de lo que haya en el 3D (más marcado en móvil). */
-.ent__hero::before {
-  content: ''; position: absolute; inset: -2.5rem -12% -2rem; z-index: -1;
-  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .55) 0, rgba(0, 0, 0, .3) 55%, rgba(0, 0, 0, 0) 78%);
-}
+/* El texto convive directamente con la escena 3D: sin panel ni velo detrás del bloque. */
 .ent__marca { margin: 0 0 .6rem; font-family: var(--ent-mono); font-size: .75rem; letter-spacing: .28em; text-transform: uppercase; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .8); }
 .ent__titulo {
   margin: 0; font-family: var(--ent-title); font-weight: 900; text-transform: uppercase; color: #fff;
@@ -1363,7 +1359,6 @@ nav.nav li[data-id="book"] { margin-top: .9rem; padding-top: .35rem; border-top:
 }
 @media (max-width: 700px) {
   .ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 12.5rem); }
-  .ent__hero::before { background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, .68) 0, rgba(0, 0, 0, .42) 58%, rgba(0, 0, 0, 0) 80%); }
   /* En móvil el mensaje manda: el fondo fotográfico baja de intensidad (el laboratorio 3D sigue montado). */
   .photo { opacity: .4; }
 
@@ -2618,3 +2613,55 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
 .ent__links .ent__b2bLink { max-width: none; width: auto; }
 .ent__caption { bottom: calc(clamp(4.75rem, 11vh, 7rem) + 13.5rem); pointer-events: none; }
 .ent__actions { z-index: 5; }
+
+
+/* ENTRADA · full-bleed: el texto pertenece al espacio, no a una columna enmarcada. */
+#entrada .stage {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  padding: 0 !important;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+#entrada .ent__hero {
+  left: clamp(22px, 7vw, 112px);
+  right: clamp(22px, 7vw, 112px);
+  top: clamp(7rem, 16vh, 10rem);
+  width: auto;
+  max-width: none;
+  padding: 0;
+  transform: none;
+  text-align: left;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+#entrada .ent__hero::before,
+#entrada .ent__hero::after { content: none !important; }
+#entrada .ent__titulo {
+  font-size: clamp(3.5rem, 10.8vw, 9.5rem);
+  line-height: .82;
+  letter-spacing: -.035em;
+  text-shadow: 0 12px 55px rgba(0,0,0,.48);
+}
+#entrada .ent__marca,
+#entrada .ent__disc,
+#entrada .ent__mod,
+#entrada .ent__confianza { text-shadow: 0 2px 18px rgba(0,0,0,.78); }
+@media (max-width: 700px) {
+  #entrada .stage { padding: 0 !important; }
+  #entrada .ent__hero {
+    left: 22px;
+    right: 22px;
+    top: clamp(6.5rem, 13vh, 8rem);
+    width: auto;
+  }
+  #entrada .ent__titulo {
+    font-size: clamp(3.1rem, 12.8vw, 5.7rem);
+    line-height: .86;
+    letter-spacing: -.025em;
+  }
+}

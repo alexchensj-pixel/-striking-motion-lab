@@ -49,7 +49,6 @@ export const hero = {
   titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
   disciplinasLinea: 'Boxeo · K1 · Muay Thai',
   ctaReservar: 'Reservar evaluación · 30 €',
-  ctaExplorar: 'No sé qué necesito → Descubrir',
   contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
   // Sin uso en pantalla. Reescrito: la web no recomienda disciplina automáticamente.
@@ -81,19 +80,19 @@ export const chapters = [
 ];
 
 export const chapterById = Object.fromEntries(chapters.map((c) => [c.id, c]));
+export const scrollChapters = chapters.filter((c) => c.id !== 'character-select');
 
 // Umbrales narrativos entre capítulos (tramo de scroll con velo + viaje de cámara).
 export const thresholdLabels = {
-  'entrada>character-select': 'Entrada al mundo del combate',
-  'character-select>asesoria-lab': 'De la selección al protocolo',
+  'entrada>asesoria-lab': 'De la entrada al método',
   'asesoria-lab>slot': 'Del protocolo a la configuración',
   'slot>proof-chen': 'Resolución · evidencia',
   'proof-chen>reserva': 'Acceso',
 };
 
 // Secuencia ordenada de tramos de scroll: capítulo, umbral, capítulo, umbral...
-export const segmentKeys = chapters.flatMap((c, i) =>
-  i < chapters.length - 1 ? [c.id, `${c.id}>${chapters[i + 1].id}`] : [c.id]
+export const segmentKeys = scrollChapters.flatMap((c, i) =>
+  i < scrollChapters.length - 1 ? [c.id, `${c.id}>${scrollChapters[i + 1].id}`] : [c.id]
 );
 
 // --- Bridge · escena narrativa HOME → EXPLORE (CUERPO → COMBATE → MAPA → STRIKING → DISCIPLINAS) ---

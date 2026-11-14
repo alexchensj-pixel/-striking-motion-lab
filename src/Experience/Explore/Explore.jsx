@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Chapter from '../Chapter.jsx';
 import { useStore } from '../../App/store.js';
 import { disciplines } from '../../Data/Disciplines.js';
 import { seleccion, explore, hero } from '../../Data/Content.js';
@@ -61,6 +60,8 @@ export default function Explore() {
   const discId = useStore((s) => s.selectedDiscipline);
   const selectDiscipline = useStore((s) => s.selectDiscipline);
   const focus = useStore((s) => s.exploreFocus); // 'modos' (puerta DESCUBRIR) | 'disciplinas' (puerta DISCIPLINAS)
+  const open = useStore((s) => s.exploreOpen);
+  const closeExplore = useStore((s) => s.closeExplore);
   const stacked = useStacked();
   const [deep, setDeep] = useState(false);     // Nivel 3 de la disciplina (qué es · cómo · desarrolla · glosario)
   const [modeDeep, setModeDeep] = useState(false); // Nivel 3 del concepto (texto largo de la forma de entrenar)
@@ -149,8 +150,17 @@ export default function Explore() {
     </section>
   );
 
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    const onKey = (event) => { if (event.key === 'Escape') closeExplore(); };
+    window.addEventListener('keydown', onKey);
+    return () => { document.documentElement.style.overflow = previous; window.removeEventListener('keydown', onKey); };
+  }, [open, closeExplore]);
+  if (!open) return null;
   return (
-    <Chapter id="character-select" className="ex">
+    <div className="explore-overlay" role="dialog" aria-modal="true" aria-label={explore.titulo} style={{ position: 'fixed', inset: 0, zIndex: 11, pointerEvents: 'none' }}>
       <div className="ex__body" data-empty={!active && !forma ? 'true' : undefined} data-picked={active ? active.id : 'none'} data-focus={focus} data-deep={deep || undefined} style={style}>
         <div className="ex__glow" aria-hidden="true" />
 
@@ -158,7 +168,7 @@ export default function Explore() {
           <div className="ex__scroll">
             <header className="exs__head">
               <h2 className="ex__title">{explore.titulo}</h2>
-              <button type="button" className="ex__estudio" onClick={() => goToSection('estudio')}>{estudio.marca} →</button>
+              <div className="exs__actions"><button type="button" className="ex__estudio" onClick={() => goToSection('estudio')}>{estudio.marca} →</button><button type="button" className="ex__estudio" onClick={closeExplore}>Cerrar ×</button></div>
             </header>
 
             {focus === 'disciplinas' ? <>{discSection}{modeSection}</> : <>{modeSection}{discSection}</>}
@@ -171,7 +181,7 @@ export default function Explore() {
           </div>
         </div>
       </div>
-    </Chapter>
+    </div>
   );
 }
 

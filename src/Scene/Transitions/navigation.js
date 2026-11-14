@@ -1,5 +1,5 @@
 import { gsap } from './gsap.js';
-import { chapters } from '../../Data/Content.js';
+import { scrollChapters } from '../../Data/Content.js';
 import { useStore } from '../../App/store.js';
 import { SECTIONS, SECTION_CHAPTER, SECTION_HASH, HASH_SECTION } from '../../App/sections.js';
 import { prefersReducedMotion, scrollState } from './scrollState.js';
@@ -35,13 +35,7 @@ export function jumpTo(y) {
 // entre otros capítulos contiguos. Se escala con la distancia real (≈1,8 s por pantalla, entre 2,2 y 12 s); `autoKill` deja al usuario
 // retomar el scroll en cualquier momento. El resto de pasos contiguos conserva los 2,2 s de siempre.
 const STEP_DURATION = 2.2;
-const BRIDGE_SECONDS_PER_SCREEN = 1.8;
-const crossesBridge = (from, to) => from === 'entrada' && to === 'character-select';
-function travelDuration(from, to, y) {
-  if (!crossesBridge(from, to)) return STEP_DURATION;
-  const screens = Math.abs(y - window.scrollY) / window.innerHeight;
-  return Math.min(Math.max(screens * BRIDGE_SECONDS_PER_SCREEN, STEP_DURATION), 12);
-}
+function travelDuration() { return STEP_DURATION; }
 
 // Capítulo (o 'faq') → posición. Nunca recorre capítulos intermedios.
 export function jumpToChapter(id) {
@@ -49,7 +43,7 @@ export function jumpToChapter(id) {
 }
 
 // Distancia en capítulos entre el activo y el destino ('faq' cuenta como medio paso después de 'slot').
-const orderOf = (id) => (id === 'faq' ? chapters.findIndex((c) => c.id === 'slot') + 0.5 : chapters.findIndex((c) => c.id === id));
+const orderOf = (id) => (id === 'faq' ? scrollChapters.findIndex((c) => c.id === 'slot') + 0.5 : scrollChapters.findIndex((c) => c.id === id));
 
 // Scroll animado a un capítulo. Entre capítulos contiguos conserva el recorrido cinematográfico de siempre; si el destino está
 // a más de un paso, salta directamente (ninguna acción obliga a atravesar toda la película anterior).
@@ -109,9 +103,10 @@ export function goToSection(id, opts = {}) {
   if (!SECTIONS.includes(id)) return;
   const { push = true, direct = false } = opts;
   const st = useStore.getState();
-  const hadOverlay = st.b2bOpen || st.estudioOpen;
+  const hadOverlay = st.b2bOpen || st.estudioOpen || st.exploreOpen;
   if (st.b2bOpen && id !== 'experiences') st.closeB2B();
   if (st.estudioOpen && id !== 'estudio') st.closeEstudio();
+  if (st.exploreOpen && id !== 'explore' && id !== 'disciplinas') st.closeExplore();
 
   // Overlays: no tocan capítulos, cámara ni scroll. Antes de abrirlos se duplica la entrada de historial (ver arriba).
   if (id === 'estudio' || id === 'experiences') {
@@ -123,11 +118,15 @@ export function goToSection(id, opts = {}) {
 
   const chapter = SECTION_CHAPTER[id];
   const isExplore = id === 'explore' || id === 'disciplinas';
+  if (isExplore) {
+    st.openExplore(id === 'disciplinas' ? 'disciplinas' : 'modos');
+    if (hadOverlay) setTimeout(() => writeHash(id, 'replace'), 0); else if (push) writeHash(id, 'push');
+    return;
+  }
   const sameChapter = chapter && useStore.getState().activeChapter === chapter;
   if (!sameChapter) rememberProgress(useStore.getState().activeChapter); // antes de moverse: dónde se queda la persona
 
   st.setActiveSection(id);
-  if (isExplore) st.setExploreFocus(id === 'disciplinas' ? 'disciplinas' : 'modos');
   if (id === 'book') st.openBooking();
 
   // Historial: con overlay abierto su limpieza (replaceState) corre tras el render, así que el hash se escribe después y reemplazando.
@@ -136,13 +135,9 @@ export function goToSection(id, opts = {}) {
 
   if (!chapter) return;
   // DISCIPLINAS ↔ DESCUBRIR dentro de character-select: solo cambia el foco, sin volver a saltar.
-  if (isExplore && sameChapter) return;
   // Ya estás en ese capítulo (sin overlay encima): no se recoloca ni se reinicia el paso en el que estabas.
   if (sameChapter) return;
-  // Desde HOME, DESCUBRIR se alcanza ATRAVESANDO el Bridge (cuerpo → combate → mapa → disciplinas). DISCIPLINAS desde HOME y DESCUBRIR
-  // desde cualquier otra sección son salto directo (la persona ya sabe lo que quiere o ya conoce la narrativa).
-  if (id === 'explore' && !direct && st.activeChapter === 'entrada') scrollToChapter(chapter);
-  else if (RESUME_CHAPTERS.includes(chapter)) jumpToChapterResuming(chapter);
+  if (RESUME_CHAPTERS.includes(chapter)) jumpToChapterResuming(chapter);
   else jumpToChapter(chapter);
 }
 
@@ -156,8 +151,8 @@ function onPopState() {
   // «Atrás» con Empresas / Estudio abierto = cerrar el overlay y quedarse donde estaba la persona (el scroll no se movió bajo él).
   // Sin esto, un hash antiguo (el scroll no escribe hash) la llevaba a otra sección o a HOME.
   const st = useStore.getState();
-  if ((st.b2bOpen || st.estudioOpen) && id !== 'experiences' && id !== 'estudio') {
-    if (st.b2bOpen) st.closeB2B(); else st.closeEstudio();
+  if ((st.b2bOpen || st.estudioOpen || st.exploreOpen) && id !== 'experiences' && id !== 'estudio' && id !== 'explore' && id !== 'disciplinas') {
+    if (st.b2bOpen) st.closeB2B(); else if (st.estudioOpen) st.closeEstudio(); else st.closeExplore();
     return;
   }
   if (id) goToSection(id, { push: false, direct: true });
@@ -171,13 +166,14 @@ export function initHistoryNavigation() {
 
   // Cerrar B2B/Estudio con Esc / botón: su limpieza borra el hash; se restituye el de la sección en pantalla (replace, sin entrada nueva).
   useStore.subscribe((s, prev) => {
-    const closed = (prev.b2bOpen && !s.b2bOpen) || (prev.estudioOpen && !s.estudioOpen);
-    if (closed && !s.b2bOpen && !s.estudioOpen) setTimeout(() => writeHash(useStore.getState().activeSection, 'replace'), 0);
+    const closed = (prev.b2bOpen && !s.b2bOpen) || (prev.estudioOpen && !s.estudioOpen) || (prev.exploreOpen && !s.exploreOpen);
+    if (closed && !s.b2bOpen && !s.estudioOpen && !s.exploreOpen) setTimeout(() => writeHash(useStore.getState().activeSection, 'replace'), 0);
   });
 
   // Carga directa con hash de B2C (#metodo…): espera a que los capítulos se registren y salta sin pushear. #empresas y #estudio los abren sus overlays.
   const id = sectionFromHash();
   if (!id || id === 'home' || id === 'experiences' || id === 'estudio') return;
+  if (id === 'explore' || id === 'disciplinas') { setTimeout(() => goToSection(id, { push: false, direct: true }), 150); return; }
   const chapter = SECTION_CHAPTER[id];
   let tries = 0;
   const wait = () => {
@@ -201,13 +197,14 @@ export function goToAnchor(id) {
   const st = useStore.getState();
   if (st.b2bOpen) st.closeB2B();
   if (st.estudioOpen) st.closeEstudio();
+  if (st.exploreOpen) st.closeExplore();
   jumpToChapter(id);
 }
 
 // ↑/↓: capítulo anterior / siguiente, con el recorrido animado (son contiguos).
 export function stepChapter(dir) {
-  const i = chapters.findIndex((c) => c.id === useStore.getState().activeChapter);
-  const next = chapters[Math.max(0, Math.min(chapters.length - 1, i + dir))];
+  const i = scrollChapters.findIndex((c) => c.id === useStore.getState().activeChapter);
+  const next = scrollChapters[Math.max(0, Math.min(scrollChapters.length - 1, i + dir))];
   const el = els[next.id];
-  if (el) go(topOf(el), travelDuration(chapters[i].id, next.id, topOf(el)));
+  if (el) go(topOf(el), travelDuration());
 }

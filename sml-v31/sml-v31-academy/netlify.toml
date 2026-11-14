@@ -13,7 +13,6 @@
   to = "/.netlify/functions/grupos"
   status = 200
 
-# MI SML · API privada (valida la sesión de Auth0). El comodín deja que la función responda 404 JSON a otras rutas /api/mi-sml/*.
 [[redirects]]
   from = "/api/academy/content"
   to = "/.netlify/functions/academy-content"
@@ -30,6 +29,16 @@
   status = 200
 
 [[redirects]]
+  from = "/api/calendly/availability"
+  to = "/.netlify/functions/calendly-availability"
+  status = 200
+
+[[redirects]]
+  from = "/api/calendly/book"
+  to = "/.netlify/functions/calendly-book"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -39,7 +48,6 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# MI SML: zona privada del cliente. Fuera de buscadores y sin caché (cuando exista sesión, nada de cliente debe quedar en caché compartida).
 [[headers]]
   for = "/mi-sml"
   [headers.values]
@@ -63,4 +71,3 @@
   [headers.values]
     Cache-Control = "no-store, private"
     X-Robots-Tag = "noindex, nofollow"
-

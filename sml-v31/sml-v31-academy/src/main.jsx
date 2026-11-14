@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App/App.jsx';
+import AppOriginal from './App/App.jsx';
 import LegalPage from './UI/Legal/LegalPage.jsx';
 import { RUTAS } from './Data/Legal.js';
 import './styles/global.css';
@@ -9,6 +9,7 @@ import './styles/global.css';
 // Se carga bajo demanda: la web pública no descarga nada de ella.
 const MiSML = lazy(() => import('./Client/MiSML.jsx'));
 const Academia = lazy(() => import('./Academy/Academia.jsx'));
+const SpatialApp = lazy(() => import('./Spatial/SpatialApp.jsx'));
 
 // Rutas legales (/privacidad, /aviso-legal): páginas independientes, sin canvas 3D. Netlify ya sirve index.html para cualquier ruta (netlify.toml).
 const ruta = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -27,6 +28,6 @@ createRoot(document.getElementById('root')).render(
     {esMiSML
       ? <Suspense fallback={null}><MiSML /></Suspense>
       : esAcademia ? <Suspense fallback={null}><Academia /></Suspense>
-      : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
+      : legalTipo ? <LegalPage tipo={legalTipo} /> : ruta === '/' ? <Suspense fallback={null}><SpatialApp /></Suspense> : <AppOriginal />}
   </React.StrictMode>
 );

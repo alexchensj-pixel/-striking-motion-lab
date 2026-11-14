@@ -5,13 +5,11 @@ import { goToSection, irAReservar } from '../../Scene/Transitions/navigation.js'
 // NAVEGACIÓN = «¿A qué parte de SML quiero ir?». Cada entrada lleva DIRECTAMENTE a su sección.
 //   Principal (mismo peso, escritorio y móvil): DISCIPLINAS · MÉTODO · ENTRENAMIENTO · SOBRE CHEN · EMPRESAS
 //   Acción (acento, separada del resto):        RESERVAR  → irAReservar()
-// DESCUBRIR ya no es ítem del menú, pero sigue existiendo como sección (goToSection('explore'), #descubrir) para el hero, el footer y Estudio.
 // FAQ · Contacto · Instagram · Privacidad · Aviso legal no son destinos del menú: viven en el footer / en su sección.
 // El logo / home es el SML del HUD (no se duplica aquí). ESTUDIO DE COMBATE no es sección principal: se abre desde Explore (y Método).
 // EMPRESAS pasa por goToSection('experiences'), que cierra lo que haya encima, gestiona el historial y llama a openB2B (lógica B2B intacta).
 const MAIN = [
   { id: 'disciplinas', label: 'Disciplinas', target: 'disciplinas' },
-  { id: 'explore', label: 'Descubrir', target: 'explore' },
   { id: 'method', label: 'Método', target: 'method' },
   { id: 'training', label: 'Entrenamiento', target: 'training' },
   { id: 'founder', label: 'Sobre Alex', target: 'founder' },

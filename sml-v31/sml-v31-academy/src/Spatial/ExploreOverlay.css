@@ -1,0 +1,375 @@
+/* Original SML Explore HUD, scoped to the fixed overlay. No legacy global CSS is imported. */
+.ex-overlay{position:fixed;inset:0;z-index:5;display:none;pointer-events:none;color:#f4f6fa}
+.ex-overlay.is-active{display:block}
+.ex-overlay .ex{position:absolute;inset:0;--accent:#e05a2b;--font-display:'Barlow Condensed',sans-serif;--font-sans:'DM Sans',sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;--pad-l:clamp(20px,5vw,76px);--tx-head-shadow:0 1px 12px rgba(0,0,0,.85);--cx-line:rgba(217,221,230,.18);--cx-line-hi:rgba(217,221,230,.34);--cx-vignette:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(0,0,0,.35) 100%)}
+.ex-overlay .ex__body{position:absolute;inset:0;pointer-events:none}
+.ex-overlay .ex__panel{pointer-events:auto}
+.ex-overlay .ex__scroll{pointer-events:auto}
+.ex-overlay .ex__scroll button,.ex-overlay .ex__scroll a{pointer-events:auto}
+.ex {
+  --ex-ink: #f4f6fa;
+  --ex-soft: rgba(226, 231, 240, .8);
+  --ex-mute: rgba(226, 231, 240, .55);
+  --ex-hair: rgba(217, 221, 230, .18);
+  --ex-accent: var(--accent);
+  --ex-rgb: 143, 179, 255;
+  --ex-display: var(--font-display);
+  --ex-sans: var(--font-sans);
+  --ex-mono: var(--font-mono);
+}
+.ex .stage { display: block; padding: 0; }
+.ex__body { position: absolute; inset: 0; pointer-events: none; }
+
+/* Luz de ambiente del color de la disciplina elegida, sobre la regiÃ³n del 3D. */
+.ex__glow {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 60%; pointer-events: none; opacity: 0;
+  background: radial-gradient(closest-side at 50% 52%, rgba(var(--ex-rgb), .22), rgba(var(--ex-rgb), .07) 55%, transparent 80%);
+  mix-blend-mode: screen; transition: opacity .7s ease;
+}
+
+/* PANEL (apaisado: columna izquierda con fundido hacia el 3D) */
+.ex__panel {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 42%; min-width: 25rem; max-width: 44rem;
+  pointer-events: auto;
+  background: linear-gradient(90deg, rgba(5, 6, 8, .96) 0%, rgba(5, 6, 8, .92) 74%, rgba(5, 6, 8, 0) 100%);
+}
+.ex__scroll {
+  position: relative; height: 100%; overflow-y: auto; overscroll-behavior: auto; -webkit-overflow-scrolling: touch;
+  padding: 4.5rem 3.25rem 5rem var(--pad-l);
+  scrollbar-width: thin; scrollbar-color: rgba(217, 221, 230, .28) transparent;
+}
+
+/* Cabecera */
+.ex__title {
+  margin: 0; font-family: var(--ex-display); font-weight: 900; text-transform: uppercase; color: #fff;
+  font-size: clamp(2.2rem, 1.2rem + 2.4vw, 3.4rem); line-height: .98; letter-spacing: .01em; max-width: 13ch;
+  text-shadow: var(--tx-head-shadow);
+}
+.ex__intro { margin: .9rem 0 0; font-family: var(--ex-sans); font-size: 1.05rem; line-height: 1.45; color: var(--ex-soft); max-width: 32ch; }
+
+/* 1 Â· Formas de entrenar */
+.ex__block { margin-top: 2rem; }
+.ex__modes, .ex__discs { list-style: none; margin: 0; padding: 0; }
+.ex__mode { border-top: 1px solid var(--ex-hair); }
+.ex__mode:last-child { border-bottom: 1px solid var(--ex-hair); }
+.ex__modeBtn {
+  display: grid; grid-template-columns: .6rem 1fr; column-gap: .85rem; align-items: start; width: 100%; min-height: 3.5rem;
+  padding: .85rem 0; text-align: left; color: var(--ex-soft);
+}
+.ex__modeBtn::before {
+  content: ''; grid-row: 1 / span 2; width: .6rem; height: .6rem; margin-top: .38rem;
+  border: 1px solid var(--ex-mute); background: transparent; transition: background .2s ease, border-color .2s ease;
+}
+.ex__mode[data-on="true"] .ex__modeBtn::before { background: var(--ex-accent); border-color: var(--ex-accent); }
+.ex__modeName {
+  grid-column: 2; font-family: var(--ex-display); font-weight: 800; text-transform: uppercase;
+  font-size: 1.3rem; line-height: 1.05; letter-spacing: .015em; color: var(--ex-soft);
+}
+.ex__modeLine { grid-column: 2; margin-top: .3rem; font-family: var(--ex-sans); font-size: .92rem; line-height: 1.4; color: var(--ex-mute); max-width: 34ch; }
+.ex__mode[data-on="true"] .ex__modeName { color: #fff; }
+.ex__mode[data-on="true"] .ex__modeLine { color: var(--ex-soft); }
+.ex__modeDetail { display: grid; gap: .7rem; padding: .15rem 0 1.15rem 1.45rem; animation: ex-in .28s ease both; }
+.ex__text { margin: 0; font-family: var(--ex-sans); font-size: .95rem; line-height: 1.55; color: var(--ex-soft); max-width: 46ch; }
+.ex__text--soft { color: var(--ex-mute); }
+.ex__hl { display: grid; margin: 0; font-family: var(--ex-display); font-weight: 800; text-transform: uppercase; font-size: 1.2rem; line-height: 1.1; color: #fff; }
+.ex__hl span:last-child { color: var(--ex-accent); }
+.ex__tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.ex__tags li { padding: .25rem .55rem; border: 1px solid var(--ex-hair); font-family: var(--ex-mono); font-size: .7rem; line-height: 1.3; letter-spacing: .03em; color: var(--ex-soft); }
+.ex__note { margin: 1rem 0 0; font-family: var(--ex-sans); font-weight: 700; font-size: .95rem; line-height: 1.4; color: #fff; }
+
+/* 2 Â· Disciplinas */
+.ex__block--disc { margin-top: 2.6rem; }
+.ex__h {
+  margin: 0 0 .8rem; font-family: var(--ex-display); font-weight: 900; text-transform: uppercase; color: #fff;
+  font-size: clamp(1.8rem, 1rem + 1.8vw, 2.5rem); line-height: 1; letter-spacing: .01em; text-shadow: var(--tx-head-shadow);
+}
+
+.ex__disc { position: relative; border-top: 1px solid var(--ex-hair); border-left: 3px solid transparent; padding-left: .9rem; transition: border-color .25s ease, opacity .25s ease; }
+.ex__disc:last-child { border-bottom: 1px solid var(--ex-hair); }
+.ex__disc[data-on="true"] { border-left-color: var(--ex-accent); }
+.ex__disc[data-dim="true"] { opacity: .66; }
+.ex__discBtn { display: grid; gap: .3rem; justify-items: start; width: 100%; min-height: 4.5rem; padding: 1rem 0; text-align: left; }
+.ex__discName {
+  font-family: var(--ex-display); font-weight: 900; text-transform: uppercase; color: var(--ex-soft);
+  font-size: clamp(1.7rem, 1.1rem + 1.4vw, 2.2rem); line-height: 1; letter-spacing: .012em;
+}
+.ex__disc[data-on="true"] .ex__discName { color: #fff; text-shadow: var(--tx-head-shadow); }
+.ex__discLine { font-family: var(--ex-sans); font-size: .92rem; line-height: 1.4; color: var(--ex-mute); max-width: 34ch; }
+.ex__disc[data-on="true"] .ex__discLine { color: var(--ex-soft); }
+.ex__discTag { margin-top: .15rem; font-family: var(--ex-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ex-accent); }
+
+/* Contenido de la disciplina elegida */
+.ex__detail { padding: 0 0 1.4rem; animation: ex-in .32s ease both; }
+.ex__tagline { margin: 0 0 .5rem; font-family: var(--ex-display); font-weight: 800; text-transform: uppercase; font-size: 1.15rem; letter-spacing: .03em; color: var(--ex-accent); }
+.ex__pick { margin: 0 0 .4rem; font-family: var(--ex-sans); font-weight: 700; font-size: .92rem; line-height: 1.4; color: #fff; }
+.ex__pick span { font-family: var(--ex-mono); font-weight: 500; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ex-mute); margin-right: .4rem; }
+.ex__pick i { font-style: normal; color: var(--ex-accent); }
+.ex__dh {
+  display: flex; align-items: center; gap: .7rem; margin: 1.35rem 0 .5rem;
+  font-family: var(--ex-mono); font-weight: 500; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ex-accent);
+}
+.ex__dh::after { content: ''; flex: 1; height: 1px; background: var(--ex-hair); }
+.ex__detail .ex__text + .ex__text { margin-top: .7rem; }
+.ex__attrs { display: flex; flex-wrap: wrap; gap: .3rem 1rem; margin: 0; padding: 0; list-style: none; }
+.ex__attrs li { font-family: var(--ex-display); font-weight: 800; text-transform: uppercase; font-size: 1.2rem; line-height: 1.15; letter-spacing: .02em; color: #fff; }
+.ex__gloss { display: grid; gap: .65rem; margin: 0; }
+.ex__gloss dt { font-family: var(--ex-sans); font-weight: 700; font-size: .95rem; letter-spacing: 0; color: #fff; }
+.ex__gloss dd { margin: .1rem 0 0; font-family: var(--ex-sans); font-size: .92rem; line-height: 1.5; color: var(--ex-soft); max-width: 44ch; }
+.ex__reset {
+  margin-top: 1.4rem; min-height: 2.75rem; padding: 0; font-family: var(--ex-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ex-soft); text-decoration: underline; text-underline-offset: .35em;
+}
+
+/* VÃ­deo local del personaje (solo en vertical: ver Explore.jsx#useStacked). Negro puro + mix-blend-mode: se funde con el fondo. */
+.ex__media { position: relative; display: block; width: 100%; height: min(34svh, 20rem); margin: .8rem 0 .2rem; padding: 0; overflow: hidden; background: transparent; isolation: isolate; mix-blend-mode: screen; cursor: zoom-in; }
+.ex__media img { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; filter: saturate(1.08) contrast(1.04); }
+.ex__mediaHint { position: absolute; right: .2rem; bottom: .25rem; padding: .25rem .4rem; color: rgba(244,246,250,.72); background: rgba(5,6,8,.55); font: 10px ui-monospace,monospace; letter-spacing: .12em; }
+.ex__media.is-zoomed { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; width: 100vw; height: 100dvh; max-height: none; margin: 0; padding: 5vh 5vw; overflow: visible; box-sizing: border-box; background: rgba(5,6,8,.97); cursor: zoom-out; -webkit-mask-image: none !important; mask-image: none !important; }
+.ex__media.is-zoomed img { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; }
+.ex__media.is-zoomed .ex__mediaHint { right: 7vw; bottom: 5vh; color: #fff; background: rgba(5,6,8,.8); }
+
+@keyframes ex-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Hover solo como refuerzo en escritorio: el estado nunca depende de Ã©l. */
+@media (hover: hover) and (pointer: fine) {
+  .ex__modeBtn:hover .ex__modeName, .ex__discBtn:hover .ex__discName { color: #fff; }
+  .ex__disc[data-dim="true"]:hover { opacity: .9; }
+  .ex__reset:hover { color: #fff; }
+
+}
+
+/* VERTICAL (mÃ³vil / tablet vertical): 3D arriba, panel debajo con scroll propio. Mismo corte que cells.js (aspect 1,1). */
+@media (max-aspect-ratio: 11/10) {
+  .ex__glow { top: 0; right: 0; bottom: auto; left: 0; width: auto; height: 32%; }
+  .ex__panel {
+    top: 32%; left: 0; right: 0; bottom: 0; width: auto; min-width: 0; max-width: none;
+    background: linear-gradient(180deg, rgba(5, 6, 8, 0) 0, rgba(5, 6, 8, .94) 1.6rem, rgba(5, 6, 8, .97) 100%);
+  }
+  .ex__scroll { padding: 1.8rem 1.25rem 6rem 1.25rem; }
+  .ex__title { font-size: clamp(1.9rem, 8.4vw, 2.6rem); max-width: 14ch; }
+  .ex__intro { font-size: 1rem; }
+  .ex__block { margin-top: 1.6rem; }
+  .ex__block--disc { margin-top: 2.1rem; }
+  .ex__modeName { font-size: 1.2rem; }
+  .ex__modeBtn { min-height: 3.75rem; }
+  .ex__discBtn { min-height: 4.75rem; }
+  .ex__discName { font-size: 1.75rem; }
+  .ex__text, .ex__modeLine, .ex__discLine, .ex__gloss dd { max-width: none; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ex__modeDetail, .ex__detail { animation: none; }
+  .ex__glow, .ex__disc { transition: none; }
+
+}
+
+/* DESCUBRIR: el panel pasa de columna opaca a interfaz de anÃ¡lisis sobre el mundo (atmÃ³sfera + lÃ­nea de laboratorio, sin caja). */
+.ex__panel {
+  background: linear-gradient(90deg, rgba(5, 6, 8, .9) 0%, rgba(5, 6, 8, .74) 62%, rgba(5, 6, 8, 0) 100%);
+}
+.ex__panel::before {
+  content: ''; position: absolute; top: 4rem; bottom: 4rem; left: calc(var(--pad-l) - 1.1rem); width: 1px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--cx-line-hi) 18%, var(--cx-line-hi) 82%, transparent);
+}
+.ex__body::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: var(--cx-vignette);
+}
+.ex__title, .ex__h { text-shadow: var(--tx-head-shadow); }
+.ex__mode, .ex__disc { border-top-color: var(--cx-line); }
+@media (max-aspect-ratio: 11/10) {
+  .ex__panel { background: linear-gradient(180deg, rgba(5, 6, 8, 0) 0, rgba(5, 6, 8, .82) 1.6rem, rgba(5, 6, 8, .9) 100%); }
+  .ex__panel::before { display: none; }
+}
+
+/* 1 Â· DESCUBRIR (Character Select): la informaciÃ³n es un HUD sobre el mundo; el personaje manda. */
+.ex__panel { background: linear-gradient(90deg, rgba(5, 6, 8, .84) 0, rgba(5, 6, 8, .56) 58%, rgba(5, 6, 8, 0) 100%); }
+.ex__intro, .ex__text, .ex__modeLine, .ex__discLine, .ex__gloss dd { text-shadow: 0 1px 12px rgba(0, 0, 0, .85), 0 0 2px rgba(0, 0, 0, .9); }
+/* opciones no elegidas: bajan de protagonismo sin desaparecer */
+.ex__modes:has(.ex__mode[data-on="true"]) .ex__mode[data-on="false"] { opacity: .55; transition: opacity .25s ease; }
+.ex__modes:has(.ex__mode[data-on="true"]) .ex__mode[data-on="false"]:hover { opacity: .9; }
+/* disciplina activa: luz de su color en el borde + nombre dominante; el concepto va justo debajo */
+.ex__disc[data-on="true"] { box-shadow: -1px 0 22px -8px rgba(var(--ex-rgb), .6); }
+.ex__tagline { font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.05; }
+/* los tÃ­tulos de bloque pasan a acotaciones: la lectura deja de ser TÃTULO â PÃRRAFO â LISTA */
+.ex__dh { font-family: var(--ex-mono); font-weight: 500; font-size: .72rem; letter-spacing: .14em; color: var(--ex-mute); }
+/* etiquetas sin caja */
+.ex__tags li { border: 0; border-bottom: 1px solid var(--cx-line-hi); padding: .1rem 0 .2rem; }
+@media (min-aspect-ratio: 11/10) {
+  .ex__disc[data-on="true"] .ex__discName { font-size: clamp(2.3rem, 1.5rem + 2.2vw, 3.5rem); line-height: .95; }
+}
+@media (max-aspect-ratio: 11/10) {
+  .ex__panel { background: linear-gradient(180deg, rgba(5, 6, 8, 0) 0, rgba(5, 6, 8, .7) 2.6rem, rgba(5, 6, 8, .9) 100%); }
+  /* el vÃ­deo se disuelve en el contenido: continÃºa la escena, no es Â«vÃ­deo + documento debajoÂ» */
+  .ex__media { -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 100%); mask-image: linear-gradient(180deg, #000 68%, transparent 100%); }
+}
+
+.exs__sr { position: absolute !important; width: 1px; height: 1px; margin: 0; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+.exs__sr:focus-within { position: static !important; width: auto; height: auto; overflow: visible; clip: auto; clip-path: none; white-space: normal; }
+.exs__cN { margin: 0 0 .3rem; font-family: var(--ex-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); line-height: 1; letter-spacing: .02em; animation: ex-in .28s ease both; }
+.exs__cN span { display: block; margin-top: .3rem; font-family: var(--ex-sans); font-weight: 600; font-size: .85rem; letter-spacing: 0; text-transform: none; color: var(--ex-soft); }
+
+/* v30b Â· EXPLORE sin panel: el texto es un pie de escena anclado abajo, sin fondo ni columna; antes de elegir solo queda el tÃ­tulo.
+   La pista (intro / nota) es copy ya existente: se conserva para lector de pantalla pero no se pinta hasta que haya una selecciÃ³n. */
+.ex__panel, .ex__panel::before, .ex__body::after { background: none !important; }
+.ex__panel { pointer-events: none; }
+.ex__scroll { display: flex; flex-direction: column; justify-content: flex-start; pointer-events: none; }
+.ex__scroll button, .ex__scroll a, .exs__drawer, .exs__cD { pointer-events: auto; }
+.ex__body[data-empty="true"] .exs__hint { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; min-height: 0; margin: 0; }
+.ex__body:not([data-empty="true"]) .exs__sel, .ex__body:not([data-empty="true"]) .exs__proto { text-shadow: 0 1px 14px rgba(0,0,0,.95); }
+@media (max-aspect-ratio: 11/10) {
+  .ex__scroll { justify-content: flex-end; padding-bottom: 5.5rem; }
+  .ex__scroll > .exs__head { position: absolute; top: .6rem; left: 1.25rem; right: 1.25rem; }
+  .ex__panel { background: linear-gradient(0deg, rgba(5,6,8,.78) 0, rgba(5,6,8,0) 100%) !important; }
+  .ex__body[data-empty="true"] .ex__panel { background: none !important; }
+}
+
+/* Overlay-specific interaction: the world remains clickable outside the information panel. */
+.ex-overlay .ex__panel{pointer-events:auto}
+.ex-overlay .ex__scroll{pointer-events:auto}
+.ex-overlay .ex__scroll button,.ex-overlay .ex__scroll a{pointer-events:auto}
+.ex-overlay .ex__estudio{display:inline-flex;align-items:center;gap:.6rem;margin-top:1.1rem;padding:.5rem 0;border-bottom:1px solid rgba(217,221,230,.3);font-family:var(--ex-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ex-soft)}
+.ex-overlay .ex__estudio:hover{color:#fff}
+@media(max-width:700px){.ex-overlay .ex__panel{min-width:0}.ex-overlay .ex__scroll{padding-left:1.25rem;padding-right:1.25rem}}
+
+
+/* iOS Safari: keep the Explore HUD inside its reserved lower viewport region. */
+@media (max-aspect-ratio: 11/10) {
+  .ex-overlay .ex__panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .ex-overlay .ex__scroll {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+  }
+  .ex-overlay .ex__disc,
+  .ex-overlay .ex__discBtn { box-sizing: border-box; min-width: 0; }
+  .ex-overlay .ex__discBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    min-height: 4rem;
+    padding: .8rem .9rem;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid rgba(226, 231, 240, .22);
+    border-radius: 2px;
+    background: rgba(7, 9, 13, .82);
+    color: #f4f6fa;
+    box-shadow: none;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ex-overlay .ex__discName {
+    color: #f4f6fa;
+    text-shadow: none;
+    filter: none;
+    opacity: 1;
+  }
+  .ex-overlay .ex__discLine,
+  .ex-overlay .ex__discTag,
+  .ex-overlay .ex__pick,
+  .ex-overlay .exs__hint,
+  .ex-overlay .ex__intro,
+  .ex-overlay .ex__text,
+  .ex-overlay .ex__modeLine,
+  .ex-overlay .ex__gloss dd {
+    color: rgba(226, 231, 240, .84);
+    text-shadow: none;
+    filter: none;
+    opacity: 1;
+  }
+  .ex-overlay .ex__disc[data-on="true"] .ex__discBtn {
+    border-color: var(--ex-accent);
+    background: rgba(var(--ex-rgb), .16);
+  }
+}
+
+
+/* v31 - Movil / iOS Safari. Maquetacion en flujo real, botones sin aspecto nativo y un solo capitulo visible.
+   No toca escritorio, camara, geometria, iluminacion ni transiciones de la escena. */
+
+/* Reset explicito de TODOS los botones del overlay (especificidad 0: cualquier regla propia gana).
+   Evita el gris nativo de Safari tambien en "Profundizar" y "Ver las 3", que no tenian reset. */
+:where(.ex-overlay) :where(button) {
+  -webkit-appearance: none; appearance: none;
+  margin: 0; border: 0; border-radius: 0; background: transparent;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-aspect-ratio: 11/10) {
+  /* Causa de los dos titulares superpuestos: .ex__scroll era flex con justify-content:flex-end (lo que no cabe desborda por
+     ARRIBA y no se puede desplazar) y la cabecera iba en absolute. Ahora todo ocupa espacio real: cabecera arriba, disciplinas
+     empujadas abajo con margin-top:auto (se anula solo si no hay hueco) y scroll normal desde el principio. */
+  .ex-overlay .ex__scroll { justify-content: flex-start; padding-top: 1.25rem; overscroll-behavior-y: auto; }
+  .ex-overlay .ex__scroll > .exs__head { position: static; flex: 0 0 auto; margin: 0; }
+  .ex-overlay .ex__scroll > .ex__block--disc { flex: 0 0 auto; margin-top: auto; padding-top: 1.25rem; }
+
+  /* Tarjetas: fondo oscuro casi opaco (no depende de backdrop-filter), texto claro, borde sutil, sin doble borde. */
+  .ex-overlay .ex__discs { display: grid; gap: .6rem; }
+  .ex-overlay .ex__disc,
+  .ex-overlay .ex__disc:last-child { border: 0; padding-left: 0; box-shadow: none; }
+  .ex-overlay .ex__disc[data-dim="true"] { opacity: .88; }
+  .ex-overlay .ex__discBtn { background: rgba(7, 9, 13, .9); border-color: rgba(226, 231, 240, .28); }
+  .ex-overlay .ex__disc[data-on="true"] .ex__discBtn {
+    border-color: var(--ex-accent);
+    background: linear-gradient(rgba(var(--ex-rgb), .16), rgba(var(--ex-rgb), .16)), rgba(7, 9, 13, .92);
+  }
+  .ex-overlay .ex__discName { color: #fff; }
+  .ex-overlay .ex__discTag { color: var(--ex-accent); }
+
+  /* Un solo capitulo a la vez: #metodo es contenido de pagina y se desplaza bajo este overlay fijo mientras el capitulo activo
+     todavia es Entrada / Explore (de ahi "UN PROCESO PERSONAL / No empezamos... / TU PRIMER PASO" detras). Solo se pinta cuando
+     su capitulo es el activo. */
+  html[data-sml-chapter="entrada"] #metodo .method-stage,
+  html[data-sml-chapter="character-select"] #metodo .method-stage { visibility: hidden; }
+}
+
+/* .explore-dwell: la altura vive solo en styles.css (antes había reglas duplicadas que se contradecían). */
+
+@media (max-aspect-ratio: 11/10) {
+  .ex-overlay .ex__glow { top: 86px; height: 32%; }
+  .ex-overlay .ex__panel { top: calc(32% + 86px); }
+  .ex-overlay .ex__scroll { padding-top: 1.25rem; }
+}
+
+
+/* 2026-11 · identificadores de las tres figuras, siempre accesibles durante el scroll del panel */
+.ex__figure-rail{position:sticky;top:0;z-index:8;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;padding:.55rem 0;background:linear-gradient(180deg,rgba(5,6,8,.96),rgba(5,6,8,.82));backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.16)}
+.ex__figure-label{min-width:0;padding:.7rem .35rem;border:1px solid color-mix(in srgb,var(--figure-accent) 58%,transparent);background:color-mix(in srgb,var(--figure-accent) 9%,rgba(255,255,255,.035));color:var(--figure-accent);font:700 clamp(9px,1vw,12px)/1.2 var(--ex-mono);letter-spacing:.08em;text-align:center;cursor:pointer;animation:none;opacity:1;filter:none;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.ex__figure-label[data-active="true"]{border-color:var(--figure-accent);background:color-mix(in srgb,var(--figure-accent) 22%,rgba(5,6,8,.72));color:#fff;box-shadow:0 0 20px rgba(var(--figure-rgb),.28)}
+.ex__figure-label:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+@keyframes exFigureLabelIn{from{opacity:.35;filter:brightness(.55)}to{opacity:1;filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){.ex__figure-label{animation:none;opacity:1;filter:none}}
+@media(max-width:520px){.ex__figure-label{font-size:9px;letter-spacing:.035em;padding:.65rem .2rem}}
+
+/* Las tres disciplinas permanecen visibles desde el primer fotograma; sin retardo ni estado atenuado. */
+.ex-overlay .ex__figure-label{animation:none!important;animation-delay:0s!important;opacity:1!important;filter:none!important}
+
+
+/* Salida visible, separada del panel de lectura y del área táctil 3D. */
+.ex-overlay .ex__continue {
+  pointer-events: auto;
+  position: fixed; right: clamp(20px, 5vw, 76px); bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 20;
+  display: inline-flex; align-items: center; gap: 1rem; min-height: 48px; padding: 0 18px;
+  border: 1px solid rgba(255,255,255,.62); background: rgba(7,9,13,.92); color: #fff;
+  font: 700 11px/1 var(--font-mono, ui-monospace, monospace); letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; backdrop-filter: blur(12px);
+}
+.ex-overlay .ex__continue span { color: #e05a2b; font-size: 18px; }
+.ex-overlay .ex__continue:focus-visible { outline: 2px solid #e05a2b; outline-offset: 3px; }
+@media (max-aspect-ratio: 11/10) { .ex-overlay .ex__continue { right: 1rem; bottom: calc(12px + env(safe-area-inset-bottom)); min-height: 44px; } }

@@ -1,4 +1,5 @@
 import { segmentKeys } from '../../Data/Content.js';
+import { useStore } from '../../App/store.js';
 
 export const prefersReducedMotion =
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -64,6 +65,7 @@ export const REVEAL_FULL = 1;
 // HOME → EXPLORE (determinista y reversible: al subir el scroll se ocultan otra vez exactamente por el mismo camino).
 // Tras un salto directo a EXPLORE (navegación por sección) el umbral queda en 1: reveal = 1.
 export function getCharactersReveal() {
+  if (useStore.getState().exploreOpen) return 1;
   const introProgress = scrollState.segments['entrada'] ?? 0;
   if (introProgress < 1) return 0;
   const thresholdProgress = scrollState.segments['entrada>character-select'] ?? 0;
@@ -73,10 +75,7 @@ export function getCharactersReveal() {
 // ¿Está la persona en EXPLORE? True dentro del capítulo y también justo en su inicio: un salto directo a la sección
 // (navigation.js#jumpTo) deja el scroll EXACTAMENTE en el borde superior del capítulo, donde el progreso del capítulo aún
 // es 0 y el tramo activo sigue siendo el umbral HOME → EXPLORE (al 100 %). Ambos casos son EXPLORE.
-export function isExploreActive() {
-  const { key, progress } = scrollState.current;
-  return key === 'character-select' || (key === 'entrada>character-select' && progress >= 0.999);
-}
+export function isExploreActive() { return useStore.getState().exploreOpen; }
 
 // Progreso CRUDO (0..1, sin curva) del mismo umbral que gobierna getCharactersReveal(): lo necesita
 // AthleteSlots.jsx para interpolar posición/tamaño (no solo opacidad) mientras la escuadra se convierte
