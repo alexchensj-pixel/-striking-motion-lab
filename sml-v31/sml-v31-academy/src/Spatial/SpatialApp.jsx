@@ -72,8 +72,11 @@ function App() {
   const [showMore, setShowMore] = useState(false);
   const [showGroupFinder, setShowGroupFinder] = useState(false);
   const [activeService, setActiveService] = useState('grupos');
-  const methodProgress = useRef(0);
   const [activeMethodIndex, setActiveMethodIndex] = useState(0);
+  const handleMethodProgress = (progress) => {
+    const nextStep = Math.min(4, Math.floor(Math.max(0, Math.min(0.999, progress)) * 5));
+    setActiveMethodIndex((current) => current === nextStep ? current : nextStep);
+  };
   const [bookingVisible, setBookingVisible] = useState(false);
 
   useEffect(() => {
@@ -107,22 +110,7 @@ function App() {
     return () => window.removeEventListener('hashchange', syncTabFromHash);
   }, []);
 
-  useEffect(() => {
-    const updateProgress = () => {
-      const section = document.getElementById('asesoria-lab');
-      if (section) {
-        const rect = section.getBoundingClientRect();
-        const travel = Math.max(1, rect.height - window.innerHeight);
-        methodProgress.current = Math.max(0, Math.min(1, -rect.top / travel));
-        const nextStep = Math.min(4, Math.floor(Math.max(0, Math.min(.999, methodProgress.current)) * 5));
-        setActiveMethodIndex((current) => current === nextStep ? current : nextStep);
-      }
-    };
-    updateProgress();
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    window.addEventListener('resize', updateProgress);
-    return () => { window.removeEventListener('scroll', updateProgress); window.removeEventListener('resize', updateProgress); };
-  }, []);
+
 
   const go = (id) => {
     setActive(id);
@@ -193,7 +181,7 @@ function App() {
 
       <Threshold from="entrada" to="asesoria-lab" />
 
-      <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method">
+      <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
       <div id="metodo" className="method-section journey-section">
         <div className="method-stage">
           <div className="method-copy">
