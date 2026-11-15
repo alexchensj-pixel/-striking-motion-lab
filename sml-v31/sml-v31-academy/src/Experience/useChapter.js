@@ -42,8 +42,12 @@ export function useChapter(id, ref, build, onProgress) {
       };
 
       // Progreso: mientras el "stage" sticky permanece en pantalla.
+      const mobileMethodPin = id === 'asesoria-lab' && window.matchMedia('(max-width: 760px)').matches
+        ? el.querySelector(':scope > .stage')
+        : false;
       ScrollTrigger.create({
         trigger: el, start: 'top top', end: 'bottom bottom',
+        ...(mobileMethodPin ? { pin: mobileMethodPin, pinSpacing: false, anticipatePin: 1, invalidateOnRefresh: true } : {}),
         onUpdate: update, onRefresh: update,
       });
 
