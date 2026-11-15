@@ -688,3 +688,29 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 .quick-booking span:last-child{font-size:18px;line-height:10px}
 .quick-booking:focus-visible{outline:2px solid #fff;outline-offset:4px}
 @media(max-width:760px){.booking-calendar{margin:22px -2px 30px;padding:14px}.booking-calendar .rs__calendly-frame,.booking-calendar .rs__calendly-frame iframe{height:720px!important}.quick-booking{right:14px;bottom:calc(14px + env(safe-area-inset-bottom));left:14px;justify-content:space-between;padding:16px 19px}.booking-grid--secondary{grid-template-columns:1fr!important}}
+/* MOBILE METHOD: pinned spatial stage, compact evaluation strip and five stations. */
+@media (max-width: 760px) {
+.spatial-chapter--method .method-section{height:300svh!important;min-height:300svh!important;overflow:visible!important}
+.spatial-chapter--method>.stage{position:sticky!important;top:0!important;height:100svh!important;min-height:100svh!important;overflow:hidden!important}
+.spatial-chapter--method .method-stage{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;gap:8px!important;width:100%;height:100svh!important;min-height:100svh!important;padding:82px 18px calc(76px + env(safe-area-inset-bottom))!important;overflow:hidden!important;background:linear-gradient(180deg,rgba(7,9,13,.72),rgba(7,9,13,.30) 42%,rgba(7,9,13,.12))!important}
+.spatial-chapter--method .method-copy,.spatial-chapter--method .method-stations{position:relative!important;z-index:2!important;width:100%!important;max-width:none!important;padding:0!important;margin:0!important;transform:none!important}
+.spatial-chapter--method .method-copy .eyebrow{margin:0 0 5px!important;font-size:8px!important;letter-spacing:.18em!important}
+.spatial-chapter--method .method-copy h2{max-width:19ch!important;margin:0 0 8px!important;font-size:clamp(1.45rem,6.4vw,2rem)!important;line-height:.94!important;letter-spacing:-.02em!important}
+.spatial-chapter--method .method-evaluation{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;column-gap:10px!important;row-gap:2px!important;width:100%!important;max-width:none!important;padding:7px 10px!important;border:1px solid rgba(224,90,43,.62)!important;border-left:2px solid var(--orange)!important;border-radius:0!important;background:rgba(7,9,13,.58)!important;backdrop-filter:blur(5px)!important}
+.spatial-chapter--method .method-evaluation>span{grid-column:1/-1!important;font-size:7px!important;letter-spacing:.16em!important;line-height:1.2!important}
+.spatial-chapter--method .method-evaluation-title{display:contents!important}
+.spatial-chapter--method .method-evaluation-title h3{grid-column:1!important;grid-row:2!important;margin:0!important;font-size:1rem!important;line-height:1!important}
+.spatial-chapter--method .method-evaluation-price{grid-column:2!important;grid-row:2!important;white-space:nowrap!important;font-size:10px!important;font-weight:700!important}
+.spatial-chapter--method .method-evaluation-note,.spatial-chapter--method .method-material-note,.spatial-chapter--method .method-evaluation-terms,.spatial-chapter--method .method-evaluation .primary-cta,.spatial-chapter--method .method-cta-note,.spatial-chapter--method .method-evaluation .text-link,.spatial-chapter--method .method-evaluation ul{display:none!important}
+.spatial-chapter--method .method-stations{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;justify-content:center!important;min-height:0!important;margin-top:4px!important}
+.spatial-chapter--method .method-station{display:grid!important;grid-template-columns:25px minmax(0,1fr)!important;align-items:start!important;gap:7px!important;min-height:0!important;padding:7px 5px!important;border-top:1px solid rgba(226,232,240,.25)!important;border-right:0!important;border-bottom:0!important;border-left:0!important;border-radius:0!important;background:linear-gradient(90deg,rgba(6,8,12,.42),rgba(6,8,12,.08))!important;text-align:left!important}
+.spatial-chapter--method .method-station:last-of-type{border-bottom:1px solid rgba(226,232,240,.25)!important}
+.spatial-chapter--method .station-number{grid-column:1!important;grid-row:1/span 2!important;padding-top:2px!important;font-size:9px!important}
+.spatial-chapter--method .station-content{grid-column:2!important;display:grid!important;gap:3px!important;min-width:0!important}
+.spatial-chapter--method .station-content strong{font-size:clamp(1rem,4.6vw,1.28rem)!important;line-height:1!important;letter-spacing:.015em!important}
+.spatial-chapter--method .station-description{max-width:38ch!important;font-size:10px!important;line-height:1.35!important}
+.spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:8px!important;line-height:1.3!important}
+.spatial-chapter--method .method-station>small,.spatial-chapter--method .method-closing,.spatial-chapter--method .method-coordinate{display:none!important}
+.quick-booking{z-index:90!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;min-height:44px!important}
+}
+
