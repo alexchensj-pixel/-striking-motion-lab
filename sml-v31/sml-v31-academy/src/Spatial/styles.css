@@ -714,6 +714,18 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 .quick-booking{z-index:90!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;min-height:44px!important}
 }
 
+/* MOBILE METHOD TYPE SCALE — restore the condensed hierarchy from the approved reference. */
+@media (max-width:760px){
+ .spatial-chapter--method .method-copy h2{font-family:'Barlow Condensed',sans-serif!important;font-size:clamp(2rem,8.4vw,2.35rem)!important;line-height:.94!important;letter-spacing:-.025em!important;max-width:16ch!important}
+ .spatial-chapter--method .method-evaluation-title h3{font-family:'Barlow Condensed',sans-serif!important;font-size:clamp(1.45rem,6.4vw,1.75rem)!important;line-height:.98!important}
+ .spatial-chapter--method .method-evaluation-price{font-size:13px!important}
+ .spatial-chapter--method .method-station{padding:9px 5px!important;min-height:52px!important}
+ .spatial-chapter--method .station-content strong{font-family:'Barlow Condensed',sans-serif!important;font-size:clamp(1.55rem,7.1vw,1.9rem)!important;line-height:.98!important;letter-spacing:.01em!important}
+ .spatial-chapter--method .station-description{font-size:15px!important;line-height:1.42!important;max-width:38ch!important}
+ .spatial-chapter--method .station-number{font-size:12px!important}
+ .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:11px!important;line-height:1.35!important}
+}
+
 
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
