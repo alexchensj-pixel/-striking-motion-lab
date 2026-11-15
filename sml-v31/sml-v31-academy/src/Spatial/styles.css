@@ -717,8 +717,10 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
-  .spatial-chapter--method { height: 250vh !important; min-height: 250vh !important; }
-  .spatial-chapter--method > .stage { position: sticky !important; top: 0 !important; height: 100svh !important; min-height: 100svh !important; overflow: hidden !important; }
+  /* Sticky needs a flat containing-block chain on mobile; the 3D perspective ancestor was letting the page scroll past the copy. */
+  main { perspective: none !important; transform-style: flat !important; }
+  .spatial-chapter--method { height: 250svh !important; min-height: 250svh !important; perspective: none !important; transform-style: flat !important; }
+  .spatial-chapter--method > .stage { position: sticky !important; top: 0 !important; height: 100svh !important; min-height: 100svh !important; overflow: hidden !important; transform: none !important; }
   .spatial-chapter--method .method-section { height: 100% !important; min-height: 100svh !important; overflow: visible !important; }
   .spatial-chapter--method .method-stage { height: 100svh !important; min-height: 100svh !important; overflow: hidden !important; }
   .quick-booking { left: auto !important; right: 14px !important; width: auto !important; min-width: 0 !important; min-height: 38px !important; justify-content: center !important; gap: 7px !important; padding: 9px 12px !important; font-size: 9px !important; letter-spacing: .08em !important; box-shadow: 0 8px 22px rgba(0,0,0,.28) !important; }
