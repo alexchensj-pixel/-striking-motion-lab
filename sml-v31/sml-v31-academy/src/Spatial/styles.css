@@ -721,5 +721,6 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
   .spatial-chapter--method > .stage { position: sticky !important; top: 0 !important; height: 100svh !important; min-height: 100svh !important; overflow: hidden !important; }
   .spatial-chapter--method .method-section { height: 100% !important; min-height: 100svh !important; overflow: visible !important; }
   .spatial-chapter--method .method-stage { height: 100svh !important; min-height: 100svh !important; overflow: hidden !important; }
-  .quick-booking { left: auto !important; right: 14px !important; width: auto !important; min-width: 0 !important; justify-content: center !important; gap: 10px !important; padding: 12px 15px !important; }
+  .quick-booking { left: auto !important; right: 14px !important; width: auto !important; min-width: 0 !important; min-height: 38px !important; justify-content: center !important; gap: 7px !important; padding: 9px 12px !important; font-size: 9px !important; letter-spacing: .08em !important; box-shadow: 0 8px 22px rgba(0,0,0,.28) !important; }
+  .quick-booking span:last-child { font-size: 14px !important; line-height: 10px !important; }
 }
