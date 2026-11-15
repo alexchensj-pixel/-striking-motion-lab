@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LegacyWorld from './LegacyWorld.jsx';
 import Chapter from '../Experience/Chapter.jsx';
 import Threshold from '../Scene/Transitions/Threshold.jsx';
