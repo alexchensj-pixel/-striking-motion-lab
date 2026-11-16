@@ -8,6 +8,9 @@ const dateKey = (date) => new Intl.DateTimeFormat("en-CA", { timeZone: MADRID, y
 const localDate = (key) => new Date(`${key}T12:00:00+01:00`);
 const timeLabel = (iso) => new Intl.DateTimeFormat("es-ES", { timeZone: MADRID, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(iso));
 const startOfWeek = (date) => { const d = new Date(date); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); d.setHours(12, 0, 0, 0); return d; };
+const friendlyBookingError = (message) => /scope|permission|unauthori[sz]ed|forbidden/i.test(message || "")
+  ? "La conexión automática de reservas necesita actualizar sus permisos. Puedes reservar directamente en Calendly mientras se completa esa actualización."
+  : (message || "No se pudo completar la operación. Prueba de nuevo o reserva directamente.");
 
 async function loadRange(start, end, signal) {
   const response = await fetch(`/api/calendly/availability?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`, { signal, headers: { Accept: "application/json" } });
@@ -53,7 +56,7 @@ export default function Calendly({ fallbackHref = "https://calendly.com/alexchen
           cursor = end;
         }
         if (active) setSlots(all.filter(x => x.status === "available" && new Date(x.start_time) > new Date()).sort((a,b) => new Date(a.start_time)-new Date(b.start_time)));
-      } catch (e) { if (active && e.name !== "AbortError") setError(/scope|permission|unauthori[sz]ed|forbidden/i.test(e.message || "") ? "La consulta automática de horarios no está disponible ahora. Puedes ver y reservar directamente en el calendario de reservas." : (e.message || "No se pudo cargar el calendario.")); }
+      } catch (e) { if (active && e.name !== "AbortError") setError(friendlyBookingError(e.message || "No se pudo cargar el calendario.")); }
       finally { if (active) setLoading(false); }
     })();
     return () => { active = false; controller.abort(); };
@@ -80,10 +83,10 @@ export default function Calendly({ fallbackHref = "https://calendly.com/alexchen
         body: JSON.stringify({ name, email, start_time: selectedSlot })
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "No se pudo completar la reserva.");
+      if (!response.ok) throw new Error(friendlyBookingError(payload.error || "No se pudo completar la reserva."));
       setSuccess(payload.message || "Reserva confirmada. Revisa tu correo.");
       setSelectedSlot(""); setSlots(current => current.filter(slot => slot.start_time !== selectedSlot));
-    } catch (e) { setError(e.message || "No se pudo completar la reserva."); }
+    } catch (e) { setError(friendlyBookingError(e.message || "No se pudo completar la reserva.")); }
     finally { setBooking(false); }
   }, [selectedSlot, booking, name, email]);
 
