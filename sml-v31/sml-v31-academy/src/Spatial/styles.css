@@ -811,3 +811,13 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--booking .booking-calendar{margin-top:18px!important}
  .spatial-chapter--booking .booking-calendar-heading p{font-size:14px!important;line-height:1.5!important}
 }
+
+/* Credenciales: prueba visible bajo la promesa principal y en trayectoria */
+.hero-credentials{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px auto 0;max-width:760px;text-align:left}
+.hero-credentials>div,.founder-credentials>article{border:1px solid rgba(235,238,242,.18);background:rgba(255,255,255,.035);padding:14px 16px;border-radius:12px}
+.hero-credentials strong,.hero-credentials span,.founder-credentials strong{display:block}
+.hero-credentials strong,.founder-credentials strong{font-size:14px;letter-spacing:.02em}
+.hero-credentials span,.founder-credentials p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
+.founder-credentials{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0}
+.founder-credentials .eyebrow{display:block;margin-bottom:8px}
+@media(max-width:640px){.hero-credentials,.founder-credentials{grid-template-columns:1fr;gap:8px}.hero-credentials>div,.founder-credentials>article{padding:12px 14px}}

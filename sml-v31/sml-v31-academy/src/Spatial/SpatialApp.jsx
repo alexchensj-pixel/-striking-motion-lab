@@ -168,6 +168,7 @@ function App() {
         <p className="hero-overline">{hero.kicker}</p>
         <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < hero.titulo.length - 1 && <br/>}</React.Fragment>)}</h1>
         <p className="hero-context">{spatialHeroContext}</p>
+        <div className="hero-credentials" aria-label="Experiencia competitiva y federativa"><div><strong>3.º puesto · K1</strong><span>Juegos de Combate 2025 · Copa de España</span></div><div><strong>Licencia federativa</strong><span>Kickboxing y Muay Thai · FEKM</span></div></div>
         <div className="hero-credentials" aria-label="Experiencia competitiva y federativa">
           <div><strong>3.º puesto · K1</strong><span>Juegos de Combate 2025 · Copa de España</span></div>
           <div><strong>Licencia federativa</strong><span>Kickboxing y Muay Thai · FEKM</span></div>
@@ -291,6 +292,7 @@ function App() {
       <div id="alex" className="journey-section content-section founder-section">
         <div className="section-meta"><span>04 / 05</span><span>SOBRE ALEX</span></div>
         <p className="eyebrow">COACH / COMPETIDOR</p><h2>Experiencia dentro y fuera del ring.</h2>
+        <div className="founder-credentials" aria-label="Acreditaciones"><article><span className="eyebrow">RESULTADO COMPETITIVO</span><strong>3.º puesto · K1</strong><p>Juegos de Combate 2025 · Copa de España</p></article><article><span className="eyebrow">ACREDITACIÓN FEDERATIVA</span><strong>Licencia FEKM</strong><p>Kickboxing y Muay Thai</p></article></div>
         <div className="founder-human"><figure><img src={image.chenAzotea} alt="Alex, entrenador de Striking Motion Lab" loading="lazy"/><figcaption>Alex · Entrenador</figcaption></figure><figure><img src={image.chenRing} alt="Alex compitiendo en el ring" loading="lazy"/><figcaption>Experiencia en competición · FEKM / WAKO</figcaption></figure></div>
         {dossierItems.filter((item) => item.id !== 'metodo').map((item) => <article className="proof-card" key={item.id}><small>{item.label}</small>{item.titulo && <h3>{item.titulo}</h3>}{item.datos?.map(([a, b]) => <p key={a}><b>{a}:</b> {b}</p>)}{item.texto?.map((line, i) => <p key={i}>{line}</p>)}{item.resenas?.map((review, i) => <blockquote key={i}>“{review}”</blockquote>)}{item.enlace && <a href={item.enlace.href} target="_blank" rel="noopener noreferrer">{item.enlace.label} ↗</a>}</article>)}
         </div>
