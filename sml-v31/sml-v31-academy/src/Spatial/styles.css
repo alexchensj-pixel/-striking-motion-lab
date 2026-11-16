@@ -770,6 +770,16 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--method .station-description{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:3!important;overflow:hidden!important;font-size:clamp(11px,3.1vw,13px)!important;line-height:1.2!important}
  .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{display:none!important}
 }
+/* MOBILE PRICING ENTRY — explicit vertical flow for metadata, eyebrow and title. */
+@media (max-width:760px){
+ .spatial-chapter--pricing .pricing-section{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;padding:clamp(112px,14svh,136px) 18px 120px!important;min-height:100svh!important;box-sizing:border-box!important}
+ .spatial-chapter--pricing .pricing-section>.section-meta{position:relative!important;inset:auto!important;display:flex!important;flex-direction:column!important;gap:5px!important;margin:0 0 18px!important;padding:0!important;line-height:1.35!important;white-space:normal!important}
+ .spatial-chapter--pricing .pricing-section>.eyebrow{position:relative!important;inset:auto!important;display:block!important;margin:0 0 10px!important;padding:0!important;line-height:1.3!important}
+ .spatial-chapter--pricing .pricing-section>.pricing-title{position:relative!important;inset:auto!important;display:block!important;margin:0 0 14px!important;max-width:15ch!important;font-size:clamp(2.35rem,10vw,3rem)!important;line-height:.94!important}
+ .spatial-chapter--pricing .pricing-section>.pricing-social{margin:0 0 14px!important}
+ .spatial-chapter--pricing .pricing-section>.lead{margin:0 0 18px!important;max-width:42ch!important}
+ .quick-booking{bottom:calc(58px + env(safe-area-inset-bottom))!important}
+}
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
   /* Sticky needs a flat containing-block chain on mobile; the 3D perspective ancestor was letting the page scroll past the copy. */
