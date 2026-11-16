@@ -758,6 +758,18 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--method .method-copy>h2{font-size:1.65rem!important;max-width:19ch!important}
  .spatial-chapter--method .station-content strong{font-size:1.32rem!important}
 }
+/* MOBILE METHOD FINAL FIT — clear the fixed nav and contain active-step copy inside its row. */
+@media (max-width:760px){
+ .spatial-chapter--method .method-stage{padding-top:clamp(132px,16svh,150px)!important;gap:8px!important}
+ .spatial-chapter--method .method-copy>h2{font-size:clamp(1.58rem,6.8vw,1.92rem)!important;line-height:.92!important;max-width:20ch!important}
+ .spatial-chapter--method .method-stations{min-height:0!important;overflow:hidden!important}
+ .spatial-chapter--method .method-station{display:grid!important;grid-template-columns:25px minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;align-items:center!important;min-height:0!important;overflow:hidden!important;padding:4px 5px!important;box-sizing:border-box!important}
+ .spatial-chapter--method .method-station.active{flex:1.9 1 0!important}
+ .spatial-chapter--method .station-content{display:flex!important;flex-direction:column!important;justify-content:center!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;gap:2px!important}
+ .spatial-chapter--method .station-content strong{font-size:clamp(1.25rem,5.8vw,1.55rem)!important;line-height:.92!important;white-space:normal!important}
+ .spatial-chapter--method .station-description{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:3!important;overflow:hidden!important;font-size:clamp(11px,3.1vw,13px)!important;line-height:1.2!important}
+ .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{display:none!important}
+}
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
   /* Sticky needs a flat containing-block chain on mobile; the 3D perspective ancestor was letting the page scroll past the copy. */
