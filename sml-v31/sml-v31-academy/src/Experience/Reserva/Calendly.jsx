@@ -16,7 +16,7 @@ async function loadRange(start, end, signal) {
   return payload.collection || [];
 }
 
-export default function Calendly() {
+export default function Calendly({ fallbackHref = "https://calendly.com/alexchensj" } = {}) {
   const [month, setMonth] = useState(() => new Date(new Date().toLocaleString("en-US", { timeZone: MADRID })));
   const [slots, setSlots] = useState([]);
   const [selectedDay, setSelectedDay] = useState("");
@@ -53,7 +53,7 @@ export default function Calendly() {
           cursor = end;
         }
         if (active) setSlots(all.filter(x => x.status === "available" && new Date(x.start_time) > new Date()).sort((a,b) => new Date(a.start_time)-new Date(b.start_time)));
-      } catch (e) { if (active && e.name !== "AbortError") setError(e.message || "No se pudo cargar el calendario."); }
+      } catch (e) { if (active && e.name !== "AbortError") setError(/scope|permission|unauthori[sz]ed|forbidden/i.test(e.message || "") ? "La consulta automática de horarios no está disponible ahora. Puedes ver y reservar directamente en el calendario de reservas." : (e.message || "No se pudo cargar el calendario.")); }
       finally { if (active) setLoading(false); }
     })();
     return () => { active = false; controller.abort(); };
@@ -131,7 +131,7 @@ export default function Calendly() {
           </form>}
         </div>
       </div>
-      {error && <p className="sml-booking__error" role="alert">{error}</p>}
+      {error && <div className="sml-booking__error" role="alert"><p>{error}</p><a className="sml-booking__submit" href={fallbackHref} target="_blank" rel="noopener noreferrer">Ver horarios y reservar ↗</a></div>}
       <p className="sml-booking__foot">Horario de Madrid · La reserva queda confirmada al finalizar el proceso.</p>
     </section>
   );
