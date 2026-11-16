@@ -726,47 +726,38 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:11px!important;line-height:1.35!important}
 }
 
-/* MOBILE METHOD LAYOUT — fixed viewport grid; no overlapping station rows. */
+/* MOBILE METHOD LAYOUT — compact header, isolated evaluation and non-overlapping steps. */
 @media (max-width:760px){
  .spatial-chapter--method .method-stage{
-  display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;
-  align-content:stretch!important;align-items:stretch!important;justify-content:initial!important;
-  gap:clamp(10px,1.8svh,16px)!important;
-  padding:clamp(112px,13svh,142px) 18px calc(68px + env(safe-area-inset-bottom))!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr)!important;
+  align-content:stretch!important;align-items:stretch!important;justify-content:initial!important;gap:10px!important;
+  padding:clamp(96px,11svh,116px) 18px calc(62px + env(safe-area-inset-bottom))!important;
   height:100svh!important;min-height:100svh!important;overflow:hidden!important;box-sizing:border-box!important;
  }
- .spatial-chapter--method .method-copy{min-height:0!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:0!important}
- .spatial-chapter--method .method-copy h2{font-size:clamp(1.9rem,8vw,2.25rem)!important;line-height:.94!important;margin:0 0 10px!important;max-width:16ch!important}
- .spatial-chapter--method .method-evaluation{flex:0 0 auto!important;min-height:62px!important;padding:8px 10px!important;column-gap:8px!important}
- .spatial-chapter--method .method-evaluation-title h3{font-size:clamp(1.35rem,5.9vw,1.6rem)!important;line-height:.96!important}
- .spatial-chapter--method .method-evaluation-price{font-size:clamp(11px,3.2vw,13px)!important}
- .spatial-chapter--method .method-stations{display:flex!important;flex-direction:column!important;justify-content:stretch!important;min-height:0!important;height:100%!important;margin:0!important;overflow:hidden!important}
- .spatial-chapter--method .method-station{flex:1 1 0!important;min-height:0!important;overflow:hidden!important;align-content:center!important;padding:5px 5px!important;gap:7px!important;transition:flex-grow .25s ease!important}
- .spatial-chapter--method .method-station.active{flex:1.75 1 0!important}
- .spatial-chapter--method .station-content{align-content:center!important;gap:4px!important}
- .spatial-chapter--method .station-content strong{font-size:clamp(1.45rem,6.5vw,1.75rem)!important;line-height:.95!important}
- .spatial-chapter--method .station-description{font-size:clamp(13px,3.7vw,15px)!important;line-height:1.32!important}
- .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:10px!important;line-height:1.25!important}
+ .spatial-chapter--method .method-copy{display:contents!important}
+ .spatial-chapter--method .method-copy>.eyebrow{grid-row:1!important;margin:0!important;font-size:10px!important}
+ .spatial-chapter--method .method-copy>h2{grid-row:2!important;width:100%!important;max-width:18ch!important;margin:0!important;font-family:'Barlow Condensed',sans-serif!important;font-size:clamp(1.72rem,7.2vw,2.08rem)!important;line-height:.92!important;letter-spacing:-.025em!important}
+ .spatial-chapter--method .method-evaluation{grid-row:3!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:4px 8px!important;width:100%!important;min-height:0!important;padding:8px 10px!important;box-sizing:border-box!important}
+ .spatial-chapter--method .method-evaluation>span{grid-column:1/-1!important;grid-row:1!important;font-size:9px!important}
+ .spatial-chapter--method .method-evaluation-title{display:contents!important}
+ .spatial-chapter--method .method-evaluation-title h3{grid-column:1!important;grid-row:2!important;font-size:clamp(1.28rem,5.6vw,1.52rem)!important;line-height:.94!important;max-width:15ch!important}
+ .spatial-chapter--method .method-evaluation-price{grid-column:2!important;grid-row:2!important;font-size:11px!important;white-space:nowrap!important}
+ .spatial-chapter--method .method-evaluation-note,.spatial-chapter--method .method-material-note,.spatial-chapter--method .method-evaluation-terms,.spatial-chapter--method .method-evaluation .primary-cta,.spatial-chapter--method .method-cta-note,.spatial-chapter--method .method-evaluation .text-link,.spatial-chapter--method .method-evaluation ul{display:none!important}
+ .spatial-chapter--method .method-stations{grid-row:4!important;display:flex!important;flex-direction:column!important;justify-content:stretch!important;min-height:0!important;height:100%!important;margin:0!important;overflow:hidden!important}
+ .spatial-chapter--method .method-station{flex:1 1 0!important;min-height:0!important;overflow:hidden!important;align-content:center!important;padding:5px 5px!important;gap:7px!important}
+ .spatial-chapter--method .method-station.active{flex:1.55 1 0!important}
+ .spatial-chapter--method .station-content{align-content:center!important;gap:3px!important}
+ .spatial-chapter--method .station-content strong{font-family:'Barlow Condensed',sans-serif!important;font-size:clamp(1.38rem,6.1vw,1.65rem)!important;line-height:.94!important}
+ .spatial-chapter--method .station-description{font-size:clamp(12px,3.4vw,14px)!important;line-height:1.28!important}
+ .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:10px!important;line-height:1.2!important}
  .spatial-chapter--method .station-number{font-size:11px!important}
+ .spatial-chapter--method .method-station>small,.spatial-chapter--method .method-closing,.spatial-chapter--method .method-coordinate{display:none!important}
 }
 @media (max-width:380px){
  .spatial-chapter--method .method-stage{padding-left:14px!important;padding-right:14px!important}
- .spatial-chapter--method .method-copy h2{font-size:1.82rem!important}
- .spatial-chapter--method .station-content strong{font-size:1.38rem!important}
- .spatial-chapter--method .station-description{font-size:12px!important}
+ .spatial-chapter--method .method-copy>h2{font-size:1.65rem!important;max-width:19ch!important}
+ .spatial-chapter--method .station-content strong{font-size:1.32rem!important}
 }
-
-/* MOBILE METHOD REFINEMENT — stop headline and evaluation card from over-wrapping. */
-@media (max-width:760px){
- .spatial-chapter--method .method-copy h2{max-width:none!important;width:100%!important;font-size:clamp(1.78rem,7.5vw,2.12rem)!important;line-height:.96!important;letter-spacing:-.02em!important;margin-bottom:9px!important}
- .spatial-chapter--method .method-evaluation{grid-template-columns:minmax(0,1fr)!important;row-gap:4px!important;padding:8px 10px!important;min-height:0!important}
- .spatial-chapter--method .method-evaluation>span{grid-column:1!important;grid-row:1!important}
- .spatial-chapter--method .method-evaluation-title{display:contents!important}
- .spatial-chapter--method .method-evaluation-title h3{grid-column:1!important;grid-row:2!important;width:100%!important;font-size:clamp(1.38rem,5.8vw,1.58rem)!important;line-height:.98!important;white-space:normal!important}
- .spatial-chapter--method .method-evaluation-price{grid-column:1!important;grid-row:3!important;justify-self:end!important;font-size:12px!important;line-height:1.2!important}
-}
-
-
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
   /* Sticky needs a flat containing-block chain on mobile; the 3D perspective ancestor was letting the page scroll past the copy. */
