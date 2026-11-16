@@ -756,6 +756,16 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--method .station-description{font-size:12px!important}
 }
 
+/* MOBILE METHOD REFINEMENT — stop headline and evaluation card from over-wrapping. */
+@media (max-width:760px){
+ .spatial-chapter--method .method-copy h2{max-width:none!important;width:100%!important;font-size:clamp(1.78rem,7.5vw,2.12rem)!important;line-height:.96!important;letter-spacing:-.02em!important;margin-bottom:9px!important}
+ .spatial-chapter--method .method-evaluation{grid-template-columns:minmax(0,1fr)!important;row-gap:4px!important;padding:8px 10px!important;min-height:0!important}
+ .spatial-chapter--method .method-evaluation>span{grid-column:1!important;grid-row:1!important}
+ .spatial-chapter--method .method-evaluation-title{display:contents!important}
+ .spatial-chapter--method .method-evaluation-title h3{grid-column:1!important;grid-row:2!important;width:100%!important;font-size:clamp(1.38rem,5.8vw,1.58rem)!important;line-height:.98!important;white-space:normal!important}
+ .spatial-chapter--method .method-evaluation-price{grid-column:1!important;grid-row:3!important;justify-self:end!important;font-size:12px!important;line-height:1.2!important}
+}
+
 
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
