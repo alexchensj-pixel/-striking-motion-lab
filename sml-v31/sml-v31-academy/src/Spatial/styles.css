@@ -726,6 +726,36 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
  .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:11px!important;line-height:1.35!important}
 }
 
+/* MOBILE METHOD LAYOUT — fixed viewport grid; no overlapping station rows. */
+@media (max-width:760px){
+ .spatial-chapter--method .method-stage{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;
+  align-content:stretch!important;align-items:stretch!important;justify-content:initial!important;
+  gap:clamp(10px,1.8svh,16px)!important;
+  padding:clamp(112px,13svh,142px) 18px calc(68px + env(safe-area-inset-bottom))!important;
+  height:100svh!important;min-height:100svh!important;overflow:hidden!important;box-sizing:border-box!important;
+ }
+ .spatial-chapter--method .method-copy{min-height:0!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:0!important}
+ .spatial-chapter--method .method-copy h2{font-size:clamp(1.9rem,8vw,2.25rem)!important;line-height:.94!important;margin:0 0 10px!important;max-width:16ch!important}
+ .spatial-chapter--method .method-evaluation{flex:0 0 auto!important;min-height:62px!important;padding:8px 10px!important;column-gap:8px!important}
+ .spatial-chapter--method .method-evaluation-title h3{font-size:clamp(1.35rem,5.9vw,1.6rem)!important;line-height:.96!important}
+ .spatial-chapter--method .method-evaluation-price{font-size:clamp(11px,3.2vw,13px)!important}
+ .spatial-chapter--method .method-stations{display:flex!important;flex-direction:column!important;justify-content:stretch!important;min-height:0!important;height:100%!important;margin:0!important;overflow:hidden!important}
+ .spatial-chapter--method .method-station{flex:1 1 0!important;min-height:0!important;overflow:hidden!important;align-content:center!important;padding:5px 5px!important;gap:7px!important;transition:flex-grow .25s ease!important}
+ .spatial-chapter--method .method-station.active{flex:1.75 1 0!important}
+ .spatial-chapter--method .station-content{align-content:center!important;gap:4px!important}
+ .spatial-chapter--method .station-content strong{font-size:clamp(1.45rem,6.5vw,1.75rem)!important;line-height:.95!important}
+ .spatial-chapter--method .station-description{font-size:clamp(13px,3.7vw,15px)!important;line-height:1.32!important}
+ .spatial-chapter--method .station-tags,.spatial-chapter--method .station-highlight{font-size:10px!important;line-height:1.25!important}
+ .spatial-chapter--method .station-number{font-size:11px!important}
+}
+@media (max-width:380px){
+ .spatial-chapter--method .method-stage{padding-left:14px!important;padding-right:14px!important}
+ .spatial-chapter--method .method-copy h2{font-size:1.82rem!important}
+ .spatial-chapter--method .station-content strong{font-size:1.38rem!important}
+ .spatial-chapter--method .station-description{font-size:12px!important}
+}
+
 
 /* MOBILE METHOD — the Chapter owns the 250vh scroll runway; its inner stage stays pinned. */
 @media (max-width: 760px) {
