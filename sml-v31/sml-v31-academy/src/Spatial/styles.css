@@ -729,7 +729,7 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 /* MOBILE METHOD LAYOUT — compact header, isolated evaluation and non-overlapping steps. */
 @media (max-width:760px){
  .spatial-chapter--method .method-stage{
-  display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto minmax(0,1fr)!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto auto minmax(0,1fr)!important;
   align-content:stretch!important;align-items:stretch!important;justify-content:initial!important;gap:10px!important;
   padding:clamp(96px,11svh,116px) 18px calc(62px + env(safe-area-inset-bottom))!important;
   height:100svh!important;min-height:100svh!important;overflow:hidden!important;box-sizing:border-box!important;
