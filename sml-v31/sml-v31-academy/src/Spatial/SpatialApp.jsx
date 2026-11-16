@@ -27,8 +27,8 @@ const navItems = [
 ];
 const chapterTarget = { inicio: 'entrada', metodo: 'asesoria-lab', entrenamiento: 'slot', alex: 'proof-chen', reserva: 'reserva', empresas: 'empresas' };
 const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot: 'entrenamiento', 'proof-chen': 'alex', reserva: 'reserva' };
-const spatialHeroTitle = ['Tu técnica.', 'Tu estrategia.', 'Tu forma de combatir.'];
-const spatialHeroContext = 'Trabajamos técnica, defensa y movimiento desde tu punto de partida: corregimos lo que limita tu progreso y desarrollamos lo que mejor funciona contigo.';
+const spatialHeroTitle = ['Entrena con metodología de competición.', 'Progresa a tu ritmo.'];
+const spatialHeroContext = 'Entrenamientos dinámicos y exigentes que combinan técnica, preparación física y situaciones reales de combate. Aprende a golpear, defenderte, desplazarte y reaccionar mientras mejoras tu condición física. Trabaja con métodos de preparación competitiva, con ejercicios, intensidad y contacto adaptados a tu nivel.';
 const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
@@ -172,7 +172,7 @@ function App() {
           <div><strong>3.º puesto · K1</strong><span>Juegos de Combate 2025 · Copa de España</span></div>
           <div><strong>Licencia federativa</strong><span>Kickboxing y Muay Thai · FEKM</span></div>
         </div>
-        <p className="hero-offer">Muay Thai · Boxeo · Kickboxing / K1 en Madrid<br/><span>1:1 · Parejas · Grupos reducidos de hasta 4</span></p>
+        <p className="hero-offer">Sesiones individuales · Parejas · Grupos reducidos de hasta 4</p>
         <div className="hero-actions">
           <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
           <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método</button>
