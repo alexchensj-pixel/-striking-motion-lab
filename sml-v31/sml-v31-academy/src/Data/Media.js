@@ -18,9 +18,9 @@ import stillRoster from '../Assets/Images/roster-completo-poster.jpg';
 import heroLab from '../Assets/Images/hero-lab.jpg';
 import chenAzotea from '../Assets/Images/chen-azotea.jpg';
 import chenRing from '../Assets/Images/chen-ring.jpg';
-// Acreditaciones deportivas y federativas (anonimizadas: sin nombre, NIF, nº de licencia ni fechas personales).
-import credencialWako from '../Assets/Images/credentials/wako-resultado-copa-espana-2025.webp';
-import credencialFekm from '../Assets/Images/credentials/fekm-licencia-kickboxing-muaythai.webp';
+// Acreditaciones públicas: nombre visible; identificadores personales y datos sensibles ocultos.
+const credencialWako = '/wako-nombre-visible.jpg';
+const credencialFekm = '/fekm-nombre-visible.jpg';
 import bridgeHallRef from '../Assets/Images/bridge-hall-reference.jpg';
 
 // Caso real El Corte Inglés × agencia de viajes a Tailandia (material del evento, seleccionado y recortado: fotos 4:5 / 5:4,

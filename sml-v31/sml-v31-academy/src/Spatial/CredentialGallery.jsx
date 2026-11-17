@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './credentials.css';
 
-// Galería de acreditaciones (WAKO + FEKM): imágenes reales, sin datos personales (anonimizadas antes de entrar al repo).
+// Galería de acreditaciones WAKO + FEKM: nombre visible; identificadores personales y datos privados ocultos.
 // Escritorio: lado a lado · móvil: apiladas · al tocar una, se amplía a pantalla completa (Esc, ✕ o toque fuera para cerrar).
 export default function CredentialGallery({ items }) {
   const [open, setOpen] = useState(null);
