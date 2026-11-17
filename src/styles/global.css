@@ -2688,3 +2688,11 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
     z-index: 1;
   }
 }
+
+/* Mobile: shorten the long runway between Entrada and the optional discipline selector.
+   Keep enough scroll for the full Bridge sequence (70% copy + 12% fade), while moving
+   its fixed captions into the lower third so they no longer sit over the fighters. */
+@media (max-width: 700px) {
+  .threshold[data-threshold="entrada>character-select"] { height: 105svh; }
+  .bridge__momento { top: 64%; }
+}
