@@ -18,6 +18,9 @@ import stillRoster from '../Assets/Images/roster-completo-poster.jpg';
 import heroLab from '../Assets/Images/hero-lab.jpg';
 import chenAzotea from '../Assets/Images/chen-azotea.jpg';
 import chenRing from '../Assets/Images/chen-ring.jpg';
+// Acreditaciones deportivas y federativas (anonimizadas: sin nombre, NIF, nº de licencia ni fechas personales).
+import credencialWako from '../Assets/Images/credentials/wako-resultado-copa-espana-2025.webp';
+import credencialFekm from '../Assets/Images/credentials/fekm-licencia-kickboxing-muaythai.webp';
 import bridgeHallRef from '../Assets/Images/bridge-hall-reference.jpg';
 
 // Caso real El Corte Inglés × agencia de viajes a Tailandia (material del evento, seleccionado y recortado: fotos 4:5 / 5:4,
@@ -61,4 +64,4 @@ export const poster = { boxeo: stillBoxeo, k1: stillK1, muayThai: stillMuayThai,
 // "bridgeHallRef" = foto de referencia real de la nave (pasarela central, columnas, galerías). Se usa
 // SOLO como telón de fondo lejano en BridgeHall.jsx (Z_FAR, detrás de toda la geometría 3D existente),
 // nunca como textura sobre la estructura: la nave sigue siendo 100% geometría real.
-export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef };
+export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef, credencialWako, credencialFekm };
