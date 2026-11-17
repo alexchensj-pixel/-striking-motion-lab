@@ -177,6 +177,10 @@ function App() {
           <div><strong>3.º puesto · K1</strong><span>Juegos de Combate 2025 · Copa de España</span></div>
           <div><strong>Licencia federativa</strong><span>Kickboxing y Muay Thai · FEKM</span></div>
         </div>
+        <div className="hero-credential-proof">
+          <p className="hero-credential-proof__label">ACREDITACIONES · WAKO / FEKM</p>
+          <CredentialGallery items={credentialItems} />
+        </div>
         <p className="hero-offer">Sesiones individuales · Parejas · Grupos reducidos de hasta 4</p>
         <div className="hero-actions">
           <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
