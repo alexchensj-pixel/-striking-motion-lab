@@ -242,43 +242,38 @@ export const explore = {
   cerrar: 'Cerrar',
 };
 
-// --- 03 Asesoría + Lab → METHOD (V22 · paso 4) ---
-// Estructura V22: «No empezamos por el entrenamiento. Empezamos por ti.» + cinco pasos (01 Te conozco · 02 Te observo ·
-// 03 Entrenamos · 04 Adaptamos · 05 Seguimos) + cierre. El copy es el de la especificación V22 y se usa literal.
-// id/label = lo que lee el HUD. Los ids de paso son el valor de `substage` (App/store.js); 'apertura' se conserva como id de la
-// cabecera porque es el valor inicial de `substage`. Un registro con `n` es un PASO (se pinta en la lista y reparte el scroll).
+// --- 03 Método: cinco pasos del sistema de entrenamiento y desarrollo individual ---
 export const advisorySubstages = [
   {
-    id: 'apertura', label: 'Entrada',
-    titular: ['No empezamos por el entrenamiento.', 'Empezamos por ti.'],
+    id: 'apertura', label: 'Método',
+    titular: ['UN ENTRENAMIENTO QUE', 'EVOLUCIONA CONTIGO.'],
   },
   {
-    id: 'conozco', label: 'Te conozco', num: '01', n: 'TE CONOZCO',
-    texto: 'Antes de decidir qué entrenar, necesitamos saber desde dónde empiezas.',
-    elementos: ['Objetivo', 'Experiencia', 'Disponibilidad', 'Contexto'],
+    id: 'disciplinas', label: 'Aprende de diferentes disciplinas', num: '01', n: 'APRENDE DE DIFERENTES DISCIPLINAS',
+    texto: 'Detrás de cada entrenamiento hay conocimientos de boxeo, Kickboxing, K1 y Muay Thai, junto con recursos técnicos de otras disciplinas. Aprenderás a utilizar diferentes herramientas de movimiento y combate, entendiendo cómo y cuándo aplicarlas.',
   },
   {
-    id: 'observo', label: 'Te observo', num: '02', n: 'TE OBSERVO',
-    texto: 'Vemos cómo te mueves antes de decidir qué necesitas.',
-    destacada: 'Aquí entra la evaluación inicial.',
-    etiqueta: 'Evaluación inicial · 30 €', // marca que acompaña al paso cuando está plegado
+    id: 'movimiento', label: 'Entiende cómo te mueves', num: '02', n: 'ENTIENDE CÓMO TE MUEVES',
+    texto: 'No se trata solo de repetir golpes. Aprenderás a mejorar tu mecánica corporal, coordinación, equilibrio, transferencia de fuerza y desplazamientos. Comprenderás cómo ejecutar cada movimiento y qué puedes mejorar para hacerlo con mayor eficacia.',
   },
   {
-    id: 'entrenamos', label: 'Entrenamos', num: '03', n: 'ENTRENAMOS',
-    texto: 'Lo que vemos determina lo que trabajamos.',
+    id: 'estilo', label: 'Desarrolla tu propia forma de combatir', num: '03', n: 'DESARROLLA TU PROPIA FORMA DE COMBATIR',
+    texto: 'No tienes que imitar el estilo de otra persona. Trabajaremos sobre tus características, aprovecharemos tus fortalezas y desarrollaremos los aspectos que necesitas mejorar. Aprenderás a utilizar los recursos técnicos que mejor se adapten a tus capacidades.',
   },
   {
-    id: 'adaptamos', label: 'Adaptamos', num: '04', n: 'ADAPTAMOS',
-    texto: 'El plan no está cerrado. Evoluciona contigo.',
+    id: 'continuidad', label: 'Sigue aprendiendo fuera de cada sesión', num: '04', n: 'SIGUE APRENDIENDO FUERA DE CADA SESIÓN',
+    texto: 'Tu aprendizaje no termina al acabar el entrenamiento. Podrás reforzar lo trabajado mediante vídeos de tus sesiones, contenidos formativos y ejercicios. Los recursos digitales complementan el trabajo presencial y te ayudan a revisar tu ejecución y seguir evolucionando.',
   },
   {
-    id: 'seguimos', label: 'Seguimos', num: '05', n: 'SEGUIMOS',
-    texto: 'Revisamos tu evolución, detectamos qué necesitas mejorar y ajustamos el entrenamiento a tu progreso. Cada sesión tiene un propósito: que sigas avanzando con criterio y confianza.',
+    id: 'valor', label: 'Mucho más que entrenar', num: '05', n: 'MUCHO MÁS QUE ENTRENAR',
+    texto: 'No se trata simplemente de aprender varios deportes de combate o recibir un entrenamiento personalizado. Se trata de desarrollar tus capacidades mediante conocimientos técnicos, análisis del movimiento, correcciones y un entrenamiento adaptado a ti.',
+    elementos: ['Experiencia multidisciplinar', 'Conocimiento técnico y biomecánico', 'Enseñanza, análisis y corrección', 'Adaptación a cada persona', 'Desarrollo técnico, físico, ofensivo y defensivo', 'Continuidad presencial y digital'],
+    destacada: 'Aprende, comprende tu movimiento y construye tu propia evolución.',
   },
 ];
 
-// Cierre de Method (se ve al final del recorrido; no es un paso).
-export const metodoCierre = ['No solo entrenas.', 'Entiendes qué estás desarrollando.'];
+// Cierre integrado en el quinto paso de la metodología.
+export const metodoCierre = ['Mucho más que entrenar.', 'Aprende, comprende tu movimiento y construye tu propia evolución.'];
 
 // EVALUACIÓN INICIAL — producto concreto dentro del paso 02 · TE OBSERVO (aplicación práctica de «te observo»).
 // CTA principal → BOOK existente (goToSection('book')). CTA secundario → información contextual en el propio paso (sin página nueva).
