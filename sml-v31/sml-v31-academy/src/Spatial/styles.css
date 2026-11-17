@@ -927,3 +927,45 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
   .spatial-chapter--method .method-coordinate { display: none !important; }
   .quick-booking { bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
 }
+
+
+/* MOBILE CHAPTER HANDOFF — keep Método in document flow so it cannot cover Precios. */
+@media (max-width: 760px) {
+  .spatial-chapter--method { height: auto !important; min-height: 0 !important; overflow: visible !important; }
+  .spatial-chapter--method > .stage {
+    position: relative !important; inset: auto !important; top: auto !important;
+    width: 100% !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; overflow: visible !important; transform: none !important;
+  }
+  .spatial-chapter--method .method-section {
+    position: relative !important; display: block !important; width: 100% !important;
+    height: auto !important; min-height: 0 !important; overflow: visible !important;
+  }
+  .spatial-chapter--method .method-stage {
+    position: relative !important; display: flex !important; flex-direction: column !important;
+    align-items: stretch !important; justify-content: flex-start !important; gap: 22px !important;
+    width: 100% !important; height: auto !important; min-height: 100svh !important;
+    max-height: none !important; box-sizing: border-box !important;
+    padding: max(112px, calc(env(safe-area-inset-top) + 96px)) 18px
+      calc(48px + env(safe-area-inset-bottom)) !important;
+    overflow: visible !important; transform: none !important;
+  }
+  .spatial-chapter--method .method-copy,
+  .spatial-chapter--method .method-stations {
+    position: relative !important; inset: auto !important; width: 100% !important;
+    max-width: none !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; margin: 0 !important; overflow: visible !important;
+    transform: none !important;
+  }
+  .spatial-chapter--method .method-stations { gap: 0 !important; }
+  .spatial-chapter--pricing { height: auto !important; min-height: 0 !important; overflow: visible !important; }
+  .spatial-chapter--pricing > .stage {
+    position: relative !important; inset: auto !important; top: auto !important;
+    width: 100% !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; overflow: visible !important; transform: none !important;
+  }
+  .spatial-chapter--pricing .pricing-section {
+    position: relative !important; width: 100% !important; height: auto !important;
+    min-height: 100svh !important; overflow: visible !important;
+  }
+}
