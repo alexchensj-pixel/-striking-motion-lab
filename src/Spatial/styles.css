@@ -768,3 +768,72 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
     overflow: visible !important;
   }
 }
+
+
+/* MOBILE METHOD FINISH · five complete stations + clearance for the persistent CTA. */
+@media (max-width: 760px) {
+  .spatial-chapter--method .method-stage {
+    padding: 92px 18px 116px !important;
+    gap: 18px;
+  }
+  .spatial-chapter--method .method-copy {
+    padding: 0 !important;
+    margin: 0;
+  }
+  .spatial-chapter--method .method-copy h2 {
+    max-width: 15ch;
+    margin-bottom: 10px;
+    line-height: 1.02;
+  }
+  .spatial-chapter--method .method-stations {
+    display: flex;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    gap: 0;
+    overflow: visible;
+  }
+  .spatial-chapter--method .method-station {
+    grid-template-columns: 26px minmax(0, 1fr) !important;
+    align-items: start;
+    gap: 7px 10px;
+    min-height: 0;
+    height: auto;
+    padding: 13px 5px;
+    overflow: visible;
+  }
+  .spatial-chapter--method .station-number { grid-column: 1; grid-row: 1 / span 2; }
+  .spatial-chapter--method .station-content {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    gap: 5px;
+  }
+  .spatial-chapter--method .station-content strong {
+    font-size: clamp(20px, 5.6vw, 25px);
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+  }
+  .spatial-chapter--method .method-station > small {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    margin: 0;
+    white-space: normal;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .spatial-chapter--method .station-description,
+  .spatial-chapter--method .station-tags,
+  .spatial-chapter--method .station-highlight {
+    max-width: none;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .spatial-chapter--method .method-closing {
+    margin: 12px 0 0;
+    line-height: 1.3;
+  }
+}
