@@ -28,7 +28,7 @@ const navItems = [
 ];
 const chapterTarget = { inicio: 'entrada', metodo: 'asesoria-lab', entrenamiento: 'slot', alex: 'proof-chen', reserva: 'reserva', empresas: 'empresas' };
 const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot: 'entrenamiento', 'proof-chen': 'alex', reserva: 'reserva' };
-const spatialHeroTitle = ['Entrena con metodología de competición.', 'Progresa a tu ritmo.'];
+const spatialHeroTitle = ['Entrena con metodología de competición.', 'Aprende a golpear con criterio.'];
 const spatialHeroContext = 'Entrenamientos dinámicos y exigentes que combinan técnica, preparación física y situaciones reales de combate. Aprende a golpear, defenderte, desplazarte y reaccionar mientras mejoras tu condición física. Trabaja con métodos de preparación competitiva, con ejercicios, intensidad y contacto adaptados a tu nivel.';
 const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
 const credentialItems = [
