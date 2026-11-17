@@ -1008,3 +1008,33 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
   .spatial-chapter--pricing .pricing-section > .pricing-followup { order: 6 !important; margin: 0 0 22px !important; }
   .spatial-chapter--pricing .pricing-section > .session-proof { order: 7 !important; margin: 0 0 24px !important; }
 }
+
+
+/* FINAL MOBILE METHOD FLOW — ScrollTrigger no longer pins this chapter. */
+@media (max-width: 760px) {
+  .spatial-chapter--method {
+    display: block !important; position: relative !important;
+    height: auto !important; min-height: 0 !important;
+    overflow: visible !important; perspective: none !important; transform-style: flat !important;
+  }
+  .spatial-chapter--method > .stage {
+    display: block !important; position: relative !important; inset: auto !important; top: auto !important;
+    width: 100% !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; overflow: visible !important; transform: none !important;
+  }
+  .spatial-chapter--method .method-section,
+  .spatial-chapter--method .method-stage {
+    display: flex !important; position: relative !important; inset: auto !important;
+    flex-direction: column !important; align-items: stretch !important; justify-content: flex-start !important;
+    width: 100% !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; overflow: visible !important; transform: none !important;
+    box-sizing: border-box !important;
+  }
+  .spatial-chapter--method .method-copy,
+  .spatial-chapter--method .method-stations,
+  .spatial-chapter--method .method-coordinate {
+    position: relative !important; inset: auto !important; transform: none !important;
+    width: 100% !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; overflow: visible !important; margin: 0 !important;
+  }
+}
