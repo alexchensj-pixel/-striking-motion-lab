@@ -834,3 +834,96 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 .hero-credential-proof .credential-gallery__zoom{position:absolute;right:7px;bottom:7px;padding:4px 7px;background:rgba(0,0,0,.78);color:#fff;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
 .hero-credential-proof .credential-gallery__item figcaption{margin:6px 0 0;color:rgba(240,242,245,.75);font-size:10px;line-height:1.35}
 @media(max-width:640px){.hero-credential-proof{margin-top:15px}.hero-credential-proof .credential-gallery{gap:8px}.hero-credential-proof .credential-gallery__open{height:clamp(88px,27vw,124px);padding:5px}.hero-credential-proof .credential-gallery__item figcaption{font-size:9px}}
+
+/* MOBILE METHOD REPAIR — natural flow, readable steps, no viewport clipping.
+   Overrides the older pinned/overflow-hidden experiments above on portrait screens. */
+@media (max-width: 760px) {
+  .spatial-chapter--method {
+    height: auto !important; min-height: 0 !important; overflow: visible !important;
+    perspective: none !important; transform-style: flat !important;
+  }
+  .spatial-chapter--method > .stage {
+    position: relative !important; inset: auto !important; top: auto !important;
+    display: block !important; width: 100% !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important; overflow: visible !important;
+    transform: none !important; padding: 0 !important;
+  }
+  .spatial-chapter--method .method-section {
+    display: block !important; width: 100% !important; height: auto !important;
+    min-height: 0 !important; overflow: visible !important;
+  }
+  .spatial-chapter--method .method-stage {
+    display: flex !important; flex-direction: column !important; align-items: stretch !important;
+    justify-content: flex-start !important; gap: 18px !important;
+    width: 100% !important; height: auto !important; min-height: 0 !important;
+    max-height: none !important; box-sizing: border-box !important;
+    padding: max(112px, calc(env(safe-area-inset-top) + 96px)) 18px
+      calc(112px + env(safe-area-inset-bottom)) !important;
+    overflow: visible !important;
+  }
+  .spatial-chapter--method .method-copy {
+    display: block !important; position: relative !important; width: 100% !important;
+    max-width: none !important; padding: 0 !important; margin: 0 !important;
+    transform: none !important;
+  }
+  .spatial-chapter--method .method-copy h2 {
+    max-width: 18ch !important; margin: 8px 0 16px !important;
+    font-size: clamp(2rem, 8vw, 2.55rem) !important; line-height: .98 !important;
+    overflow: visible !important;
+  }
+  .spatial-chapter--method .method-evaluation {
+    display: grid !important; width: 100% !important; box-sizing: border-box !important;
+    grid-template-columns: minmax(0, 1fr) auto !important; gap: 6px 10px !important;
+    padding: 12px !important; overflow: visible !important;
+  }
+  .spatial-chapter--method .method-evaluation-title { display: contents !important; }
+  .spatial-chapter--method .method-evaluation-title h3 {
+    grid-column: 1 !important; grid-row: 2 !important; font-size: clamp(1.35rem, 5.8vw, 1.7rem) !important;
+    line-height: 1 !important; overflow-wrap: normal !important;
+  }
+  .spatial-chapter--method .method-evaluation-price {
+    grid-column: 2 !important; grid-row: 2 !important; white-space: nowrap !important;
+    font-size: clamp(11px, 3.2vw, 13px) !important;
+  }
+  .spatial-chapter--method .method-stations {
+    display: flex !important; position: relative !important; flex: none !important;
+    flex-direction: column !important; justify-content: flex-start !important;
+    width: 100% !important; max-width: none !important; height: auto !important;
+    min-height: 0 !important; margin: 0 !important; overflow: visible !important;
+    transform: none !important;
+  }
+  .spatial-chapter--method .method-station,
+  .spatial-chapter--method .method-station.active {
+    display: grid !important; flex: none !important; grid-template-columns: 28px minmax(0, 1fr) !important;
+    align-items: start !important; gap: 10px !important; width: 100% !important;
+    min-height: 0 !important; height: auto !important; box-sizing: border-box !important;
+    padding: 14px 6px !important; overflow: visible !important;
+  }
+  .spatial-chapter--method .station-content {
+    display: grid !important; grid-column: 2 !important; gap: 7px !important;
+    min-width: 0 !important; max-height: none !important; overflow: visible !important;
+  }
+  .spatial-chapter--method .station-content strong {
+    display: block !important; font-size: clamp(1.45rem, 6.5vw, 1.9rem) !important;
+    line-height: 1.02 !important; white-space: normal !important; overflow: visible !important;
+    overflow-wrap: normal !important; word-break: normal !important;
+  }
+  .spatial-chapter--method .station-description {
+    display: block !important; max-width: 42ch !important; font-size: 14px !important;
+    line-height: 1.5 !important; overflow: visible !important;
+  }
+  .spatial-chapter--method .station-tags,
+  .spatial-chapter--method .station-highlight {
+    display: block !important; font-size: 11px !important; line-height: 1.45 !important;
+    overflow: visible !important;
+  }
+  .spatial-chapter--method .method-station > small {
+    display: block !important; grid-column: 2 !important; grid-row: 2 !important;
+    line-height: 1.4 !important;
+  }
+  .spatial-chapter--method .method-closing {
+    display: block !important; margin: 18px 0 0 !important; line-height: 1.4 !important;
+  }
+  .spatial-chapter--method .method-coordinate { display: none !important; }
+  .quick-booking { bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
+}
