@@ -41,13 +41,11 @@ export function useChapter(id, ref, build, onProgress) {
         if (onProgress) onProgress(self.progress);
       };
 
-      // Progreso: mientras el "stage" sticky permanece en pantalla.
-      const mobileMethodPin = id === 'asesoria-lab' && window.matchMedia('(max-width: 760px)').matches
-        ? el.querySelector(':scope > .stage')
-        : false;
+      // En móvil, Método permanece en flujo normal. El pin con pinSpacing:false
+      // dejaba el stage flotando sobre el capítulo de precios al terminar el scroll.
+      // El progreso sigue calculándose sobre la altura real del capítulo.
       ScrollTrigger.create({
         trigger: el, start: 'top top', end: 'bottom bottom',
-        ...(mobileMethodPin ? { pin: mobileMethodPin, pinSpacing: false, anticipatePin: 1, invalidateOnRefresh: true } : {}),
         onUpdate: update, onRefresh: update,
       });
 
