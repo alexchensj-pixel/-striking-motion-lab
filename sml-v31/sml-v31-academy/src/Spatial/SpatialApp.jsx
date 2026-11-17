@@ -10,6 +10,7 @@ import { image, eci, entrenamientoMedia } from '../Data/Media.js';
 import { existingPlans, kitInicio } from '../Data/Programs.js';
 import { RUTAS } from '../Data/Legal.js';
 import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
+import CredentialGallery from './CredentialGallery.jsx';
 import Calendly from '../Experience/Reserva/Calendly.jsx';
 import './styles.css';
 
@@ -30,6 +31,10 @@ const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot:
 const spatialHeroTitle = ['Entrena con metodología de competición.', 'Progresa a tu ritmo.'];
 const spatialHeroContext = 'Entrenamientos dinámicos y exigentes que combinan técnica, preparación física y situaciones reales de combate. Aprende a golpear, defenderte, desplazarte y reaccionar mientras mejoras tu condición física. Trabaja con métodos de preparación competitiva, con ejercicios, intensidad y contacto adaptados a tu nivel.';
 const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
+const credentialItems = [
+  { id: 'wako', src: image.credencialWako, width: 900, height: 826, alt: 'Resultado oficial WAKO: 3.º puesto en K1, categoría -57 kg, en los I Juegos de Combate 2025 · Copa de España, club GK1 Team Trust Fitness Center', caption: '3.º puesto · K1 -57 kg · Juegos de Combate 2025 · Copa de España' },
+  { id: 'fekm', src: image.credencialFekm, width: 960, height: 729, alt: 'Licencia federativa FEKM de Kickboxing y Muay Thai, con el Consejo Superior de Deportes, club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai' },
+];
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
@@ -291,7 +296,7 @@ function App() {
       <div id="alex" className="journey-section content-section founder-section">
         <div className="section-meta"><span>04 / 05</span><span>SOBRE ALEX</span></div>
         <p className="eyebrow">COACH / COMPETIDOR</p><h2>Experiencia dentro y fuera del ring.</h2>
-        <div className="founder-credentials" aria-label="Acreditaciones"><article><span className="eyebrow">RESULTADO COMPETITIVO</span><strong>3.º puesto · K1</strong><p>Juegos de Combate 2025 · Copa de España</p></article><article><span className="eyebrow">ACREDITACIÓN FEDERATIVA</span><strong>Licencia FEKM</strong><p>Kickboxing y Muay Thai</p></article></div>
+        <CredentialGallery items={credentialItems} />
         <div className="founder-human"><figure><img src={image.chenAzotea} alt="Alex, entrenador de Striking Motion Lab" loading="lazy"/><figcaption>Alex · Entrenador</figcaption></figure><figure><img src={image.chenRing} alt="Alex compitiendo en el ring" loading="lazy"/><figcaption>Experiencia en competición · FEKM / WAKO</figcaption></figure></div>
         {dossierItems.filter((item) => item.id !== 'metodo').map((item) => <article className="proof-card" key={item.id}><small>{item.label}</small>{item.titulo && <h3>{item.titulo}</h3>}{item.datos?.map(([a, b]) => <p key={a}><b>{a}:</b> {b}</p>)}{item.texto?.map((line, i) => <p key={i}>{line}</p>)}{item.resenas?.map((review, i) => <blockquote key={i}>“{review}”</blockquote>)}{item.enlace && <a href={item.enlace.href} target="_blank" rel="noopener noreferrer">{item.enlace.label} ↗</a>}</article>)}
         </div>
