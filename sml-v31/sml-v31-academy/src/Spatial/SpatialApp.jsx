@@ -173,10 +173,6 @@ function App() {
         <p className="hero-overline">{hero.kicker}</p>
         <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < hero.titulo.length - 1 && <br/>}</React.Fragment>)}</h1>
         <p className="hero-context">{spatialHeroContext}</p>
-        <div className="hero-credentials" aria-label="Experiencia competitiva y federativa">
-          <div><strong>3.º puesto · K1</strong><span>Juegos de Combate 2025 · Copa de España</span></div>
-          <div><strong>Licencia federativa</strong><span>Kickboxing y Muay Thai · FEKM</span></div>
-        </div>
         <div className="hero-credential-proof">
           <p className="hero-credential-proof__label">ACREDITACIONES · WAKO / FEKM</p>
           <CredentialGallery items={credentialItems} />
