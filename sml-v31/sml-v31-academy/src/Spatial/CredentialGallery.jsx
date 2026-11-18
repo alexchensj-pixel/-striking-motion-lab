@@ -28,10 +28,11 @@ export default function CredentialGallery({ items }) {
     <>
       <div className="credential-gallery" role="list" aria-label="Acreditaciones deportivas y federativas">
         {items.map((it, i) => (
-          <figure className="credential-gallery__item" role="listitem" key={it.id}>
+          <figure className={`credential-gallery__item credential-gallery__item--${it.id}`} role="listitem" key={it.id}>
+            <div className="credential-gallery__proofhead"><span>{it.eyebrow}</span><strong>{it.stat}</strong><b>{it.detail}</b><small>{it.note}</small></div>
             <button type="button" className="credential-gallery__open" onClick={() => setOpen(i)} aria-label={`Ampliar: ${it.alt}`}>
               <img src={it.src} alt={it.alt} width={it.width} height={it.height} loading="lazy" decoding="async" />
-              <span className="credential-gallery__zoom" aria-hidden="true">Ampliar</span>
+              <span className="credential-gallery__zoom" aria-hidden="true">Ver documento ↗</span>
             </button>
             <figcaption>{it.caption}</figcaption>
           </figure>
