@@ -1038,3 +1038,24 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
     max-height: none !important; overflow: visible !important; margin: 0 !important;
   }
 }
+
+/* Skill progression cards: each plan has its own visual identity. */
+.plan-card{position:relative;isolation:isolate;overflow:hidden;border:1px solid var(--skill-line,rgba(255,255,255,.16));border-top:2px solid var(--skill-accent);background:linear-gradient(155deg,var(--skill-wash),rgba(9,11,15,.98) 68%);box-shadow:0 18px 48px rgba(0,0,0,.24);}
+.plan-card::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--skill-accent),transparent 82%);opacity:.9;pointer-events:none;}
+.plan-card::after{content:"";position:absolute;right:-54px;top:54px;width:160px;height:160px;border:1px solid var(--skill-line);border-radius:50%;box-shadow:0 0 0 18px color-mix(in srgb,var(--skill-accent) 5%,transparent),0 0 0 38px color-mix(in srgb,var(--skill-accent) 3%,transparent);opacity:.42;pointer-events:none;}
+.plan-card-arsenal{--skill-accent:#72b8d6;--skill-line:rgba(114,184,214,.48);--skill-wash:rgba(20,43,56,.78);}
+.plan-card-striker{--skill-accent:#ef9b45;--skill-line:rgba(239,155,69,.58);--skill-wash:rgba(59,37,20,.82);}
+.plan-card-fight-iq{--skill-accent:#ad91ed;--skill-line:rgba(173,145,237,.52);--skill-wash:rgba(42,31,64,.82);}
+.plan-card .plan-card-top{color:var(--skill-accent);}
+.plan-card>h3{color:#fff;text-shadow:0 0 22px color-mix(in srgb,var(--skill-accent) 20%,transparent);}
+.plan-card-identity{color:#d3d6dc;}
+.plan-card-price{border-top-color:var(--skill-line);}
+.plan-card-price strong{color:#fff;}
+.plan-card-frequency span,.plan-card-intro{color:var(--skill-accent);}
+.plan-card-content{border-top-color:var(--skill-line);}
+.plan-card-action{border-color:var(--skill-line);background:color-mix(in srgb,var(--skill-accent) 10%,transparent);}
+.plan-card-action:hover{background:color-mix(in srgb,var(--skill-accent) 19%,transparent);border-color:var(--skill-accent);}
+.plan-card-action svg path{stroke:var(--skill-accent);}
+.plan-popular-badge{border-color:var(--skill-accent);background:color-mix(in srgb,var(--skill-accent) 13%,transparent);color:var(--skill-accent);}
+.plan-card-striker{transform:translateY(-8px);box-shadow:0 24px 60px rgba(0,0,0,.35),0 0 34px rgba(239,155,69,.13);}
+@media(max-width:760px){.plan-card-striker{transform:none}.plan-card{min-height:0}.plan-card::after{right:-72px;top:46px;width:138px;height:138px}.plan-card-top{min-height:26px}.plan-card>h3{font-size:2.5rem}.plan-card-action{min-height:48px}}
