@@ -1073,3 +1073,18 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 .plan-stat-bars i{display:block;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.09);transform:skewX(-18deg);}
 .plan-stat-bars i[data-filled="true"]{background:var(--skill-accent);border-color:var(--skill-accent);box-shadow:0 0 8px color-mix(in srgb,var(--skill-accent) 45%,transparent);}
 @media(max-width:760px){.plan-skill-panel{grid-template-columns:78px minmax(0,1fr);gap:10px;padding:10px;margin:8px 0 15px}.plan-skill-visual{min-height:118px;padding-right:9px}.plan-skill-emblem{width:52px;height:52px;font-size:25px}.plan-skill-stats{gap:13px 8px}.plan-stat>span{font-size:6.5px}.plan-stat-bars{height:8px;gap:2px}}
+
+/* Benefits as unlocked game abilities: visual tiles replace the plain bullet block. */
+.plan-card-content{padding-top:15px;}
+.plan-card-intro{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px!important;}
+.plan-feature-count{color:#858d99;font:700 7px/1 var(--font-mono,monospace);letter-spacing:.1em;white-space:nowrap;}
+.plan-feature-grid{display:grid;grid-template-columns:1fr;gap:7px;}
+.plan-feature-tile{position:relative;display:grid;grid-template-columns:25px 26px minmax(0,1fr);gap:9px;align-items:start;min-width:0;padding:11px 11px 10px;border:1px solid var(--skill-line);background:linear-gradient(100deg,color-mix(in srgb,var(--skill-accent) 8%,rgba(7,10,15,.9)),rgba(7,10,15,.65));}
+.plan-feature-index{padding-top:2px;color:var(--skill-accent);font:700 9px/1 var(--font-mono,monospace);opacity:.9;}
+.plan-feature-mark{display:grid;place-items:center;width:25px;height:25px;border:1px solid var(--skill-line);background:color-mix(in srgb,var(--skill-accent) 12%,transparent);color:var(--skill-accent);font-size:15px;line-height:1;}
+.plan-feature-copy{min-width:0;}
+.plan-feature-copy strong{display:block;margin:0 0 4px;color:#f0f2f5;font-size:11px;line-height:1.25;letter-spacing:.015em;}
+.plan-feature-copy p{margin:0;color:#aeb6c1;font-size:9px;line-height:1.45;overflow-wrap:anywhere;}
+.plan-feature-unlock{grid-column:3;margin-top:1px;color:var(--skill-accent);font:700 6px/1 var(--font-mono,monospace);letter-spacing:.13em;opacity:.85;}
+@media(min-width:761px){.plan-feature-grid{grid-template-columns:1fr 1fr}.plan-feature-tile:last-child:nth-child(odd){grid-column:1/-1}}
+@media(max-width:760px){.plan-feature-tile{grid-template-columns:21px 25px minmax(0,1fr);gap:8px;padding:11px 10px}.plan-feature-copy strong{font-size:12px}.plan-feature-copy p{font-size:10px}.plan-feature-unlock{font-size:6px}}
