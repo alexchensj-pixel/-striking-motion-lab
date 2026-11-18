@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { cargarDemanda, enviarSolicitud } from '../../Data/gruposApi.js';
 import {
-  grupos, MAPA, MAPA_VIEWBOX, zonaNombre, diaNombre, DIAS, HORAS, FRECUENCIAS, frecuenciaNombre,
+  grupos, GRUPOS_ACTIVOS, MAPA, MAPA_VIEWBOX, zonaNombre, diaNombre, DIAS, HORAS, FRECUENCIAS, frecuenciaNombre,
 } from '../../Data/Grupos.js';
 import { RUTAS } from '../../Data/Legal.js';
 import LegalLinks from '../../UI/Legal/LegalLinks.jsx';
@@ -95,6 +95,8 @@ export default function GrupoFinder({ onClose, onPlanes, frecuencia }) {
     return m;
   }, [combos]);
   const lista = zona ? porZona[zona] ?? [] : [];
+  const activos = zona ? GRUPOS_ACTIVOS.filter((g) => g.zona === zona) : [];
+  const gruposEnMapa = new Set(GRUPOS_ACTIVOS.map((g) => g.zona));
 
   const elegirZona = (id) => { setZona((z) => (z === id ? null : id)); setAccion(null); setHecho(false); };
   const terminado = async (z) => { setAccion(null); setHecho(true); setZona(z); await cargar(); };
@@ -115,14 +117,16 @@ export default function GrupoFinder({ onClose, onPlanes, frecuencia }) {
             {MAPA.map((z) => {
               const cs = porZona[z.id] ?? [];
               const top = cs.reduce((m, c) => (c.solicitudes > m ? c.solicitudes : m), 0);
+              const tieneActivo = gruposEnMapa.has(z.id);
               const cap = cs[0]?.capacidad ?? 4;
               return (
-                <g key={z.id} className="gf__zone" data-on={zona === z.id} data-demand={top > 0 ? Math.min(top, cap) : 0}
+                <g key={z.id} className="gf__zone" data-on={zona === z.id} data-active={tieneActivo} data-demand={top > 0 ? Math.min(top, cap) : 0}
                   role="button" tabIndex={0} aria-pressed={zona === z.id}
                   aria-label={`${z.nombre}${top ? `, ${Math.min(top, cap)} de ${cap} solicitudes en la combinación más avanzada` : ', sin solicitudes'}`}
                   onClick={() => elegirZona(z.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegirZona(z.id); } }}>
                   <path d={z.d} />
                   <text x={z.cx} y={z.cy} className="gf__zn">{z.nombre}</text>
+                  {tieneActivo && <text x={z.cx} y={z.cy + 3.4} className="gf__activeMark">ACTIVO</text>}
                   {top > 0 && <text x={z.cx} y={z.cy + 3.4} className="gf__zc">{Math.min(top, cap)}/{cap}</text>}
                 </g>
               );
@@ -132,7 +136,7 @@ export default function GrupoFinder({ onClose, onPlanes, frecuencia }) {
         </div>
 
         <div className="gf__panel" aria-live="polite">
-          {combos === null && <p className="gf__nota">Consultando grupos…</p>}
+          {combos === null && <p className="gf__nota">Consultando disponibilidad…</p>}
           {fallo && <p className="gf__err">{grupos.errorCarga} <button type="button" className="gf__link" onClick={cargar}>{grupos.reintentar}</button></p>}
 
           {!zona && accion?.tipo !== 'proponer' && combos !== null && (
@@ -150,7 +154,9 @@ export default function GrupoFinder({ onClose, onPlanes, frecuencia }) {
             <>
               <h3 className="gf__zt">{zonaNombre(zona)}</h3>
               {hecho && <p className="gf__ok" role="status">Solicitud registrada. {grupos.aviso}</p>}
-              {lista.length === 0 && <p className="gf__nota">{grupos.vacioZona}</p>}
+              {activos.length > 0 && <section className="gf__activeSection"><p className="sx__pK gf__k">{grupos.activosK}</p><ul className="gf__list">{activos.map((g) => { const key = g.id; const abierta = accion?.tipo === 'unir-activo' && accion.combo === key; return <li key={key} className="gf__row gf__activeRow"><div className="gf__rowMain"><div className="gf__slot"><b>{g.diasTexto} · {g.hora}</b><small>{g.ubicacion}</small></div><div className="gf__activeStatus"><strong>PLAZAS DISPONIBLES</strong><small>Grupo activo · máximo {g.capacidad}</small></div>{!abierta && <button type="button" className="sx__cta gf__join" onClick={() => { setHecho(false); setAccion({ tipo: 'unir-activo', combo: key }); }}>CONSULTAR PLAZA</button>}</div>{abierta && <Formulario combo={g} onDone={terminado} onCancel={() => setAccion(null)} />}</li>; })}</ul></section>}
+              {lista.length > 0 && <section className="gf__demandSection"><p className="sx__pK gf__k">{grupos.demandaK}</p><p className="gf__nota">Solicitudes de personas que buscan coincidir en esta zona; no son grupos confirmados.</p></section>}
+              {lista.length === 0 && activos.length === 0 && <p className="gf__nota">{grupos.vacioZona}</p>}
               {lista.length > 0 && <p className="sx__pK gf__k">{grupos.listaK}</p>}
               <ul className="gf__list">
                 {lista.map((c) => {
@@ -173,7 +179,7 @@ export default function GrupoFinder({ onClose, onPlanes, frecuencia }) {
                   );
                 })}
               </ul>
-              {accion?.tipo !== 'proponer' && (
+              {accion?.tipo !== 'proponer' && accion?.tipo !== 'unir-activo' && (
                 <div className="gf__alt">
                   <p className="gf__altT">{grupos.noHorarioT}</p>
                   <p className="gf__nota">{grupos.noHorario}</p>

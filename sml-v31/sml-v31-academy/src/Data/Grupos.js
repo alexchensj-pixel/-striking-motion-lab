@@ -7,9 +7,11 @@ export const grupos = {
   intro: 'Primero comprobamos si ya existe un grupo compatible contigo. Si no existe, dejas tu disponibilidad y se acumula para formarlo.',
   cta: 'CONSULTAR DISPONIBILIDAD',
   verPlanes: 'Ver precios',
-  listaK: 'Grupos que se están formando',
+  listaK: 'Personas que buscan grupo',
+  activosK: 'Grupos activos · plazas disponibles',
+  demandaK: 'Demanda de la zona',
   mapaK: 'Elige tu barrio',
-  mapaAyuda: 'Madrid por zonas. Solo se muestran solicitudes agregadas, nunca personas.',
+  mapaAyuda: 'Selecciona una zona para consultar horarios activos o demanda. Los grupos publicados están diferenciados de las solicitudes.',
   vacioZona: 'Todavía no hay ningún grupo formándose aquí. Deja tu disponibilidad y se acumulará con otras personas compatibles hasta poder formarlo.',
   noHorarioT: '¿No encuentras tu horario?',
   noHorario: 'Indica tu barrio, disponibilidad y frecuencia. Tu solicitud se acumulará con otras personas compatibles hasta formar un grupo.',
@@ -26,6 +28,7 @@ export const grupos = {
 };
 
 export const ZONAS = [
+  { id: 'metropolitano', nombre: 'Metropolitano', x: 6.2, y: 2.2 }, { id: 'parque-roma', nombre: 'Parque de Roma', x: 3.8, y: 3.1 },
   { id: 'centro', nombre: 'Centro', x: -0.6, y: 0.2 }, { id: 'chamberi', nombre: 'Chamberí', x: -0.4, y: -1.8 },
   { id: 'salamanca', nombre: 'Salamanca', x: 2.2, y: -0.6 }, { id: 'retiro', nombre: 'Retiro', x: 1.4, y: 1.3 },
   { id: 'moncloa', nombre: 'Moncloa', x: -3.0, y: -1.0 }, { id: 'tetuan', nombre: 'Tetuán', x: -0.9, y: -3.5 },
@@ -74,3 +77,11 @@ export const MAPA = ZONAS.map((z, i) => {
   return { id: z.id, nombre: z.nombre, d: `M${poly.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('L')}Z`, cx, cy };
 });
 export const MAPA_VIEWBOX = `0 0 ${W} ${H}`;
+
+// Horarios publicados y gestionados por el entrenador. No se deducen de las solicitudes.
+export const GRUPOS_ACTIVOS = [
+  { id: 'metro-sabado', zona: 'metropolitano', dia: 'sabado', hora: '10:00', frecuencia: 1, capacidad: 4, estado: 'abierto', ubicacion: 'Estadio Metropolitano', diasTexto: 'Sábados' },
+  { id: 'metro-domingo', zona: 'metropolitano', dia: 'domingo', hora: '10:00', frecuencia: 1, capacidad: 4, estado: 'abierto', ubicacion: 'Estadio Metropolitano', diasTexto: 'Domingos' },
+  { id: 'roma-sabado', zona: 'parque-roma', dia: 'sabado', hora: '11:00', frecuencia: 1, capacidad: 4, estado: 'abierto', ubicacion: 'Parque de Roma · Sainz de Baranda', diasTexto: 'Sábados' },
+  { id: 'roma-domingo', zona: 'parque-roma', dia: 'domingo', hora: '11:00', frecuencia: 1, capacidad: 4, estado: 'abierto', ubicacion: 'Parque de Roma · Sainz de Baranda', diasTexto: 'Domingos' },
+];

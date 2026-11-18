@@ -2582,3 +2582,14 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
   .rs__calendly-mobile-main span { color: #e9825d; font-family: var(--font-sans); font-size: 1.5rem; }
   .rs__calendly-mobile-note { color: var(--dim); font-family: var(--font-sans); font-size: .9rem; line-height: 1.45; }
 }
+
+/* Active groups in the Madrid zone finder: visually distinct from demand signals. */
+.gf__zone[data-active="true"] path { fill: rgba(229, 32, 43, .12); stroke: rgba(229, 32, 43, .72); stroke-width: .55; }
+.gf__zone[data-active="true"][data-on="true"] path { fill: rgba(229, 32, 43, .28); stroke-width: .9; }
+.gf__activeMark { text-anchor: middle; dominant-baseline: middle; pointer-events: none; fill: var(--sx-red); font-family: var(--sx-mono); font-size: 2.5px; font-weight: 800; letter-spacing: .08em; }
+.gf__activeSection { display: grid; gap: .55rem; padding-bottom: .85rem; border-bottom: 1px solid var(--sx-hair); }
+.gf__activeStatus { display: grid; gap: .15rem; justify-items: start; }
+.gf__activeStatus strong { color: var(--sx-red); font-family: var(--sx-mono); font-size: .66rem; letter-spacing: .09em; }
+.gf__activeStatus small { color: var(--sx-mute); font-family: var(--sx-mono); font-size: .65rem; text-transform: uppercase; }
+.gf__demandSection { display: grid; gap: .35rem; padding-top: .2rem; }
+@media (max-width:760px) { .gf__activeRow .gf__rowMain { grid-template-columns: 1fr !important; } .gf__activeRow .gf__join { width: 100%; } }
