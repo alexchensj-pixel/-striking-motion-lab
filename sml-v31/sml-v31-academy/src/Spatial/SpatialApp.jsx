@@ -250,6 +250,12 @@ function App() {
                   <div className="plan-card-top"><span>{card.descriptor}</span>{card.popular && <strong className="plan-popular-badge">MÁS POPULAR</strong>}</div>
                   <h3>{plan.nombre}</h3>
                   <p className="plan-card-identity">{card.identity}</p>
+                  <div className="plan-skill-panel">
+                    <div className="plan-skill-visual"><span className="plan-skill-emblem">{plan.id === 'arsenal' ? 'A' : plan.id === 'striker' ? 'S' : 'IQ'}</span><span className="plan-skill-rank">{plan.id === 'arsenal' ? 'RANGO 01' : plan.id === 'striker' ? 'RANGO 02' : 'RANGO 03'}</span><span className="plan-skill-xp">RUTA DE DESARROLLO</span></div>
+                    <div className="plan-skill-stats">
+                      {(plan.id === 'arsenal' ? [['TÉCNICA',2],['ANÁLISIS',1],['PLANIFICACIÓN',0],['TÁCTICA',0]] : plan.id === 'striker' ? [['TÉCNICA',3],['ANÁLISIS',3],['PLANIFICACIÓN',3],['TÁCTICA',1]] : [['TÉCNICA',4],['ANÁLISIS',4],['PLANIFICACIÓN',4],['TÁCTICA',4]]).map(([label,level]) => <div className="plan-stat" key={label}><span>{label}</span><div className="plan-stat-bars" aria-label={`${label}: ${level} de 4 segmentos`}>{[1,2,3,4].map((n) => <i key={n} data-filled={n <= level} />)}</div></div>)}
+                    </div>
+                  </div>
                   <div className="plan-card-price"><strong>{money(plan.precio)}</strong><span>/ mes</span></div>
                   <p className="plan-card-per-session">{perSession} € / sesión</p>
                   <p className="plan-card-frequency">{plan.sesionesSemana} {plan.sesionesSemana === 1 ? 'sesión' : 'sesiones'} / semana <span>·</span> 60 min</p>
