@@ -1116,3 +1116,10 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 /* Remove the oversized decorative corner triangle from service format cards. */
 article.format-service-card::before,article.format-service-card::after{display:none!important;content:none!important}
 @media(max-width:760px){.plan-skill-panel{grid-template-columns:92px minmax(0,1fr)!important;gap:12px!important;padding:13px!important;min-height:144px}.plan-skill-visual{min-height:120px!important;padding-right:10px}.plan-skill-emblem{width:64px!important;height:64px!important;font-size:29px!important}.plan-skill-rank{font-size:9px!important}.plan-skill-xp{font-size:7px!important}.plan-skill-stats{gap:15px 10px!important}.plan-stat>span{font-size:8px!important}.plan-stat-bars{height:10px!important;gap:3px!important}.plan-feature-tile{grid-template-columns:25px 36px minmax(0,1fr) auto!important;gap:9px!important;min-height:78px;padding:12px 10px!important}.plan-feature-mark{width:34px!important;height:34px!important;font-size:20px!important}.plan-feature-copy strong{font-size:13px!important}.plan-feature-copy p{font-size:10px!important}.plan-feature-unlock{font-size:6px!important}.plan-card-action{min-height:56px!important;max-height:60px!important}.plan-card-action span{font-size:11px!important}}
+
+
+/* Real training footage belongs to the service it demonstrates, not in a detached gallery. */
+.service-media{width:min(100%,920px);margin:12px 0 26px;overflow:hidden;border:1px solid rgba(230,233,239,.16);background:#0b0d10}
+.service-media img{display:block;width:100%;height:clamp(190px,34vw,390px);object-fit:cover;object-position:center 48%;filter:contrast(1.04) saturate(.94)}
+.service-media figcaption{padding:10px 13px;color:#c9ced6;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+@media(max-width:680px){.service-media{margin:10px 0 20px}.service-media img{height:230px}.hero-context{max-width:34ch;font-size:14px;line-height:1.55}}
