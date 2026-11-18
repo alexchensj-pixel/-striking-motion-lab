@@ -6,26 +6,15 @@
     <meta name="theme-color" content="#050608" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;900&display=swap" rel="stylesheet" />
     <!-- Escena 01 (Entrada): serif editorial para la narrativa. Solo se usa dentro de .ent. -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500;1,600&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Escena 02 (Descubrir): display condensada + sans editorial + mono técnica. Solo se usan dentro de #character-select.
-         Entrada (.ent) reutiliza esta misma condensada y sans, ya cargadas aquí, para "Entra." y el cuerpo de apoyo. -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500;1,600&display=swap" rel="stylesheet" />
+    <!-- Escena 02 (Descubrir): display condensada + sans editorial + mono técnica. -->
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <title>Entrenamiento Privado Muay Thai, Boxeo y Kickboxing en Madrid | Striking Motion Lab</title>
     <meta name="description" content="Entrenamiento privado de Muay Thai, Boxeo, Kickboxing y K1 en Madrid. Clases 1:1, parejas, grupos reducidos y planes mensuales con Chen, peleador y entrenador. Reserva tu Sesión Privada presencial directamente en el calendario online." />
     <meta name="keywords" content="Muay Thai Madrid, Boxeo Madrid, Kickboxing Madrid, entrenamiento personal Muay Thai Madrid, clases privadas Muay Thai Madrid, entrenador Muay Thai Madrid" />
     <meta name="robots" content="index, follow" />
-    <!-- Confirmar dominio real antes de publicar y actualizar canonical + og:url + JSON-LD si difiere -->
     <link rel="canonical" href="https://strikingmotionlab.com/" />
     <meta property="og:title" content="Striking Motion Lab — Private Combat Training, Madrid" />
     <meta property="og:description" content="Entrenamiento privado de combate en Madrid. Muay Thai · Boxing · Kickboxing · K1. Clases 1:1, parejas, grupos reducidos y empresas." />
@@ -33,11 +22,10 @@
     <meta property="og:locale" content="es_ES" />
     <meta property="og:url" content="https://strikingmotionlab.com/" />
     <meta property="og:site_name" content="Striking Motion Lab" />
-    <!-- og:image — añadir cuando exista una fotografía real definitiva en alta resolución (1200x630): <meta property="og:image" content="URL_REAL_AQUI"> -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Striking Motion Lab — Private Combat Training, Madrid" />
     <meta name="twitter:description" content="Entrenamiento privado de combate en Madrid. Muay Thai · Boxing · Kickboxing · K1." />
-    <!-- Datos estructurados (Schema.org): solo datos presentes en la web. aggregateRating se inyecta en build/dev desde site.rating (src/Data/Content.js); no editar a mano. -->
+    <!-- Datos estructurados (Schema.org): aggregateRating se inyecta en build/dev desde src/Data/Content.js. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -58,6 +46,20 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // El CTA de grupos abre el buscador integrado; WhatsApp queda reservado al contacto posterior.
+      document.addEventListener('click', (event) => {
+        const link = event.target.closest('a');
+        if (!link || link.textContent.trim().toLocaleLowerCase('es').indexOf('consultar grupos en mi zona') !== 0) return;
+        event.preventDefault();
+        const toggle = document.querySelector('.group-finder-toggle');
+        if (!toggle) return;
+        if (toggle.getAttribute('aria-expanded') !== 'true') toggle.click();
+        window.setTimeout(() => {
+          document.querySelector('.gf')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+      });
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
