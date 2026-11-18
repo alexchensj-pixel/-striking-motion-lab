@@ -2617,3 +2617,19 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
  .gf__districtPicker { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media(min-width:761px) { .gf__districtPicker { display:none; } }
+
+/* GROUP FINDER · active sessions as visual schedule cards */
+.gf__activeSection .gf__list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.gf__activeRow{position:relative;min-width:0;padding:14px!important;border:1px solid rgba(229,32,43,.32)!important;background:linear-gradient(145deg,rgba(229,32,43,.085),rgba(255,255,255,.018) 52%,rgba(0,0,0,.16));gap:12px!important}
+.gf__activeRow:last-child{border-bottom:1px solid rgba(229,32,43,.32)!important}
+.gf__activeRow .gf__rowMain{grid-template-columns:1fr!important;gap:11px!important;align-items:stretch!important}
+.gf__activeRow .gf__slot{gap:5px}
+.gf__activeRow .gf__slot b{font-size:clamp(1.45rem,4vw,1.9rem);color:#fff;letter-spacing:.015em}
+.gf__activeRow .gf__slot small{font-size:9px;line-height:1.4;letter-spacing:.08em;color:#aeb5c0}
+.gf__activeStatus{display:flex!important;align-items:center;flex-wrap:wrap;gap:6px 9px!important;padding-top:9px;border-top:1px solid rgba(255,255,255,.12)}
+.gf__activeStatus strong{display:inline-flex;align-items:center;gap:6px;font-size:8px!important;letter-spacing:.1em;color:#f0785b!important}
+.gf__activeStatus strong::before{content:"";width:6px;height:6px;border-radius:50%;background:#e55b45;box-shadow:0 0 9px rgba(229,91,69,.7)}
+.gf__activeStatus small{font-size:8px!important;letter-spacing:.06em;color:#9da5b1!important}
+.gf__activeRow .gf__join{width:100%;min-height:42px;margin:0!important;padding:10px!important;border:1px solid rgba(229,32,43,.6);background:rgba(229,32,43,.1);font-size:9px!important;letter-spacing:.08em}
+.gf__activeRow .gf__join:hover{background:rgba(229,32,43,.2)}
+@media(max-width:760px){.gf__activeSection .gf__list{grid-template-columns:1fr;gap:9px}.gf__activeRow{padding:14px!important}.gf__activeRow .gf__rowMain{grid-template-columns:minmax(0,1fr) auto!important;gap:10px 12px!important}.gf__activeRow .gf__slot{grid-column:1/-1}.gf__activeRow .gf__activeStatus{grid-column:1;align-self:center}.gf__activeRow .gf__join{grid-column:2;grid-row:2;width:auto;min-width:122px;min-height:40px}.gf__activeRow .gf__slot b{font-size:1.55rem}}
