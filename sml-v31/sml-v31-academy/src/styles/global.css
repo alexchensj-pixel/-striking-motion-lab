@@ -2600,3 +2600,20 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 .gf__placeMarker { pointer-events: none; }
 .gf__placeMarker circle:first-child { fill: var(--sx-red); stroke: #fff; stroke-width: .42; }
 .gf__placeMarker circle:nth-child(2) { fill: none; stroke: var(--sx-red); stroke-width: .42; opacity: .8; }
+
+/* Mobile map UX: geography as overview, district names as a clean selectable list. */
+.gf__districtPicker { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:12px 0 4px; }
+.gf__districtPicker button { display:flex; align-items:center; justify-content:space-between; gap:6px; min-width:0; padding:10px 9px; border:1px solid var(--sx-hair); background:rgba(255,255,255,.018); color:var(--sx-soft); text-align:left; font:500 .7rem/1.2 var(--sx-mono); letter-spacing:.015em; }
+.gf__districtPicker button[data-on="true"] { border-color:var(--sx-red); background:rgba(229,32,43,.12); color:var(--sx-ink); }
+.gf__districtPicker button i { flex:none; color:var(--sx-red); font-size:.55rem; font-style:normal; letter-spacing:.06em; }
+.gf__placeMarker { pointer-events:none; }
+.gf__placeHalo { fill:none; stroke:var(--sx-red); stroke-width:.42; opacity:.8; }
+.gf__placeCore { fill:var(--sx-red); stroke:#fff; stroke-width:.32; }
+@media(max-width:760px) {
+ .gf__map { width:100%; max-height:none; height:auto; margin:0 auto; }
+ .gf__zn { display:none; }
+ .gf__zone[data-active="true"] path { fill:rgba(229,32,43,.10); stroke:rgba(229,32,43,.7); stroke-width:.55; }
+ .gf__zone[data-on="true"] path { fill:rgba(229,32,43,.24); stroke:var(--sx-red); stroke-width:1; }
+ .gf__districtPicker { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(min-width:761px) { .gf__districtPicker { display:none; } }
