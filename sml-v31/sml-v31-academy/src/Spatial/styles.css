@@ -1088,3 +1088,31 @@ main { position:relative; z-index:2; perspective:1500px; transform-style:preserv
 .plan-feature-unlock{grid-column:3;margin-top:1px;color:var(--skill-accent);font:700 6px/1 var(--font-mono,monospace);letter-spacing:.13em;opacity:.85;}
 @media(min-width:761px){.plan-feature-grid{grid-template-columns:1fr 1fr}.plan-feature-tile:last-child:nth-child(odd){grid-column:1/-1}}
 @media(max-width:760px){.plan-feature-tile{grid-template-columns:21px 25px minmax(0,1fr);gap:8px;padding:11px 10px}.plan-feature-copy strong{font-size:12px}.plan-feature-copy p{font-size:10px}.plan-feature-unlock{font-size:6px}}
+
+/* FINAL MOBILE POLISH · skill progression and readable unlock modules */
+.plan-card-arsenal{--skill-accent:#72b8d6!important;--skill-line:rgba(114,184,214,.48)!important;--skill-wash:rgba(20,43,56,.78)!important;border-color:rgba(114,184,214,.48)!important;background:linear-gradient(155deg,rgba(20,43,56,.78),rgba(9,11,15,.98) 70%)!important}
+.plan-card-striker{--skill-accent:#ef9b45!important;--skill-line:rgba(239,155,69,.58)!important;--skill-wash:rgba(59,37,20,.82)!important;border-color:rgba(239,155,69,.58)!important;background:linear-gradient(155deg,rgba(59,37,20,.82),rgba(9,11,15,.98) 70%)!important;box-shadow:0 20px 55px rgba(0,0,0,.34),0 0 26px rgba(239,155,69,.11)!important}
+.plan-card-fight-iq{--skill-accent:#ad91ed!important;--skill-line:rgba(173,145,237,.52)!important;--skill-wash:rgba(42,31,64,.82)!important;border-color:rgba(173,145,237,.52)!important;background:linear-gradient(155deg,rgba(42,31,64,.82),rgba(9,11,15,.98) 70%)!important}
+.plan-skill-panel{grid-template-columns:112px minmax(0,1fr)!important;gap:17px!important;padding:17px!important;margin:12px 0 20px!important;min-height:158px}
+.plan-skill-visual{min-height:130px!important;justify-content:center}
+.plan-skill-emblem{width:76px!important;height:76px!important;font-size:34px!important}
+.plan-skill-rank{font-size:10px!important;margin-top:15px!important}
+.plan-skill-xp{font-size:8px!important}
+.plan-skill-stats{grid-template-columns:1fr 1fr!important;gap:17px 14px!important}
+.plan-stat>span{font-size:9px!important;margin-bottom:8px!important;letter-spacing:.1em}
+.plan-stat-bars{height:11px!important;gap:4px!important}
+.plan-feature-grid{grid-template-columns:1fr!important;gap:9px!important}
+.plan-feature-tile{grid-template-columns:32px 42px minmax(0,1fr) auto!important;align-items:center!important;gap:12px!important;min-height:82px;padding:13px 14px!important}
+.plan-feature-index{font-size:12px!important;align-self:start;padding-top:4px!important}
+.plan-feature-mark{width:40px!important;height:40px!important;font-size:23px!important}
+.plan-feature-copy strong{font-size:14px!important;line-height:1.25!important;margin-bottom:5px!important}
+.plan-feature-copy p{font-size:11px!important;line-height:1.45!important}
+.plan-feature-unlock{grid-column:auto!important;align-self:center;writing-mode:vertical-rl;font-size:7px!important;letter-spacing:.12em!important;margin:0!important}
+.plan-card-action{display:flex!important;min-height:58px!important;max-height:64px!important;align-items:center!important;margin-top:18px!important;padding:12px 16px!important;font-size:12px!important;letter-spacing:.04em!important;background:color-mix(in srgb,var(--skill-accent) 13%,rgba(8,10,14,.94))!important;border:1px solid var(--skill-accent)!important}
+.plan-card-action span{display:block;min-width:0;max-width:calc(100% - 44px);font-size:12px!important;line-height:1.35!important}
+.plan-card-action svg{display:block!important;flex:0 0 30px!important;width:30px!important;height:30px!important;max-width:30px!important;max-height:30px!important}
+.plan-card-action svg path{stroke:var(--skill-accent)!important;stroke-width:1.7!important;fill:none!important}
+.plan-card-action:hover{background:color-mix(in srgb,var(--skill-accent) 22%,rgba(8,10,14,.94))!important}
+/* Remove the oversized decorative corner triangle from service format cards. */
+article.format-service-card::before,article.format-service-card::after{display:none!important;content:none!important}
+@media(max-width:760px){.plan-skill-panel{grid-template-columns:92px minmax(0,1fr)!important;gap:12px!important;padding:13px!important;min-height:144px}.plan-skill-visual{min-height:120px!important;padding-right:10px}.plan-skill-emblem{width:64px!important;height:64px!important;font-size:29px!important}.plan-skill-rank{font-size:9px!important}.plan-skill-xp{font-size:7px!important}.plan-skill-stats{gap:15px 10px!important}.plan-stat>span{font-size:8px!important}.plan-stat-bars{height:10px!important;gap:3px!important}.plan-feature-tile{grid-template-columns:25px 36px minmax(0,1fr) auto!important;gap:9px!important;min-height:78px;padding:12px 10px!important}.plan-feature-mark{width:34px!important;height:34px!important;font-size:20px!important}.plan-feature-copy strong{font-size:13px!important}.plan-feature-copy p{font-size:10px!important}.plan-feature-unlock{font-size:6px!important}.plan-card-action{min-height:56px!important;max-height:60px!important}.plan-card-action span{font-size:11px!important}}

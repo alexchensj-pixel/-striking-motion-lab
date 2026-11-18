@@ -264,7 +264,7 @@ function App() {
                     <div className="plan-feature-grid">{card.highlights.map((item, index) => {
                       const featureNames = plan.id === 'arsenal' ? ['Evaluación técnica','Análisis en vídeo','Equipo de entrenamiento'] : plan.id === 'striker' ? ['Plan personalizado','Biblioteca de ejercicios','Trabajo por objetivos'] : ['Preparación de combate','Estrategia y táctica','Estilo y sparring'];
                       const featureMarks = plan.id === 'arsenal' ? ['◎','◫','↗'] : plan.id === 'striker' ? ['⌘','▤','◈'] : ['⚑','⌖','✳'];
-                      return <div className="plan-feature-tile" key={item}><span className="plan-feature-index">0{index + 1}</span><span className="plan-feature-mark">{featureMarks[index]}</span><div className="plan-feature-copy"><strong>{featureNames[index]}</strong><p>{item}</p></div><span className="plan-feature-unlock">UNLOCKED</span></div>;
+                      return <div className="plan-feature-tile" key={item}><span className="plan-feature-index">0{index + 1}</span><span className="plan-feature-mark">{featureMarks[index]}</span><div className="plan-feature-copy"><strong>{featureNames[index]}</strong><p>{item}</p></div><span className="plan-feature-unlock">DESBLOQUEADA</span></div>;
                     })}</div>
                   </div>
                   <a className="plan-card-action" href={waLink(`Hola, quiero información sobre el plan ${plan.nombre} y consultar disponibilidad.`)} target="_blank" rel="noopener noreferrer"><span>{card.cta} · {money(plan.precio)}/mes</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
