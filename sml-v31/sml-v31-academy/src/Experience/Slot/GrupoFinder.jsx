@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { cargarDemanda, enviarSolicitud } from '../../Data/gruposApi.js';
 import {
-  grupos, GRUPOS_ACTIVOS, MAPA, MAPA_VIEWBOX, zonaNombre, diaNombre, DIAS, HORAS, FRECUENCIAS, frecuenciaNombre,
+  grupos, GRUPOS_ACTIVOS, MAPA, MAPA_PUNTOS, MAPA_VIEWBOX, zonaNombre, diaNombre, DIAS, HORAS, FRECUENCIAS, frecuenciaNombre,
 } from '../../Data/Grupos.js';
 import { RUTAS } from '../../Data/Legal.js';
 import LegalLinks from '../../UI/Legal/LegalLinks.jsx';
@@ -125,12 +125,13 @@ export default function GrupoFinder({ onClose, onPlanes, frecuencia }) {
                   aria-label={`${z.nombre}${top ? `, ${Math.min(top, cap)} de ${cap} solicitudes en la combinación más avanzada` : ', sin solicitudes'}`}
                   onClick={() => elegirZona(z.id)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegirZona(z.id); } }}>
                   <path d={z.d} />
-                  <text x={z.cx} y={z.cy} className="gf__zn">{z.nombre}</text>
+                  <text x={z.cx} y={z.cy} className="gf__zn">{z.etiqueta || z.nombre}</text>
                   {tieneActivo && <text x={z.cx} y={z.cy + 3.4} className="gf__activeMark">ACTIVO</text>}
                   {top > 0 && <text x={z.cx} y={z.cy + 3.4} className="gf__zc">{Math.min(top, cap)}/{cap}</text>}
                 </g>
               );
             })}
+            {MAPA_PUNTOS.map((p) => <g key={p.id} className="gf__placeMarker" aria-hidden="true"><circle cx={p.x} cy={p.y} r="1.7" /><circle cx={p.x} cy={p.y} r="3.2" /><title>{p.nombre}</title></g>)}
           </svg>
           <p className="gf__nota">{grupos.mapaAyuda}</p>
         </div>

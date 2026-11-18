@@ -2593,3 +2593,10 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 .gf__activeStatus small { color: var(--sx-mute); font-family: var(--sx-mono); font-size: .65rem; text-transform: uppercase; }
 .gf__demandSection { display: grid; gap: .35rem; padding-top: .2rem; }
 @media (max-width:760px) { .gf__activeRow .gf__rowMain { grid-template-columns: 1fr !important; } .gf__activeRow .gf__join { width: 100%; } }
+
+/* Madrid real: límites administrativos y lectura inspirada en la cartografía Metro. */
+.gf__zone[data-active="true"] path { stroke: rgba(229, 32, 43, .62); stroke-width: .58; }
+.gf__zone[data-on="true"] path { fill: rgba(229, 32, 43, .22); stroke: var(--sx-red); stroke-width: .8; }
+.gf__placeMarker { pointer-events: none; }
+.gf__placeMarker circle:first-child { fill: var(--sx-red); stroke: #fff; stroke-width: .42; }
+.gf__placeMarker circle:nth-child(2) { fill: none; stroke: var(--sx-red); stroke-width: .42; opacity: .8; }
