@@ -1129,3 +1129,8 @@ article.format-service-card::before,article.format-service-card::after{display:n
 .service-media--portrait img{height:auto;object-fit:contain;object-position:center}
 .founder-human--portrait{grid-template-columns:repeat(2,minmax(0,340px));justify-content:start;width:100%}
 .founder-human--portrait img{height:auto;object-fit:contain;object-position:center}
+
+
+/* Service photography: keep portrait originals fully visible without black letterboxing. */
+.service-media--portrait{width:min(100%,420px);max-width:100%;background:transparent;border:0;overflow:visible}
+.service-media--portrait img{display:block;width:100%;height:auto;max-height:none;aspect-ratio:auto;object-fit:contain;background:transparent}
