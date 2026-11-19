@@ -1138,5 +1138,5 @@ article.format-service-card::before,article.format-service-card::after{display:n
 
 /* Mobile training framing: remove the unused vertical canvas around landscape session footage. */
 .service-media--wide{width:min(100%,760px);max-width:100%;aspect-ratio:16 / 9;overflow:hidden;margin:18px auto 26px;background:#090b0f}
-.service-media--wide img{display:block;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:cover;object-position:center;background:#090b0f}
-@media(max-width:680px){.service-media--wide{width:100%;aspect-ratio:16 / 9;margin:14px auto 22px;padding:0;box-sizing:border-box}.service-media--wide img{width:100%;height:100%;object-fit:cover;object-position:center}}
+.service-media--wide img{display:block;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:cover;object-position:center 72%;background:#090b0f}
+@media(max-width:680px){.service-media--wide{width:100%;aspect-ratio:16 / 9;margin:14px auto 22px;padding:0;box-sizing:border-box}.service-media--wide img{width:100%;height:100%;object-fit:cover;object-position:center 72%}}
