@@ -72,7 +72,7 @@ export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef, credencialW
 const foto = (src, width, height) => ({ src, width, height });
 export const fotosSesion = {
   individual: [foto('/IMG_3493.webp', 1037, 1600), foto('/IMG_3476.webp', 738, 907)],
-  parejas: [foto('/IMG_3489.webp', 738, 1600)],
+  parejas: [foto('/IMG_3658-parejas.webp', 480, 535)],
   grupos: [foto('/IMG_3492.webp', 738, 1600), foto('/IMG_3488.webp', 738, 1600)],
   metodologia: foto('/IMG_3493.webp', 1037, 1600),
   competicion: [foto('/IMG_3495.webp', 738, 1600), foto('/IMG_3491.webp', 738, 1600)],
