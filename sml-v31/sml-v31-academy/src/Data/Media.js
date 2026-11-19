@@ -65,3 +65,13 @@ export const poster = { boxeo: stillBoxeo, k1: stillK1, muayThai: stillMuayThai,
 // SOLO como telón de fondo lejano en BridgeHall.jsx (Z_FAR, detrás de toda la geometría 3D existente),
 // nunca como textura sobre la estructura: la nave sigue siendo 100% geometría real.
 export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef, credencialWako, credencialFekm };
+
+// Fotos reales de sesiones, método y competición. Viven en public/ y se sirven por ruta absoluta,
+// igual que las acreditaciones WAKO/FEKM. Para cambiar una, reemplaza el archivo en public/ (mismo nombre).
+export const fotosSesion = {
+  individual: ['/IMG_3493.jpeg', '/IMG_3476.jpeg'],
+  parejas: ['/IMG_3490.png'],
+  grupos: ['/IMG_3492.png', '/IMG_3488.png'],
+  metodologia: '/IMG_3489.png',
+  competicion: ['/IMG_3495.png', '/IMG_3491.png'],
+};

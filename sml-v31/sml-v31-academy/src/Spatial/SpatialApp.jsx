@@ -6,7 +6,7 @@ import {
   site, hero, advisorySubstages, evaluacionInicial,
   dossierItems, reserva, faq, empresas, cierre, waLink
 } from '../Data/Content.js';
-import { image, eci, entrenamientoMedia } from '../Data/Media.js';
+import { image, eci, entrenamientoMedia, fotosSesion } from '../Data/Media.js';
 import { existingPlans, kitInicio } from '../Data/Programs.js';
 import { RUTAS } from '../Data/Legal.js';
 import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
@@ -36,6 +36,7 @@ const credentialItems = [
   { id: 'wako', src: image.credencialWako, width: 900, height: 826, alt: 'Certificado oficial WAKO a nombre de CHEN HAN: 3.º puesto en K1, categoría -57 kg, en los I Juegos de Combate 2025 · Copa de España, club GK1 Team Trust Fitness Center', caption: '3.º puesto · K1 -57 kg · Juegos de Combate 2025 · Copa de España', eyebrow: 'RESULTADO DE COMPETICIÓN', stat: '3.º', detail: 'K1 · −57 KG', note: 'Juegos de Combate 2025 · Copa de España' },
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
+const SessionPhoto = ({ src, alt, caption }) => <figure className="service-media"><img src={src} alt={alt} loading="lazy" decoding="async"/><figcaption>{caption}</figcaption></figure>;
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
@@ -207,6 +208,7 @@ function App() {
               <p className="method-cta-note">Sin permanencia en los planes.</p>
               <button className="text-link" type="button" aria-expanded={showMore} onClick={() => setShowMore((value) => !value)}>{showMore ? 'Cerrar información −' : `${evaluacionInicial.ctaMas} +`}</button>
               {showMore && <ul>{evaluacionInicial.mas.map(([a, b]) => <li key={a}><b>{a}:</b> {b}</li>)}</ul>}
+              {showMore && <SessionPhoto src={fotosSesion.metodologia} alt="Apoyo visual del método de trabajo de Striking Motion Lab" caption="Método de trabajo · Apoyo visual" />}
             </div>
           </div>
           <div className="method-stations" aria-label="Cinco pasos del método">
@@ -237,6 +239,7 @@ function App() {
         <div id="service-pricing-panel" className="pricing-tab-panel" role="tabpanel" aria-labelledby={`tab-${activeService}`}>
           {activeService === 'individual' && <>
             {entrenamientoMedia.sala?.poster && <figure className="service-media"><img src={entrenamientoMedia.sala.poster} alt="Entrenamiento privado: trabajo técnico de golpeo y corrección individual" loading="lazy"/><figcaption>Trabajo técnico individual · Sesiones privadas</figcaption></figure>}
+            <SessionPhoto src={fotosSesion.individual[0]} alt="Sesión individual de entrenamiento en Striking Motion Lab" caption="Sesión individual · Atención personalizada" />
             <div className="plan-cards-heading">
               <div><p className="eyebrow">PLANES MENSUALES · 1:1</p><h3 className="subsection-title">Elige tu plan de entrenamiento.</h3></div>
               <p>Cada plan incluye el anterior y añade más frecuencia y trabajo específico.</p>
@@ -279,6 +282,7 @@ function App() {
               <a href={waLink('Hola, quiero consultar disponibilidad para una sesión individual 1:1.')} target="_blank" rel="noopener noreferrer">Consultar sesión <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
               <p className="format-risk-note">60 min · Sin plan mensual ni permanencia · cambios con 24 h de antelación.</p>
             </div>
+            <SessionPhoto src={fotosSesion.individual[1]} alt="Entrenamiento individual: trabajo técnico en una sesión 1:1" caption="Entrenamiento 1:1 · Trabajo técnico" />
             <div className="plan-comparison-control">
               <button type="button" className="plan-comparison-toggle" aria-expanded={showPlanComparison} aria-controls="plan-comparison" onClick={() => setShowPlanComparison((value) => !value)}>{showPlanComparison ? 'Ocultar comparación' : 'Comparar qué incluye cada plan'} <span>{showPlanComparison ? '−' : '+'}</span></button>
             </div>
@@ -292,13 +296,16 @@ function App() {
             </div>}
           </>}
           {activeService === 'parejas' && <>
+            <SessionPhoto src={fotosSesion.parejas[0]} alt="Sesión de entrenamiento en pareja en Striking Motion Lab" caption="Entrenamiento en pareja · Sesión compartida" />
             <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO COMPARTIDO</p><h3 className="subsection-title">Entrenad juntos.</h3></div><p>Una sesión privada para dos personas, adaptada a vuestro nivel y objetivos.</p></div>
             <article className="training-card format-service-card"><small>SESIÓN PARA 2 PERSONAS</small><h3>Parejas</h3><div className="format-service-price">{money(coupleFormat.precio)} <span>/ persona / sesión</span></div><p>{coupleFormat.texto}</p><a href={waLink('Hola, quiero consultar disponibilidad para entrenar en pareja.')} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a><p className="format-risk-note">Sin permanencia · cambios con 24 h de antelación. La evaluación inicial no se descuenta en este formato.</p></article>
           </>}
           {activeService === 'grupos' && <>
             {entrenamientoMedia.exterior?.poster && <figure className="service-media"><img src={entrenamientoMedia.exterior.poster} alt="Entrenamiento técnico al aire libre en grupo reducido" loading="lazy"/><figcaption>Entrenamiento al aire libre · Grupos reducidos</figcaption></figure>}
+            <SessionPhoto src={fotosSesion.grupos[0]} alt="Grupo reducido entrenando en Striking Motion Lab" caption="Grupos reducidos · Máximo 4 personas" />
             <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO EN EQUIPO</p><h3 className="subsection-title">Grupo reducido.</h3></div><p>Entrenamiento compartido, con atención técnica y un máximo de cuatro personas.</p></div>
             <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article>
+            <SessionPhoto src={fotosSesion.grupos[1]} alt="Entrenamiento en grupo reducido con atención técnica" caption="Entrenamiento en grupo · Atención técnica" />
           </>}
         </div>
       </div>
@@ -310,6 +317,7 @@ function App() {
         <p className="eyebrow">COACH / COMPETIDOR</p><h2>Experiencia dentro y fuera del ring.</h2>
         <CredentialGallery items={credentialItems} />
         <div className="founder-human"><figure><img src={image.chenAzotea} alt="Alex, entrenador de Striking Motion Lab" loading="lazy"/><figcaption>Alex · Entrenador</figcaption></figure><figure><img src={image.chenRing} alt="Alex compitiendo en el ring" loading="lazy"/><figcaption>Experiencia en competición · FEKM / WAKO</figcaption></figure></div>
+        <div className="founder-human"><figure><img src={fotosSesion.competicion[0]} alt="Competición: imagen de apoyo visual de la trayectoria deportiva" loading="lazy" decoding="async"/><figcaption>Competición · Trayectoria</figcaption></figure><figure><img src={fotosSesion.competicion[1]} alt="Apoyo visual de la experiencia en competición" loading="lazy" decoding="async"/><figcaption>Apoyo visual · Competición</figcaption></figure></div>
         {dossierItems.filter((item) => item.id !== 'metodo').map((item) => <article className="proof-card" key={item.id}><small>{item.label}</small>{item.titulo && <h3>{item.titulo}</h3>}{item.datos?.map(([a, b]) => <p key={a}><b>{a}:</b> {b}</p>)}{item.texto?.map((line, i) => <p key={i}>{line}</p>)}{item.resenas?.map((review, i) => <blockquote key={i}>“{review}”</blockquote>)}{item.enlace && <a href={item.enlace.href} target="_blank" rel="noopener noreferrer">{item.enlace.label} ↗</a>}</article>)}
         </div>
       </Chapter>
