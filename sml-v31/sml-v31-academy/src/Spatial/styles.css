@@ -1123,3 +1123,9 @@ article.format-service-card::before,article.format-service-card::after{display:n
 .service-media img{display:block;width:100%;height:clamp(190px,34vw,390px);object-fit:cover;object-position:center 48%;filter:contrast(1.04) saturate(.94)}
 .service-media figcaption{padding:10px 13px;color:#c9ced6;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
 @media(max-width:680px){.service-media{margin:10px 0 20px}.service-media img{height:230px}.hero-context{max-width:34ch;font-size:14px;line-height:1.55}}
+
+/* Fotos verticales (formato móvil): se muestran completas, sin recortar como el resto de .service-media */
+.service-media--portrait{width:min(100%,340px)}
+.service-media--portrait img{height:auto;object-fit:contain;object-position:center}
+.founder-human--portrait{grid-template-columns:repeat(2,minmax(0,340px));justify-content:start;width:100%}
+.founder-human--portrait img{height:auto;object-fit:contain;object-position:center}

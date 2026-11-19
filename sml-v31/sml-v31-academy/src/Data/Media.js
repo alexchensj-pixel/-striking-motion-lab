@@ -66,12 +66,14 @@ export const poster = { boxeo: stillBoxeo, k1: stillK1, muayThai: stillMuayThai,
 // nunca como textura sobre la estructura: la nave sigue siendo 100% geometría real.
 export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef, credencialWako, credencialFekm };
 
-// Fotos reales de sesiones, método y competición. Viven en public/ y se sirven por ruta absoluta,
-// igual que las acreditaciones WAKO/FEKM. Para cambiar una, reemplaza el archivo en public/ (mismo nombre).
+// Fotos reales de sesiones, método y competición (WebP optimizado, ~20–130 KB cada una; los originales siguen en public/).
+// Viven en public/ y se sirven por ruta absoluta, igual que las acreditaciones WAKO/FEKM.
+// width/height reservan el hueco (sin saltos de layout) y fijan la proporción real de cada imagen.
+const foto = (src, width, height) => ({ src, width, height });
 export const fotosSesion = {
-  individual: ['/IMG_3493.jpeg', '/IMG_3476.jpeg'],
-  parejas: ['/IMG_3490.png'],
-  grupos: ['/IMG_3492.png', '/IMG_3488.png'],
-  metodologia: '/IMG_3489.png',
-  competicion: ['/IMG_3495.png', '/IMG_3491.png'],
+  individual: [foto('/IMG_3493.webp', 1037, 1600), foto('/IMG_3476.webp', 738, 907)],
+  parejas: [foto('/IMG_3490.webp', 738, 1600)],
+  grupos: [foto('/IMG_3492.webp', 738, 1600), foto('/IMG_3488.webp', 738, 1600)],
+  metodologia: foto('/IMG_3489.webp', 738, 1600),
+  competicion: [foto('/IMG_3495.webp', 738, 1600), foto('/IMG_3491.webp', 738, 1600)],
 };
