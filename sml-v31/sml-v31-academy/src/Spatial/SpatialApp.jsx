@@ -36,7 +36,7 @@ const credentialItems = [
   { id: 'wako', src: image.credencialWako, width: 900, height: 826, alt: 'Certificado oficial WAKO a nombre de CHEN HAN: 3.º puesto en K1, categoría -57 kg, en los I Juegos de Combate 2025 · Copa de España, club GK1 Team Trust Fitness Center', caption: '3.º puesto · K1 -57 kg · Juegos de Combate 2025 · Copa de España', eyebrow: 'RESULTADO DE COMPETICIÓN', stat: '3.º', detail: 'K1 · −57 KG', note: 'Juegos de Combate 2025 · Copa de España' },
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
-const SessionPhoto = ({ photo, alt, caption }) => <figure className="service-media service-media--portrait"><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
+const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
