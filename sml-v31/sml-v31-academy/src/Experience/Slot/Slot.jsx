@@ -168,6 +168,17 @@ export default function Slot() {
     <section className="tr__panel" id="tr-grupo" aria-label="Grupo reducido">
       <h3 className="tr__ph">GRUPO REDUCIDO</h3>
       <p className="tr__pt">{trainingUi.grupoTexto}</p>
+      <figure className="tr__grupoVideo" style={{ margin: '1.25rem 0', width: '100%' }}>
+        <video
+          controls
+          playsInline
+          preload="metadata"
+          style={{ display: 'block', width: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '12px', background: '#080808' }}
+          aria-label="Vídeo de entrenamiento en grupo reducido"
+        >
+          <source src="/ScreenRecording_optimized.mp4" type="video/mp4" />
+        </video>
+      </figure>
       <GrupoFinder onClose={() => setBuscando(false)} onPlanes={() => { setBuscando(false); irAPaso(PASO.resultado); }} frecuencia={n || undefined} />
     </section>
   );
