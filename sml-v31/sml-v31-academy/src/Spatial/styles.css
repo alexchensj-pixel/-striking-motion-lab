@@ -245,7 +245,7 @@ main{position:relative;z-index:2}
 .world { pointer-events: auto; }
 .world canvas { pointer-events: auto; touch-action: pan-y; }
 main { pointer-events: none; }
-main :is(a, button, input, select, textarea, [role="button"]) { pointer-events: auto; }
+main :is(a, button, input, select, textarea, video, audio, iframe, [role="button"]) { pointer-events: auto; }
 
 
 /* HOME hero refinement — applied to the immersive root actually built by Netlify. */
