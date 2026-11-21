@@ -42,7 +42,9 @@ export const EXPLORE_STACK_FY = 0.32;  // fracción del alto que ocupa el 3D en 
 export function exploreRegion(width, height) {
   const aspect = width / Math.max(height, 1);
   if (aspect >= EXPLORE_SPLIT_MIN_ASPECT) return { split: true, fx: EXPLORE_SPLIT_FX, fy: 1, cx: 1 - EXPLORE_SPLIT_FX / 2, cy: 0.5 };
-  return { split: false, fx: 1, fy: EXPLORE_STACK_FY, cx: 0.5, cy: EXPLORE_STACK_FY / 2 };
+  const viewportHeight = Math.max(height, 1);
+  const topInset = Math.min(86, viewportHeight * 0.14); // 70px mobile header + 16px clear space.
+  return { split: false, fx: 1, fy: EXPLORE_STACK_FY, cx: 0.5, cy: topInset / viewportHeight + EXPLORE_STACK_FY / 2 };
 }
 // Aspect de layout: en apaisado el 3D solo dispone del 60 % del ancho; en vertical conserva el aspect real de la pantalla
 // (el ancho manda, igual que antes: los tres se acercan entre sí — layoutK — para ganar tamaño).

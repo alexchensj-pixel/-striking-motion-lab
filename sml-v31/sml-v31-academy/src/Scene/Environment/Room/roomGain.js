@@ -10,7 +10,7 @@ const smooth = (x, a, b) => {
 // el hueco del fondo (03→04: 40 % → 80 %): antes se apagaba al empezar el umbral, con la cámara aún dentro de la sala. Mismo progreso de
 // scroll real que gobierna la cámara (determinista y reversible). No depende de la posición en Z ni añade estado.
 export function getRoomGain() {
-  const enter = scrollState.segments['character-select>asesoria-lab'] ?? 0;
+  const enter = scrollState.segments['entrada>asesoria-lab'] ?? 0;
   const leave = scrollState.segments['asesoria-lab>slot'] ?? 0;
   return smooth(enter, 0.15, 0.7) * (1 - smooth(leave, 0.4, 0.8));
 }

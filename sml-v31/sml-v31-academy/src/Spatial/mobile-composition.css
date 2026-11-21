@@ -1,0 +1,153 @@
+/* Mobile: restore natural document flow for AsesoriaLab.
+   Desktop spatial/sticky composition remains unchanged. */
+@media (max-width: 700px) {
+  #asesoria-lab.chapter--flow {
+    position: relative !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  #asesoria-lab.chapter--flow > .stage {
+    position: relative !important;
+    inset: auto !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  #asesoria-lab.chapter--flow .al__wrap {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: clamp(18px, 5vw, 28px);
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: max(28px, env(safe-area-inset-top)) clamp(18px, 5vw, 24px) max(36px, env(safe-area-inset-bottom));
+    overflow: visible !important;
+  }
+
+  #asesoria-lab.chapter--flow .al__head,
+  #asesoria-lab.chapter--flow .al__eval {
+    position: relative;
+    flex: none;
+    width: 100%;
+    max-width: 38rem;
+    margin: 0;
+  }
+
+  #asesoria-lab.chapter--flow .al__titular {
+    max-width: 22ch;
+    font-size: clamp(1.55rem, 7vw, 2.15rem);
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  #asesoria-lab.chapter--flow .al__eval {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  #asesoria-lab.chapter--flow .al__prodBody {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    overscroll-behavior: auto;
+  }
+
+  #asesoria-lab.chapter--flow .al__steps {
+    position: relative;
+    flex: none;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0;
+    padding: 0 0 8px;
+    overflow: visible !important;
+    overscroll-behavior: auto;
+  }
+
+  #asesoria-lab.chapter--flow .al__step {
+    overflow: visible;
+  }
+
+  #asesoria-lab.chapter--flow .al__stepHead {
+    min-height: 58px;
+    padding: 14px 0;
+    gap: 12px;
+  }
+
+  #asesoria-lab.chapter--flow .al__num {
+    flex: 0 0 2rem;
+    font-size: .8rem;
+  }
+
+  #asesoria-lab.chapter--flow .al__name {
+    font-size: clamp(1.12rem, 5vw, 1.38rem);
+    line-height: 1.08;
+  }
+
+  #asesoria-lab.chapter--flow .al__stepBody {
+    padding: 0 0 22px 2.75rem;
+    gap: 10px;
+  }
+
+  #asesoria-lab.chapter--flow .al__stepText {
+    max-width: 42ch;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  #asesoria-lab.chapter--flow .al__dots,
+  #asesoria-lab.chapter--flow .al__stepHl {
+    font-size: .9375rem;
+    line-height: 1.45;
+  }
+
+  #asesoria-lab.chapter--flow .al__evalCtas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #asesoria-lab.chapter--flow .al__cta {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  #asesoria-lab.chapter--flow .al__cierre {
+    flex: none;
+    margin: 14px 0 0;
+    font-size: clamp(1rem, 4.8vw, 1.25rem);
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 390px) {
+  #asesoria-lab.chapter--flow .al__wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Preserve the actual 3D lab on portrait screens: the section overlay must not flatten the world into a near-black panel. */
+@media (max-width: 700px) {
+  #asesoria-lab .method-section {
+    background: linear-gradient(180deg, rgba(7, 9, 13, 0.22), rgba(7, 9, 13, 0.34)) !important;
+  }
+
+  #asesoria-lab .method-section::before {
+    background: linear-gradient(180deg, rgba(7, 9, 13, 0.06), rgba(7, 9, 13, 0.16)) !important;
+  }
+}
