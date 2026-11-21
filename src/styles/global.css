@@ -493,8 +493,8 @@ dd { margin-top: .15rem; }
 }
 
 /* Vídeo local del personaje (solo en vertical: ver Explore.jsx#useStacked). Negro puro + mix-blend-mode: se funde con el fondo. */
-.ex__media { height: min(34svh, 20rem); margin: .8rem 0 .2rem; }
-.ex__media video { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; cursor: pointer; }
+.ex__media { height: min(34svh, 20rem); margin: .8rem 0 .2rem; overflow: hidden; border: 0; outline: 0; background: transparent; box-shadow: none; }
+.ex__media video { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; border: 0; outline: 0; border-radius: 0; box-shadow: none; background: transparent; appearance: none; -webkit-appearance: none; pointer-events: none; }
 
 @keyframes ex-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
