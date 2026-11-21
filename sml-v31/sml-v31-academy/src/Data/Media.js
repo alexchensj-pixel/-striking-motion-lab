@@ -18,6 +18,9 @@ import stillRoster from '../Assets/Images/roster-completo-poster.jpg';
 import heroLab from '../Assets/Images/hero-lab.jpg';
 import chenAzotea from '../Assets/Images/chen-azotea.jpg';
 import chenRing from '../Assets/Images/chen-ring.jpg';
+// Acreditaciones públicas: nombre visible; identificadores personales y datos sensibles ocultos.
+const credencialWako = '/wako-nombre-visible.jpg';
+const credencialFekm = '/fekm-nombre-visible.jpg';
 import bridgeHallRef from '../Assets/Images/bridge-hall-reference.jpg';
 
 // Caso real El Corte Inglés × agencia de viajes a Tailandia (material del evento, seleccionado y recortado: fotos 4:5 / 5:4,
@@ -61,4 +64,16 @@ export const poster = { boxeo: stillBoxeo, k1: stillK1, muayThai: stillMuayThai,
 // "bridgeHallRef" = foto de referencia real de la nave (pasarela central, columnas, galerías). Se usa
 // SOLO como telón de fondo lejano en BridgeHall.jsx (Z_FAR, detrás de toda la geometría 3D existente),
 // nunca como textura sobre la estructura: la nave sigue siendo 100% geometría real.
-export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef };
+export const image = { heroLab, chenAzotea, chenRing, bridgeHallRef, credencialWako, credencialFekm };
+
+// Fotos reales de sesiones, método y competición (WebP optimizado, ~20–130 KB cada una; los originales siguen en public/).
+// Viven en public/ y se sirven por ruta absoluta, igual que las acreditaciones WAKO/FEKM.
+// width/height reservan el hueco (sin saltos de layout) y fijan la proporción real de cada imagen.
+const foto = (src, width, height) => ({ src, width, height });
+export const fotosSesion = {
+  individual: [foto('/IMG_3493.webp', 1037, 1600), foto('/IMG_3476.webp', 738, 907)],
+  parejas: [foto('/IMG_3658-parejas.webp', 600, 669)],
+  grupos: [foto('/IMG_3492.webp', 738, 1600), foto('/IMG_3488.webp', 738, 1600)],
+  metodologia: foto('/IMG_3493.webp', 1037, 1600),
+  competicion: [foto('/IMG_3495.webp', 738, 1600), foto('/IMG_3491.webp', 738, 1600)],
+};

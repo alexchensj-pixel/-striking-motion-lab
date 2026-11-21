@@ -3,7 +3,7 @@
 // Privacidad: `agregar()` es lo ÚNICO que sale hacia el público. Nunca incluye nombre ni contacto.
 
 export const CAPACIDAD = 4;
-export const ZONAS = ['centro','chamberi','salamanca','retiro','moncloa','tetuan','chamartin','prosperidad','ventas','ciudad-lineal','hortaleza','fuencarral','arganzuela','latina','carabanchel','usera','vallecas','moratalaz'];
+export const ZONAS = ['villaverde','villa-vallecas','carabanchel','usera','puente-vallecas','latina','arganzuela','vicalvaro','moratalaz','retiro','centro','ciudad-lineal','metropolitano','moncloa','salamanca','chamberi','chamartin','tetuan','barajas','hortaleza','fuencarral','parque-roma'];
 export const DIAS = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
 export const HORAS = Array.from({ length: 15 }, (_, i) => `${String(i + 7).padStart(2, '0')}:00`); // 07:00 – 21:00
 export const FRECUENCIAS = [1, 2, 3];
