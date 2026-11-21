@@ -11,7 +11,7 @@ import './Spatial/mobile-composition.css';
 const MiSML = lazy(() => import('./Client/MiSML.jsx'));
 
 // Rutas legales (/privacidad, /aviso-legal): páginas independientes, sin canvas 3D. Netlify ya sirve index.html para cualquier ruta (netlify.toml).
-const ruta = window.location.pathname.replace(/\\/+$/, '') || '/';
+const ruta = window.location.pathname.replace(/\/+$/, '') || '/';
 const legalTipo = ruta === RUTAS.privacidad ? 'privacidad' : ruta === RUTAS.aviso ? 'aviso' : null;
 const esMiSML = ruta === '/mi-sml' || ruta.startsWith('/mi-sml/');
 
@@ -28,3 +28,4 @@ createRoot(document.getElementById('root')).render(
       : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
   </React.StrictMode>
 );
+'
