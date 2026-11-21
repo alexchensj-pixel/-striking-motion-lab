@@ -211,25 +211,42 @@ function DisciplineDetail({ discipline: d, stacked, onReset }) {
 // Un único pase silencioso; el fotograma fijo (poster) se queda si el móvil bloquea el autoplay. Un toque lo repite.
 function DisciplineMedia({ discipline: d, label }) {
   const ref = useRef(null);
-  const replay = () => {
+
+  useEffect(() => {
     const v = ref.current;
-    if (!v) return;
-    v.currentTime = 0;
-    const p = v.play();
-    if (p && p.catch) p.catch(() => {});
-  };
+    if (!v) return undefined;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    v.loop = true;
+
+    if (!prefersReducedMotion) {
+      const start = () => {
+        const playPromise = v.play();
+        if (playPromise?.catch) playPromise.catch(() => {});
+      };
+      if (v.readyState >= 2) start();
+      else v.addEventListener('canplay', start, { once: true });
+      return () => v.removeEventListener('canplay', start);
+    }
+    return undefined;
+  }, [d.video]);
+
   return (
     <div className="ex__media" role="group" aria-label={label}>
       <video
         ref={ref}
         src={d.video}
         poster={d.poster}
-        muted
-        playsInline
-        preload="metadata"
         autoPlay={!prefersReducedMotion}
-        onClick={replay}
-        aria-label={`${d.name}: vídeo del personaje (toca para repetir)`}
+        muted
+        loop
+        playsInline
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        disableRemotePlayback
+        aria-label={`${d.name}: vídeo`}
       />
     </div>
   );
