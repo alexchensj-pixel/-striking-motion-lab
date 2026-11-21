@@ -28,4 +28,3 @@ createRoot(document.getElementById('root')).render(
       : legalTipo ? <LegalPage tipo={legalTipo} /> : <App />}
   </React.StrictMode>
 );
-'
