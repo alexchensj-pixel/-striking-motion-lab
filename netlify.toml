@@ -1,4 +1,5 @@
 [build]
+  base = "."
   command = "npm run build"
   publish = "dist"
 
@@ -13,7 +14,7 @@
   to = "/.netlify/functions/grupos"
   status = 200
 
-# MI SML · API privada (valida la sesión de Auth0). El comodín deja que la función responda 404 JSON a otras rutas /api/mi-sml/*.
+# MI SML — API privada (valida la sesión de Auth0). El comodín deja que la función responda 404 JSON a otras rutas /api/mi-sml/*.
 [[redirects]]
   from = "/api/mi-sml/me"
   to = "/.netlify/functions/mi-sml-me"
