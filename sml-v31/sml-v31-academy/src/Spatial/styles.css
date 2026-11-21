@@ -1145,3 +1145,8 @@ article.format-service-card::before,article.format-service-card::after{display:n
 .service-video{width:min(100%,760px);max-width:100%;margin:18px auto 26px;padding:0;overflow:visible;aspect-ratio:auto;background:transparent;border:0}
 .service-video video{display:block;width:100%;height:auto;max-height:none;aspect-ratio:auto;object-fit:contain;background:#080808;border-radius:12px}
 @media(max-width:680px){.service-video{width:100%;margin:14px auto 22px;padding:0 12px;box-sizing:border-box}.service-video video{width:100%;height:auto;max-height:none;object-fit:contain}}
+
+/* Clean autoplay footage: no native controls, frame, rounded card, or caption. */
+.service-video{display:block;width:100%;max-width:100%;margin:18px 0 26px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;aspect-ratio:auto}
+.service-video video{display:block;width:100%;height:auto;max-width:100%;max-height:none;margin:0;padding:0;border:0;border-radius:0;outline:0;box-shadow:none;object-fit:contain;object-position:center;background:transparent;aspect-ratio:auto}
+@media(max-width:680px){.service-video{width:100%;margin:14px 0 22px;padding:0}.service-video video{width:100%;height:auto;max-height:none;border-radius:0;object-fit:contain}}
