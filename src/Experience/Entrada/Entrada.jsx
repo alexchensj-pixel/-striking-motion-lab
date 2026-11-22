@@ -104,6 +104,7 @@ export default function Entrada() {
           <div className="ent__actions">
             <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>{hero.ctaReservar}</button>
             <div className="ent__links">
+              <button type="button" className="ent__b2bLink" onClick={() => goToSection('asesoria-lab')}>{hero.ctaMetodo}</button>
               <button type="button" className="ent__b2bLink" onClick={() => goToSection('training')}>{hero.ctaPrecios}</button>
               <button type="button" className="ent__b2bLink" onClick={() => goToSection('training')}>{hero.ctaGrupos}</button>
               <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>{hero.ctaB2B}</button>
