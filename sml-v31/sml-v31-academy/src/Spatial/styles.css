@@ -1150,3 +1150,14 @@ article.format-service-card::before,article.format-service-card::after{display:n
 .service-video{display:block;width:100%;max-width:100%;margin:18px 0 26px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;aspect-ratio:auto}
 .service-video video{display:block;width:100%;height:auto;max-width:100%;max-height:none;margin:0;padding:0;border:0;border-radius:0;outline:0;box-shadow:none;object-fit:contain;object-position:center;background:transparent;aspect-ratio:auto}
 @media(max-width:680px){.service-video{width:100%;margin:14px 0 22px;padding:0}.service-video video{width:100%;height:auto;max-height:none;border-radius:0;object-fit:contain}}
+
+
+/* Conversion clarity: keep the first reservation action above credentials and expose group logistics clearly. */
+.hero .hero-actions { margin-top: 16px; }
+.hero-credential-proof { width: min(100%, 680px); margin-top: 18px; }
+.hero-credential-proof__label { margin: 0 0 8px; color: #f08a62; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+.group-schedule { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; margin: 16px 0; }
+.group-schedule p { display: flex; flex-direction: column; gap: 5px; margin: 0; padding: 14px; border-left: 2px solid var(--orange); background: rgba(255,255,255,.045); }
+.group-schedule strong { color: #fff; font-size: 13px; line-height: 1.4; }
+.group-schedule span { color: #c8cdd5; font-size: 13px; line-height: 1.45; }
+@media (max-width: 680px) { .hero-credential-proof { margin-top: 14px; } .group-schedule { grid-template-columns: 1fr; } }
