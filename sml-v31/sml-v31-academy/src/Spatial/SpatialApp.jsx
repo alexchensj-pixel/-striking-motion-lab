@@ -144,11 +144,6 @@ function App() {
     setActiveService(id);
     window.history.replaceState(null, '', `#${id}`);
   };
-  const serviceTabs = [
-    { id: 'grupos', label: 'Grupos reducidos', detail: 'Hasta 4 · por zona' },
-    { id: 'parejas', label: 'Parejas', detail: 'Entrenad juntos' },
-    { id: 'individual', label: '1:1', detail: 'Atención individual' },
-  ];
 
   return <>
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
@@ -248,11 +243,20 @@ function App() {
         <p className="pricing-social" aria-label="Valoración en Google: 5,0 estrellas y 18 reseñas">{site.rating.valor.replace('.', ',')} ★ · {site.rating.resenas} reseñas</p>
         <p className="lead">Muay Thai, boxeo, kickboxing y K1 en Madrid. Entrenamiento 1:1, en pareja o en grupos de hasta cuatro personas.</p>
         <div className="pricing-followup"><span>NO ES SOLO UNA SESIÓN. ES UN PROCESO.</span><p>El trabajo continúa entre sesiones: Arsenal consolida la técnica, Striker añade planificación y biblioteca personalizada, y Fight IQ incorpora estrategia y preparación específica. No compras solo horas de entrenamiento: sigues un proceso con dirección y objetivos.</p></div>
-        <nav className="pricing-tabs" role="tablist" aria-label="Tipo de entrenamiento">
-          {serviceTabs.map((tab) => <a key={tab.id} id={`tab-${tab.id}`} href={`#${tab.id}`} role="tab" aria-selected={activeService === tab.id} aria-controls="service-pricing-panel" className={`pricing-tab ${activeService === tab.id ? 'is-active' : ''}`} onClick={(event) => { event.preventDefault(); chooseService(tab.id); }}>
-            <strong>{tab.label}</strong><span>{tab.detail}</span>
-          </a>)}
-        </nav>
+        <div className="pricing-format-chooser">
+          <div className="pricing-format-intro"><span className="eyebrow">03 / CLASES</span><h3>Elige cómo entrenar.</h3><p>Entrenamiento adaptado a tu nivel, objetivo y disponibilidad.</p><a href="#service-pricing-panel" onClick={(event) => { event.preventDefault(); document.getElementById('service-pricing-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Ver formatos y precios <span aria-hidden="true">↗</span></a></div>
+          <nav className="pricing-tabs pricing-format-cards" role="tablist" aria-label="Tipo de entrenamiento">
+            <button type="button" id="tab-grupos" role="tab" aria-selected={activeService === 'grupos'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'grupos' ? 'is-active' : ''}`} onClick={() => chooseService('grupos')}>
+              <span className="pricing-format-image"><img src="/Grupo_parejas_poster.jpg" alt="" loading="lazy"/><span className="pricing-format-play" aria-hidden="true">▶</span></span><span className="pricing-format-copy"><strong>Grupos reducidos</strong><small>Hasta 4 personas</small></span>
+            </button>
+            <button type="button" id="tab-parejas" role="tab" aria-selected={activeService === 'parejas'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'parejas' ? 'is-active' : ''}`} onClick={() => chooseService('parejas')}>
+              <span className="pricing-format-image"><img src={fotosSesion.parejas[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>Parejas</strong><small>Entrena junto a otra persona</small></span>
+            </button>
+            <button type="button" id="tab-individual" role="tab" aria-selected={activeService === 'individual'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'individual' ? 'is-active' : ''}`} onClick={() => chooseService('individual')}>
+              <span className="pricing-format-image"><img src={fotosSesion.individual[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>1:1</strong><small>Atención individual</small></span>
+            </button>
+          </nav>
+        </div>
         <div id="service-pricing-panel" className="pricing-tab-panel" role="tabpanel" aria-labelledby={`tab-${activeService}`}>
           {activeService === 'individual' && <>
             {entrenamientoMedia.sala?.poster && <figure className="service-media"><img src={entrenamientoMedia.sala.poster} alt="Entrenamiento privado: trabajo técnico de golpeo y corrección individual" loading="eager"/><figcaption>Trabajo técnico individual · Sesiones privadas</figcaption></figure>}

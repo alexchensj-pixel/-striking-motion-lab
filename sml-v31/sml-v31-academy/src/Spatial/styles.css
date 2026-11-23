@@ -1535,3 +1535,46 @@ article.format-service-card::before,article.format-service-card::after{display:n
  }
  .spatial-chapter--entry .hero > :not(.hero-photo) { z-index:2; }
 }
+
+
+/* SPATIAL CLASS SELECTOR — real SML footage and photography inside the existing architectural chapter. */
+.pricing-format-chooser{position:relative;display:grid;grid-template-columns:minmax(190px,.78fr) minmax(0,2.22fr);align-items:center;gap:clamp(20px,3vw,44px);margin:34px 0 30px;padding:22px 0 28px;border-top:1px solid rgba(191,205,222,.24);border-bottom:1px solid rgba(191,205,222,.2);isolation:isolate}
+.pricing-format-chooser:before,.pricing-format-chooser:after{content:"";position:absolute;pointer-events:none;z-index:-1}
+.pricing-format-chooser:before{inset:0;background:linear-gradient(90deg,rgba(8,11,17,.78),rgba(8,11,17,.34) 48%,rgba(8,11,17,.62));box-shadow:0 22px 60px rgba(0,0,0,.2)}
+.pricing-format-chooser:after{left:0;right:0;bottom:-2px;height:2px;background:linear-gradient(90deg,transparent,rgba(224,90,43,.7),rgba(224,90,43,.08),transparent);filter:drop-shadow(0 0 8px rgba(224,90,43,.75))}
+.pricing-format-intro{min-width:0;padding:0 0 0 2px}
+.pricing-format-intro .eyebrow{display:block;margin:0 0 12px;color:#e47750;font-size:11px;letter-spacing:.2em;font-weight:800}
+.pricing-format-intro h3{margin:0 0 12px;color:#f3f2ef;font-family:'Barlow Condensed',sans-serif;font-size:clamp(27px,3vw,42px);font-weight:800;line-height:.98;max-width:10ch}
+.pricing-format-intro p{margin:0 0 16px;color:#c8cdd5;font-size:14px;line-height:1.5;max-width:30ch}
+.pricing-format-intro>a{display:inline-flex;align-items:center;gap:10px;color:#f5f2ed;text-decoration:none;text-transform:uppercase;font-size:12px;font-weight:800;letter-spacing:.09em;border-bottom:1px solid rgba(224,90,43,.8);padding:8px 0}
+.pricing-format-intro>a span{color:#f07848;font-size:18px;transition:transform .25s ease}
+.pricing-format-intro>a:hover span{transform:translate(3px,-3px)}
+.pricing-format-cards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0!important;padding:0!important;border:0!important;background:transparent!important}
+.pricing-format-card{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;padding:0!important;overflow:hidden;text-align:left;color:#f4f2ee;background:linear-gradient(155deg,rgba(29,34,43,.9),rgba(7,9,13,.96))!important;border:1px solid rgba(190,199,211,.42)!important;border-radius:12px!important;box-shadow:0 12px 30px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.07);text-decoration:none;cursor:pointer;transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease,background .35s ease}
+.pricing-format-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.72)!important;box-shadow:0 18px 36px rgba(0,0,0,.4),0 0 18px rgba(224,90,43,.12)}
+.pricing-format-card.is-active{border:2px solid #f07836!important;box-shadow:0 0 0 1px rgba(255,139,75,.28),0 0 12px rgba(255,104,35,.6),0 0 32px rgba(224,90,43,.28),inset 0 0 24px rgba(224,90,43,.08);background:linear-gradient(155deg,rgba(67,36,25,.82),rgba(9,11,15,.98))!important}
+.pricing-format-image{position:relative;display:block;width:100%;aspect-ratio:1.55/1;overflow:hidden;background:#080a0e}
+.pricing-format-image:after{content:"";position:absolute;inset:30% 0 0;background:linear-gradient(180deg,transparent,rgba(4,6,10,.78))}
+.pricing-format-image img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 44%;filter:saturate(.82) contrast(1.04);transition:transform .65s cubic-bezier(.2,.7,.2,1),filter .4s ease}
+.pricing-format-card:hover .pricing-format-image img,.pricing-format-card.is-active .pricing-format-image img{transform:scale(1.045);filter:saturate(1) contrast(1.06)}
+.pricing-format-play{position:absolute;z-index:1;left:50%;top:50%;display:grid;place-items:center;width:36px;height:36px;padding-left:2px;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.75);border-radius:50%;background:rgba(5,8,12,.55);color:#fff;font-size:13px;backdrop-filter:blur(6px)}
+.pricing-format-copy{display:flex;flex:1;flex-direction:column;justify-content:center;gap:4px;min-width:0;padding:12px 14px 14px}
+.pricing-format-copy strong{font-size:clamp(13px,1.25vw,17px);font-weight:750;line-height:1.2}
+.pricing-format-copy small{color:#c1c5cc;font-size:12px;line-height:1.35;font-weight:450;letter-spacing:0}
+.pricing-format-card.is-active .pricing-format-copy small{color:#e6c0ad}
+.pricing-format-card:focus-visible{outline:2px solid #ff8a4b;outline-offset:4px}
+.pricing-tab-panel{scroll-margin-top:90px}
+@media(max-width:760px){
+ .pricing-format-chooser{grid-template-columns:1fr;gap:16px;margin:24px 0 24px;padding:18px 0 22px}
+ .pricing-format-intro h3{max-width:none;font-size:34px}
+ .pricing-format-intro p{max-width:36ch;margin-bottom:8px}
+ .pricing-format-cards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .pricing-format-card{border-radius:9px!important}
+ .pricing-format-image{aspect-ratio:1.05/1}
+ .pricing-format-copy{padding:9px 8px 11px;gap:4px}
+ .pricing-format-copy strong{font-size:12px;line-height:1.15}
+ .pricing-format-copy small{font-size:10px;line-height:1.25}
+ .pricing-format-play{width:30px;height:30px;font-size:11px}
+}
+@media(max-width:390px){.pricing-format-cards{gap:6px}.pricing-format-copy{padding:8px 6px}.pricing-format-copy strong{font-size:11px}.pricing-format-copy small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.pricing-format-card,.pricing-format-image img,.pricing-format-intro>a span{transition:none!important}}
