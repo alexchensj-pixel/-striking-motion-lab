@@ -29,8 +29,8 @@ const navItems = [
 ];
 const chapterTarget = { inicio: 'entrada', metodo: 'asesoria-lab', entrenamiento: 'slot', alex: 'proof-chen', reserva: 'reserva', empresas: 'empresas' };
 const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot: 'entrenamiento', 'proof-chen': 'alex', reserva: 'reserva' };
-const spatialHeroTitle = ['Entrena con metodología de competición.', 'Aprende a golpear con criterio.'];
-const spatialHeroContext = 'Observación técnica, análisis individual y entrenamiento adaptado a tus objetivos. Aprende a moverte, golpear y defenderte con un proceso diseñado alrededor de ti.';
+const spatialHeroTitle = ['Aprende Muay Thai, boxeo y K1 en Madrid.'];
+const spatialHeroContext = 'Entrenamiento personalizado para empezar desde cero, mejorar tu técnica y ponerte en forma. Sesiones individuales, en pareja y en grupos reducidos.';
 const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
 const credentialItems = [
   { id: 'wako', src: image.credencialWako, width: 900, height: 826, alt: 'Certificado oficial WAKO a nombre de CHEN HAN: 3.º puesto en K1, categoría -57 kg, en los I Juegos de Combate 2025 · Copa de España, club GK1 Team Trust Fitness Center', caption: '3.º puesto · K1 -57 kg · Juegos de Combate 2025 · Copa de España', eyebrow: 'RESULTADO DE COMPETICIÓN', stat: '3.º', detail: 'K1 · −57 KG', note: 'Juegos de Combate 2025 · Copa de España' },
@@ -189,14 +189,13 @@ function App() {
               <button className="secondary-cta" type="button" onClick={() => go('metodo')}>CONOCER EL MÉTODO ↓</button>
             </div>
             <div className="hero-quicklinks">
-              <button type="button" onClick={() => go('entrenamiento')}>VER PRECIOS</button>
-              <span>·</span>
+              <button type="button" onClick={() => go('entrenamiento')}>VER PRECIOS</button><span>·</span>
               <button type="button" onClick={() => { chooseService('grupos'); go('entrenamiento'); }}>GRUPOS Y HORARIOS</button>
             </div>
             <div className="hero-card-rule hero-card-rule--bottom" />
             <p className="hero-card-footer">TÉCNICA <i>·</i> ANÁLISIS <i>·</i> PROGRESIÓN</p>
           </div>
-        </div>
+        </div>  </div>
       </Chapter>
 
       <Threshold from="entrada" to="asesoria-lab" />
@@ -312,7 +311,11 @@ function App() {
           {activeService === 'grupos' && <>
             <div className="service-video"><video autoPlay muted loop playsInline webkit-playsinline="true" preload="auto" poster="/Grupo_parejas_poster.jpg" aria-label="Vídeo de entrenamiento al aire libre en grupo reducido"><source src="/Grupo_parejas_12s_safari.mp4" type="video/mp4" /></video></div>
             <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO EN EQUIPO</p><h3 className="subsection-title">Grupo reducido.</h3></div><p>Entrenamiento compartido, con atención técnica y un máximo de cuatro personas.</p></div>
-            <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article>
+            <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">1 día/semana: 55 €/mes · 2 días/semana: 95 €/mes</p>
+              <div className="group-schedule" aria-label="Horarios de grupos">
+                <p><strong>Sábados y domingos · 10:00–11:00</strong><span>Estadio Metropolitano</span></p>
+                <p><strong>Sábados y domingos · 11:00–12:00</strong><span>Parque de Roma · Metro Sainz de Baranda</span></p>
+              </div><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article>
             <SessionPhoto photo={fotosSesion.grupos[1]} alt="Entrenamiento en grupo reducido con atención técnica" caption="Entrenamiento en grupo · Atención técnica" framing="wide" />
           </>}
         </div>
