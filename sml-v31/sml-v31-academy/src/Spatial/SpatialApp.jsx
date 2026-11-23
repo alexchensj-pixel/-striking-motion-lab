@@ -379,7 +379,7 @@ function App() {
                   <div><span className="method-pillar-icon">⌁</span><strong>Multidisciplinar</strong><small>Boxeo · K1 · Muay Thai</small></div>
                   <div><span className="method-pillar-icon">⌖</span><strong>Análisis</strong><small>Del movimiento</small></div>
                   <div><span className="method-pillar-icon">◇</span><strong>Corrección</strong><small>Personalizada</small></div>
-                  <div><span className="method-pillar-icon">↗</span><strong>Progreso</strong><small>Medible</small></div>
+                  <div><span className="method-pillar-icon">↗︎</span><strong>Progreso</strong><small>Medible</small></div>
                 </div>
               </header>
 
