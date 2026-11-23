@@ -29,6 +29,6 @@ createRoot(document.getElementById('root')).render(
     {esMiSML
       ? <Suspense fallback={null}><MiSML /></Suspense>
       : esAcademia ? <Suspense fallback={null}><Academia /></Suspense>
-      : legalTipo ? <LegalPage tipo={legalTipo} /> : ruta === '/' ? <Suspense fallback={null}><SpatialApp /></Suspense> : <AppOriginal />}
+      : legalTipo ? <LegalPage tipo={legalTipo} /> : <AppOriginal />}
   </React.StrictMode>
 );
