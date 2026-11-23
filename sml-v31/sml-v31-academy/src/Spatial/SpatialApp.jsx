@@ -175,17 +175,19 @@ function App() {
         <p className="hero-overline">{hero.kicker}</p>
         <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < hero.titulo.length - 1 && <br/>}</React.Fragment>)}</h1>
         <p className="hero-context">{spatialHeroContext}</p>
+        <p className="hero-start-note">¿Empiezas desde cero? No necesitas experiencia previa. Entrenamos desde tu nivel y llevo el material.</p>
+        <p className="hero-offer">Sesiones individuales · Parejas · Grupos reducidos de hasta 4</p>
+        <div className="hero-actions">
+          <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>Reservar evaluación · 30 €</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
+          <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método</button>
+        </div>
+        <p className="hero-cta-note">Sesión privada de evaluación. Si contratas un plan mensual, descontamos los 30 € del primer mes.</p>
+        <div className="hero-proof">{hero.confianza}</div>
+        <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
         <div className="hero-credential-proof">
           <p className="hero-credential-proof__label">ACREDITACIONES · WAKO / FEKM</p>
           <CredentialGallery items={credentialItems} />
         </div>
-        <p className="hero-offer">Sesiones individuales · Parejas · Grupos reducidos de hasta 4</p>
-        <div className="hero-actions">
-          <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
-          <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método</button>
-        </div>
-        <div className="hero-proof">{hero.confianza}</div>
-        <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
         <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
         </div>
       </Chapter>

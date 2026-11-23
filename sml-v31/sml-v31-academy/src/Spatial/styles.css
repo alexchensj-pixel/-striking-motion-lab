@@ -1150,3 +1150,20 @@ article.format-service-card::before,article.format-service-card::after{display:n
 .service-video{display:block;width:100%;max-width:100%;margin:18px 0 26px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible;aspect-ratio:auto}
 .service-video video{display:block;width:100%;height:auto;max-width:100%;max-height:none;margin:0;padding:0;border:0;border-radius:0;outline:0;box-shadow:none;object-fit:contain;object-position:center;background:transparent;aspect-ratio:auto}
 @media(max-width:680px){.service-video{width:100%;margin:14px 0 22px;padding:0}.service-video video{width:100%;height:auto;max-height:none;border-radius:0;object-fit:contain}}
+
+
+/* HERO CONVERSION — preserve the spatial composition; bring the first action before credential proof. */
+.hero-start-note{position:relative;z-index:2;max-width:54ch;margin:6px 0 2px;color:#f1f2f4;font-size:clamp(13px,1.1vw,15px);line-height:1.55}
+.hero-cta-note{position:relative;z-index:2;max-width:48ch;margin:2px 0 8px;color:#c9ced6;font-size:11px;line-height:1.5;letter-spacing:.015em}
+.hero-credential-proof{margin-top:34px}
+@media(max-width:760px){
+  .hero.journey-section{justify-content:flex-start;min-height:92svh;padding:112px 24px 70px;gap:9px}
+  .hero-start-note{font-size:13px;line-height:1.5;max-width:38ch}
+  .hero-offer{margin:8px 0 0;font-size:12px;line-height:1.5}
+  .hero-actions{margin:12px 0 2px;width:100%;max-width:100%;grid-template-columns:1fr;gap:8px}
+  .hero-actions .primary-cta{min-height:54px;font-size:11px}
+  .hero-actions .secondary-cta{min-height:46px}
+  .hero-cta-note{font-size:10px;margin:0 0 4px}
+  .hero-quicklinks{margin-top:8px;gap:8px 16px}
+  .hero-credential-proof{margin-top:28px;width:100%}
+}
