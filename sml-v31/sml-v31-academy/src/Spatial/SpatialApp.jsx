@@ -37,7 +37,7 @@ const credentialItems = [
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
 const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
-const methodStepMedia = [null, { video: '/method-movement.mp4', poster: '/method-movement-poster.webp', src: '/method-movement-poster.webp', width: 512, height: 848 }, null, null];
+const methodStepMedia = [null, { video: '/Striking_Motion_Lab_Analisis_Movimiento.mov', poster: '/method-movement-poster.webp', src: '/method-movement-poster.webp', width: 512, height: 848 }, null, null];
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
