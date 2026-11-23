@@ -37,6 +37,7 @@ const credentialItems = [
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
 const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
+const methodStepMedia = [fotosSesion.grupos[1], fotosSesion.individual[1], fotosSesion.competicion[0], fotosSesion.parejas[0]];
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
@@ -83,7 +84,7 @@ function App() {
   const [activeService, setActiveService] = useState('grupos');
   const [activeMethodIndex, setActiveMethodIndex] = useState(0);
   const handleMethodProgress = (progress) => {
-    const nextStep = Math.min(4, Math.floor(Math.max(0, Math.min(0.999, progress)) * 5));
+    const nextStep = Math.min(3, Math.floor(Math.max(0, Math.min(0.999, progress)) * 4));
     setActiveMethodIndex((current) => current === nextStep ? current : nextStep);
   };
   const [bookingVisible, setBookingVisible] = useState(false);
@@ -366,35 +367,48 @@ function App() {
       </> : <>
         <div className="method-view-controls"><button type="button" onClick={() => { setShowMethod(false); setActive("inicio"); requestAnimationFrame(() => window.scrollTo({ top: methodReturnScroll.current, behavior: "instant" })); }}>← Volver al recorrido</button></div>
         <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
-      <div id="metodo" className="method-section journey-section">
-        <div className="method-stage">
-          <div className="method-copy">
-            <p className="eyebrow">UN PROCESO PERSONAL</p>
-            <h2>{advisorySubstages[0].titular.map((line, i) => <React.Fragment key={line}>{line}{i === 0 && <br/>}</React.Fragment>)}</h2>
-            <div className="method-evaluation">
-              <span>{evaluacionInicial.kickerMetodo}</span>
-              <div className="method-evaluation-title"><h3>{evaluacionInicial.titulo}</h3><small className="method-evaluation-price">Primera evaluación · {evaluacionInicial.precio}</small></div>
-              <p className="method-evaluation-note">{spatialEvaluationText}</p>
-              <p className="method-material-note">No necesitas comprar nada para empezar. Si no tienes material, lo llevo yo.</p>
-              <p className="method-evaluation-terms">{evaluacionInicial.nota}</p>
-              <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span></a>
-              <p className="method-cta-note">Sin permanencia en los planes.</p>
-              <button className="text-link" type="button" aria-expanded={showMore} onClick={() => setShowMore((value) => !value)}>{showMore ? 'Cerrar información −' : `${evaluacionInicial.ctaMas} +`}</button>
-              {showMore && <ul>{evaluacionInicial.mas.map(([a, b]) => <li key={a}><b>{a}:</b> {b}</li>)}</ul>}
-              {showMore && <SessionPhoto photo={fotosSesion.metodologia} alt="Apoyo visual del método de trabajo de Striking Motion Lab" caption="Método de trabajo · Apoyo visual" />}
+          <div id="metodo" className="method-section journey-section">
+            <div className="method-stage">
+              <header className="method-intro">
+                <div className="method-intro-copy">
+                  <p className="eyebrow">EL MÉTODO <span>— CICLO DE APRENDIZAJE</span></p>
+                  <h2>UN ENTRENAMIENTO QUE <em>EVOLUCIONA CONTIGO.</em></h2>
+                  <p className="method-lead">Técnica, análisis y progreso real. Un proceso estructurado para que aprendas, mejores tu técnica y desarrolles tus capacidades.</p>
+                </div>
+                <div className="method-pillars" aria-label="Pilares del método">
+                  <div><span className="method-pillar-icon">⌁</span><strong>Multidisciplinar</strong><small>Boxeo · K1 · Muay Thai</small></div>
+                  <div><span className="method-pillar-icon">⌖</span><strong>Análisis</strong><small>Del movimiento</small></div>
+                  <div><span className="method-pillar-icon">◇</span><strong>Corrección</strong><small>Personalizada</small></div>
+                  <div><span className="method-pillar-icon">↗</span><strong>Progreso</strong><small>Medible</small></div>
+                </div>
+              </header>
+
+              <div className="method-journey-heading"><span>01 — 04</span><p>EL CICLO DE APRENDIZAJE</p><span>STRIKING MOTION LAB / MADRID</span></div>
+              <div className="method-journey">
+                {advisorySubstages.slice(1, 5).map((step, i) => {
+                  const media = methodStepMedia[i];
+                  return <article className={`method-step ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
+                    <button className="method-step-copy" type="button" aria-expanded={activeMethodIndex === i} onClick={() => setActiveMethodIndex(i)}>
+                      <span className="method-step-number">{step.num}</span>
+                      <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
+                      <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
+                    </button>
+                    <figure className="method-step-visual"><img src={media.src} width={media.width} height={media.height} alt={['Entrenamiento técnico en grupo reducido','Trabajo individual de técnica y movimiento','Entrenamiento de combate y aplicación técnica','Entrenamiento compartido y aprendizaje continuo'][i]} loading="lazy" decoding="async"/><span className="method-image-index">SML / 0{i + 1}</span></figure>
+                  </article>;
+                })}
+              </div>
+
+              <div className="method-closing-panel"><p>MUCHO MÁS QUE ENTRENAR</p><h3>No solo entrenas. <span>Entiendes qué estás desarrollando.</span></h3><small>Aprende, comprende tu movimiento y construye tu propia evolución.</small></div>
+
+              <section className="method-booking" aria-label="Reserva de evaluación inicial">
+                <div className="method-booking-copy"><span>{evaluacionInicial.kickerMetodo}</span><h3>EVALUACIÓN<br/>INICIAL</h3><p>{spatialEvaluationText}</p></div>
+                <div className="method-booking-details"><strong>Primera sesión privada · {evaluacionInicial.precio}</strong><ul><li>Valoración de tu nivel y experiencia</li><li>Observación técnica y objetivos</li><li>{evaluacionInicial.nota}</li></ul><p>No necesitas comprar material. Si no tienes, lo llevo yo.</p></div>
+                <div className="method-booking-action"><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>RESERVAR EVALUACIÓN · 30 € ↗</span></a><small>Sin permanencia · Primera sesión privada</small></div>
+              </section>
+              <span className="method-coordinate">SML / METHOD — {String(activeMethodIndex + 1).padStart(2, '0')} : 04</span>
             </div>
           </div>
-          <div className="method-stations" aria-label="Cinco pasos del método">
-            {advisorySubstages.slice(1).map((step, i) => <button type="button" className={activeMethodIndex === i ? 'method-station active' : 'method-station'} key={step.id} aria-current={activeMethodIndex === i ? 'step' : undefined} onClick={() => { const section = document.getElementById('asesoria-lab'); if (section) { const travel = section.offsetHeight - window.innerHeight; window.scrollTo({ top: section.offsetTop + travel * ((i + .5) / 5), behavior: 'smooth' }); } }}>
-              <span className="station-number">{step.num}</span><span className="station-content"><strong>{step.n}</strong>{activeMethodIndex === i && <><span className="station-description">{step.texto}</span>{step.elementos && <span className="station-tags">{step.elementos.join(' · ')}</span>}{step.destacada && <span className="station-highlight">{step.destacada}</span>}</>}</span>
-              {step.etiqueta && activeMethodIndex !== i && <small>{step.etiqueta}</small>}
-            </button>)}
-            <p className="method-closing">No solo entrenas. <span>Entiendes qué estás desarrollando.</span></p>
-          </div>
-          <span className="method-coordinate">LAB / 03 — {String(activeMethodIndex + 1).padStart(2, '0')} : 05</span>
-        </div>
-        </div>
-      </Chapter>
+        </Chapter>
       </>}
     </main>
 
