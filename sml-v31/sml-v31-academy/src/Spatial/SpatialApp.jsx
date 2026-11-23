@@ -37,7 +37,7 @@ const credentialItems = [
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
 const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
-const methodStepMedia = [fotosSesion.grupos[1], fotosSesion.individual[1], fotosSesion.competicion[0], fotosSesion.parejas[0]];
+const methodStepMedia = [null, { src: '/method-movement.webp', width: 360, height: 530 }, null, null];
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
@@ -387,13 +387,13 @@ function App() {
               <div className="method-journey">
                 {advisorySubstages.slice(1, 5).map((step, i) => {
                   const media = methodStepMedia[i];
-                  return <article className={`method-step ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
+                  return <article className={`method-step ${media ? 'has-media' : 'no-media'} ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
                     <button className="method-step-copy" type="button" aria-expanded={activeMethodIndex === i} onClick={() => setActiveMethodIndex(i)}>
                       <span className="method-step-number">{step.num}</span>
                       <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
                       <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
                     </button>
-                    <figure className="method-step-visual"><img src={media.src} width={media.width} height={media.height} alt={['Entrenamiento técnico en grupo reducido','Trabajo individual de técnica y movimiento','Entrenamiento de combate y aplicación técnica','Entrenamiento compartido y aprendizaje continuo'][i]} loading="lazy" decoding="async"/><span className="method-image-index">SML / 0{i + 1}</span></figure>
+                    {media && <figure className="method-step-visual"><img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/><span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
                   </article>;
                 })}
               </div>

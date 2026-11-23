@@ -1631,3 +1631,8 @@ article.format-service-card::before,article.format-service-card::after{display:n
 
 /* Method mobile refinement: keep the editorial headline inside the viewport. */
 @media(max-width:600px){.spatial-chapter--method .method-intro-copy{min-width:0;width:100%;max-width:100%}.spatial-chapter--method .method-intro h2{width:100%;max-width:100%;font-size:clamp(2.15rem,9.2vw,3.35rem);line-height:.98;overflow-wrap:normal;word-break:normal;letter-spacing:-.045em}.spatial-chapter--method .method-intro h2 em{display:inline;overflow-wrap:normal}.spatial-chapter--method .method-pillar-icon{font-variant-emoji:text; color:var(--orange)}}
+
+
+/* Method stages: only render visual media when a verified, relevant image exists. */
+.method-step.no-media{grid-template-columns:minmax(0,1fr)}.method-step.no-media .method-step-copy{min-height:0}.method-step.has-media{grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr)}
+@media(max-width:600px){.method-step.has-media,.method-step.no-media{grid-template-columns:1fr}.method-step.no-media .method-step-copy{padding-bottom:20px}.spatial-chapter--method .method-intro h2{font-size:clamp(2.15rem,9.2vw,3.35rem);max-width:100%;line-height:.98;letter-spacing:-.045em}}
