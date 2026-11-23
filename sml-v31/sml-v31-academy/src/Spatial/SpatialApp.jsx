@@ -166,7 +166,6 @@ function App() {
     <main id="contenido">
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
         <div id="inicio" className="hero journey-section">
-        <img className="hero-photo" src={image.heroLab} alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
         <p className="hero-overline">{hero.kicker}</p>
         <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < spatialHeroTitle.length - 1 && <br/>}</React.Fragment>)}</h1>
         <p className="hero-context">Entrenamiento personal y en grupos reducidos para mejorar tu técnica, forma física y confianza, empieces desde cero o no.</p>
