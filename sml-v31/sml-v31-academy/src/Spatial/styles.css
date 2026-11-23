@@ -1167,3 +1167,90 @@ article.format-service-card::before,article.format-service-card::after{display:n
   .hero-quicklinks{margin-top:8px;gap:8px 16px}
   .hero-credential-proof{margin-top:28px;width:100%}
 }
+
+
+/* PREMIUM HERO REFINEMENT — editorial hierarchy, calmer spacing, same spatial experience. */
+.spatial-chapter--entry .hero {
+  --hero-ink: #f2f0eb;
+  --hero-muted: rgba(226,229,233,.78);
+}
+.spatial-chapter--entry .hero-overline {
+  color: #e47750; font-size: 10px; letter-spacing: .19em; font-weight: 650;
+}
+.spatial-chapter--entry .hero h1 {
+  max-width: 900px; color: var(--hero-ink); font-weight: 800;
+  letter-spacing: -.012em; text-shadow: 0 5px 28px rgba(0,0,0,.48);
+}
+.spatial-chapter--entry .hero-context {
+  max-width: 54ch; color: var(--hero-muted); font-size: clamp(14px,1.2vw,16px);
+  line-height: 1.72; letter-spacing: .008em;
+}
+.spatial-chapter--entry .hero-start-note {
+  max-width: 48ch; margin-top: 12px; padding: 2px 0 2px 13px;
+  border-left: 1px solid rgba(224,113,75,.72); color: rgba(245,244,240,.88);
+  font-size: 13px; line-height: 1.65;
+}
+.spatial-chapter--entry .hero-offer {
+  margin-top: 17px; color: rgba(238,239,241,.78); font-size: 11px;
+  font-weight: 650; letter-spacing: .075em; line-height: 1.7;
+}
+.spatial-chapter--entry .hero-actions .primary-cta {
+  background: #d9653b; border: 1px solid #d9653b; box-shadow: 0 10px 30px rgba(160,62,34,.16);
+  letter-spacing: .105em; transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.spatial-chapter--entry .hero-actions .primary-cta:hover {
+  background: #e4744b; transform: translateY(-2px); box-shadow: 0 14px 34px rgba(160,62,34,.22);
+}
+.spatial-chapter--entry .hero-actions .secondary-cta {
+  border-color: rgba(232,235,239,.32); background: rgba(12,14,18,.32);
+  color: rgba(245,245,243,.9); letter-spacing: .11em;
+}
+.spatial-chapter--entry .hero-cta-note {
+  color: rgba(205,210,217,.72); font-size: 10px; line-height: 1.65;
+}
+.spatial-chapter--entry .hero-quicklinks button {
+  color: rgba(224,228,233,.72); font-size: 10px; text-decoration-color: rgba(224,113,75,.55);
+}
+@media (max-width: 760px) {
+  .spatial-chapter--entry .hero.journey-section {
+    min-height: 90svh; padding: 100px 24px 58px; gap: 8px;
+  }
+  .spatial-chapter--entry .hero-overline {
+    margin-bottom: 5px; font-size: 9px; letter-spacing: .145em; line-height: 1.55;
+  }
+  .spatial-chapter--entry .hero h1 {
+    max-width: 17ch; font-size: clamp(39px,10.4vw,47px);
+    line-height: 1.015; letter-spacing: -.006em; font-weight: 800;
+    text-shadow: 0 4px 24px rgba(0,0,0,.5);
+  }
+  .spatial-chapter--entry .hero-context {
+    max-width: 39ch; margin-top: 8px; font-size: 14px; line-height: 1.62;
+  }
+  .spatial-chapter--entry .hero-start-note {
+    max-width: 38ch; margin-top: 8px; font-size: 12px; line-height: 1.6;
+  }
+  .spatial-chapter--entry .hero-offer {
+    max-width: 38ch; margin-top: 10px; font-size: 10px; line-height: 1.65; letter-spacing: .065em;
+  }
+  .spatial-chapter--entry .hero-actions {
+    width: 100%; max-width: 410px; margin-top: 12px; gap: 9px;
+  }
+  .spatial-chapter--entry .hero-actions .primary-cta {
+    min-height: 54px; padding: 13px 16px; font-size: 10px; letter-spacing: .095em;
+  }
+  .spatial-chapter--entry .hero-actions .secondary-cta {
+    min-height: 46px; font-size: 10px; letter-spacing: .1em;
+  }
+  .spatial-chapter--entry .hero-cta-note {
+    max-width: 39ch; margin: 2px 0 4px; font-size: 9px; line-height: 1.6;
+  }
+  .spatial-chapter--entry .hero-proof { font-size: 11px; line-height: 1.6; }
+  .spatial-chapter--entry .hero-quicklinks { gap: 7px 17px; margin-top: 5px; }
+  .spatial-chapter--entry .hero-quicklinks button { min-height: 34px; font-size: 9px; }
+  /* The primary reservation CTA already leads the first mobile screen; avoid a second floating button over the copy. */
+  .quick-booking { display: none !important; }
+}
+@media (max-width: 390px) {
+  .spatial-chapter--entry .hero.journey-section { padding-left: 21px; padding-right: 21px; }
+  .spatial-chapter--entry .hero h1 { font-size: clamp(37px,10.1vw,42px); }
+}
