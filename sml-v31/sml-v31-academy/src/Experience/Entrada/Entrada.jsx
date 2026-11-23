@@ -13,9 +13,12 @@ export default function Entrada() {
           {hero.titulo.map((line) => <span key={line}>{line}</span>)}
         </h1>
         <p className="ent__disc">{hero.disciplinasLinea}</p>
-        <p className="ent__support">Entrenamiento privado en Madrid · Análisis técnico · Seguimiento personal</p>
+        <p className="ent__support">{hero.contexto}</p>
         <div className="ent__actions">
-          <button type="button" className="ent__reservar" onClick={() => goToSection('book')}>RESERVAR EVALUACIÓN · 30 €</button>
+          <button type="button" className="ent__reservar" onClick={() => goToSection('reserva')}>{hero.ctaReservar}</button>
+          <button type="button" className="ent__b2bLink" onClick={() => goToSection('asesoria-lab')}>CONOCER EL MÉTODO ↓</button>
+          <button type="button" className="ent__b2bLink" onClick={() => goToSection('slot')}>VER PRECIOS →</button>
+          <button type="button" className="ent__b2bLink" onClick={() => goToSection('slot')}>GRUPOS Y HORARIOS →</button>
           <button type="button" className="ent__b2bLink" onClick={() => goToSection('experiences')}>EMPRESAS · HOTELES · EVENTOS</button>
         </div>
       </div>
