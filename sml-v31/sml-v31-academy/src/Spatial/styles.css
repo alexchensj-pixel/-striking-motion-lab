@@ -1578,3 +1578,8 @@ article.format-service-card::before,article.format-service-card::after{display:n
 }
 @media(max-width:390px){.pricing-format-cards{gap:6px}.pricing-format-copy{padding:8px 6px}.pricing-format-copy strong{font-size:11px}.pricing-format-copy small{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.pricing-format-card,.pricing-format-image img,.pricing-format-intro>a span{transition:none!important}}
+
+
+/* Método como experiencia opcional, fuera del recorrido comercial principal. */
+.method-view-controls{position:fixed;top:calc(env(safe-area-inset-top,0px) + 84px);right:clamp(16px,4vw,48px);z-index:1000;pointer-events:none}
+.method-view-controls button{pointer-events:auto;border:1px solid rgba(255,255,255,.28);background:rgba(8,10,14,.82);backdrop-filter:blur(14px);color:#f1f1ee;padding:12px 16px;border-radius:999px;font:600 12px/1 'DM Sans',sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}

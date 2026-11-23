@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LegacyWorld from './LegacyWorld.jsx';
 import Chapter from '../Experience/Chapter.jsx';
 import Threshold from '../Scene/Transitions/Threshold.jsx';
@@ -73,6 +73,8 @@ const planComparisonRows = [
 
 function App() {
   const [active, setActive] = useState('inicio');
+  const [showMethod, setShowMethod] = useState(false);
+  const methodReturnScroll = useRef(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(-1);
   const [showPlanComparison, setShowPlanComparison] = useState(false);
@@ -87,7 +89,8 @@ function App() {
   const [bookingVisible, setBookingVisible] = useState(false);
 
   useEffect(() => {
-    const ids = navItems.map(([id]) => id);
+    if (showMethod) { setActive('metodo'); return undefined; }
+    const ids = navItems.filter(([id]) => id !== 'metodo').map(([id]) => id);
     const nodes = ids.map((id) => document.getElementById(chapterTarget[id] || id)).filter(Boolean);
     if (!('IntersectionObserver' in window)) return undefined;
     const observer = new IntersectionObserver((entries) => {
@@ -122,6 +125,13 @@ function App() {
   const go = (id) => {
     setActive(id);
     setMenuOpen(false);
+    if (id === 'metodo' || id === 'asesoria-lab') {
+      methodReturnScroll.current = window.scrollY;
+      setShowMethod(true);
+      window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id: 'metodo' } }));
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      return;
+    }
     window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id } }));
     requestAnimationFrame(() => {
       const target = document.getElementById(chapterTarget[id] || id);
@@ -164,6 +174,7 @@ function App() {
 
     {!bookingVisible && <button className="quick-booking" type="button" onClick={() => go('reserva')}><span>VER HORARIOS</span><span aria-hidden="true">↗</span></button>}
     <main id="contenido">
+      {!showMethod ? <>
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
         <div id="inicio" className="hero journey-section">
         <p className="hero-overline">{hero.kicker}</p>
@@ -196,41 +207,7 @@ function App() {
         <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
         </div>
       </Chapter>
-
-      <Threshold from="entrada" to="asesoria-lab" />
-
-      <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
-      <div id="metodo" className="method-section journey-section">
-        <div className="method-stage">
-          <div className="method-copy">
-            <p className="eyebrow">UN PROCESO PERSONAL</p>
-            <h2>{advisorySubstages[0].titular.map((line, i) => <React.Fragment key={line}>{line}{i === 0 && <br/>}</React.Fragment>)}</h2>
-            <div className="method-evaluation">
-              <span>{evaluacionInicial.kickerMetodo}</span>
-              <div className="method-evaluation-title"><h3>{evaluacionInicial.titulo}</h3><small className="method-evaluation-price">Primera evaluación · {evaluacionInicial.precio}</small></div>
-              <p className="method-evaluation-note">{spatialEvaluationText}</p>
-              <p className="method-material-note">No necesitas comprar nada para empezar. Si no tienes material, lo llevo yo.</p>
-              <p className="method-evaluation-terms">{evaluacionInicial.nota}</p>
-              <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span></a>
-              <p className="method-cta-note">Sin permanencia en los planes.</p>
-              <button className="text-link" type="button" aria-expanded={showMore} onClick={() => setShowMore((value) => !value)}>{showMore ? 'Cerrar información −' : `${evaluacionInicial.ctaMas} +`}</button>
-              {showMore && <ul>{evaluacionInicial.mas.map(([a, b]) => <li key={a}><b>{a}:</b> {b}</li>)}</ul>}
-              {showMore && <SessionPhoto photo={fotosSesion.metodologia} alt="Apoyo visual del método de trabajo de Striking Motion Lab" caption="Método de trabajo · Apoyo visual" />}
-            </div>
-          </div>
-          <div className="method-stations" aria-label="Cinco pasos del método">
-            {advisorySubstages.slice(1).map((step, i) => <button type="button" className={activeMethodIndex === i ? 'method-station active' : 'method-station'} key={step.id} aria-current={activeMethodIndex === i ? 'step' : undefined} onClick={() => { const section = document.getElementById('asesoria-lab'); if (section) { const travel = section.offsetHeight - window.innerHeight; window.scrollTo({ top: section.offsetTop + travel * ((i + .5) / 5), behavior: 'smooth' }); } }}>
-              <span className="station-number">{step.num}</span><span className="station-content"><strong>{step.n}</strong>{activeMethodIndex === i && <><span className="station-description">{step.texto}</span>{step.elementos && <span className="station-tags">{step.elementos.join(' · ')}</span>}{step.destacada && <span className="station-highlight">{step.destacada}</span>}</>}</span>
-              {step.etiqueta && activeMethodIndex !== i && <small>{step.etiqueta}</small>}
-            </button>)}
-            <p className="method-closing">No solo entrenas. <span>Entiendes qué estás desarrollando.</span></p>
-          </div>
-          <span className="method-coordinate">LAB / 03 — {String(activeMethodIndex + 1).padStart(2, '0')} : 05</span>
-        </div>
-        </div>
-      </Chapter>
-
-      <Threshold from="asesoria-lab" to="slot" />
+      <Threshold from="entrada" to="slot" />
       <Chapter id="slot" className="spatial-chapter spatial-chapter--pricing">
       <div id="entrenamiento" className="journey-section content-section pricing-section">
         <div className="section-meta"><span>03 / 05</span><span>ENTRENAMIENTO · FORMATOS Y PRECIOS</span></div>
@@ -386,6 +363,39 @@ function App() {
         <div className="b2b-actions"><a className="primary-cta" href={waLink('Hola, quiero diseñar una experiencia B2B con SML. Tipo de proyecto: empresa / hotel / evento / marca.')} target="_blank" rel="noopener noreferrer">Diseñar una experiencia ↗</a><a className="secondary-cta" href={waLink('Hola, quiero recibir información sobre formatos y colaboración B2B.')} target="_blank" rel="noopener noreferrer">Solicitar dossier ↗</a></div>
       </div>
       </Chapter>
+      </> : <>
+        <div className="method-view-controls"><button type="button" onClick={() => { setShowMethod(false); setActive("inicio"); requestAnimationFrame(() => window.scrollTo({ top: methodReturnScroll.current, behavior: "instant" })); }}>← Volver al recorrido</button></div>
+        <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
+      <div id="metodo" className="method-section journey-section">
+        <div className="method-stage">
+          <div className="method-copy">
+            <p className="eyebrow">UN PROCESO PERSONAL</p>
+            <h2>{advisorySubstages[0].titular.map((line, i) => <React.Fragment key={line}>{line}{i === 0 && <br/>}</React.Fragment>)}</h2>
+            <div className="method-evaluation">
+              <span>{evaluacionInicial.kickerMetodo}</span>
+              <div className="method-evaluation-title"><h3>{evaluacionInicial.titulo}</h3><small className="method-evaluation-price">Primera evaluación · {evaluacionInicial.precio}</small></div>
+              <p className="method-evaluation-note">{spatialEvaluationText}</p>
+              <p className="method-material-note">No necesitas comprar nada para empezar. Si no tienes material, lo llevo yo.</p>
+              <p className="method-evaluation-terms">{evaluacionInicial.nota}</p>
+              <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span></a>
+              <p className="method-cta-note">Sin permanencia en los planes.</p>
+              <button className="text-link" type="button" aria-expanded={showMore} onClick={() => setShowMore((value) => !value)}>{showMore ? 'Cerrar información −' : `${evaluacionInicial.ctaMas} +`}</button>
+              {showMore && <ul>{evaluacionInicial.mas.map(([a, b]) => <li key={a}><b>{a}:</b> {b}</li>)}</ul>}
+              {showMore && <SessionPhoto photo={fotosSesion.metodologia} alt="Apoyo visual del método de trabajo de Striking Motion Lab" caption="Método de trabajo · Apoyo visual" />}
+            </div>
+          </div>
+          <div className="method-stations" aria-label="Cinco pasos del método">
+            {advisorySubstages.slice(1).map((step, i) => <button type="button" className={activeMethodIndex === i ? 'method-station active' : 'method-station'} key={step.id} aria-current={activeMethodIndex === i ? 'step' : undefined} onClick={() => { const section = document.getElementById('asesoria-lab'); if (section) { const travel = section.offsetHeight - window.innerHeight; window.scrollTo({ top: section.offsetTop + travel * ((i + .5) / 5), behavior: 'smooth' }); } }}>
+              <span className="station-number">{step.num}</span><span className="station-content"><strong>{step.n}</strong>{activeMethodIndex === i && <><span className="station-description">{step.texto}</span>{step.elementos && <span className="station-tags">{step.elementos.join(' · ')}</span>}{step.destacada && <span className="station-highlight">{step.destacada}</span>}</>}</span>
+              {step.etiqueta && activeMethodIndex !== i && <small>{step.etiqueta}</small>}
+            </button>)}
+            <p className="method-closing">No solo entrenas. <span>Entiendes qué estás desarrollando.</span></p>
+          </div>
+          <span className="method-coordinate">LAB / 03 — {String(activeMethodIndex + 1).padStart(2, '0')} : 05</span>
+        </div>
+        </div>
+      </Chapter>
+      </>}
     </main>
 
     <footer className="footer footer-complete">
