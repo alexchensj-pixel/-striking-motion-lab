@@ -18,17 +18,19 @@ export default function SalesLanding() {
         <nav aria-label="Navegación principal"><a href="#entrenamientos">Entrenamientos</a><a href="#chen">Sobre mí</a><a className="sml-sales__nav-cta" href="#reserva">Reservar evaluación · 30 €</a></nav>
       </header>
       <section className="sml-sales__hero" id="inicio">
-        <img className="sml-sales__hero-image" src={image.heroLab} alt="Entrenamiento real de deportes de contacto en Striking Motion Lab" />
+        <img className="sml-sales__hero-image" src={image.heroLab} alt="Entrenamiento real de deportes de contacto en Madrid" />
         <div className="sml-sales__hero-shade" />
-        <div className="sml-sales__hero-copy">
-          <p className="sml-sales__eyebrow">ENTRENAMIENTO PERSONAL · MADRID</p>
-          <h1>Aprende a golpear.<br/><em>Entrena a tu manera.</em></h1>
-          <p className="sml-sales__lead">Muay Thai · Boxeo · Kickboxing · K1</p>
-          <p className="sml-sales__intro">Entrenamientos privados, en pareja y en grupos reducidos. Adaptamos el trabajo a tu nivel, tus objetivos y tu experiencia.</p>
-          <div className="sml-sales__actions"><a className="sml-sales__button sml-sales__button--primary" href="#reserva">Reserva tu evaluación · 30 €</a><a className="sml-sales__button sml-sales__button--ghost" href={waLink('Hola, quiero información sobre los entrenamientos de Striking Motion Lab.')}>Pregúntame por WhatsApp</a></div>
-          <p className="sml-sales__micro">La evaluación es presencial y privada. Si continúas con un plan mensual, los 30 € se descuentan del primer pago.</p>
+        <div className="sml-sales__hero-card">
+          <div className="sml-sales__hero-cardhead"><span className="sml-sales__hero-mark">S<span>/</span>ML</span><span className="sml-sales__hero-city">STRIKING MOTION LAB<br/>MADRID</span></div>
+          <p className="sml-sales__eyebrow">MADRID · MUAY THAI · BOXEO · K1</p>
+          <h1 className="sml-sales__hero-title"><span>ENTRENA CON</span><span>METODOLOGÍA DE</span><span>COMPETICIÓN.</span><span className="sml-sales__hero-accent">APRENDE A GOLPEAR</span><span className="sml-sales__hero-accent">CON CRITERIO.</span></h1>
+          <p className="sml-sales__hero-intro">Entrenamiento personalizado basado en la observación técnica, el análisis del movimiento y la corrección individual. Adaptado a tu nivel y tus objetivos, incluso si empiezas desde cero.</p>
+          <div className="sml-sales__hero-rule" />
+          <p className="sml-sales__hero-formats">INDIVIDUAL <i>·</i> PAREJAS <i>·</i> GRUPOS REDUCIDOS</p>
+          <div className="sml-sales__hero-actions"><a className="sml-sales__hero-primary" href="#reserva">RESERVAR PRIMERA SESIÓN · 30 €</a><a className="sml-sales__hero-secondary" href="#entrenamientos">CONOCER EL MÉTODO ↓</a><div className="sml-sales__hero-links"><a href="#entrenamientos">VER PLANES</a><span>·</span><a href="#entrenamientos">GRUPOS Y HORARIOS</a></div></div>
+          <div className="sml-sales__hero-rule sml-sales__hero-rule--bottom" />
+          <p className="sml-sales__hero-footer">TÉCNICA <i>·</i> ANÁLISIS <i>·</i> PROGRESIÓN</p>
         </div>
-        <div className="sml-sales__hero-index">MADRID <span>·</span> 01 / 03</div>
       </section>
       <section className="sml-sales__services sml-sales__section" id="entrenamientos">
         <div className="sml-sales__section-head"><p className="sml-sales__eyebrow">ELIGE CÓMO ENTRENAR</p><h2>Un entrenamiento.<br/><em>Tu punto de partida.</em></h2><p>Da igual si empiezas desde cero o si ya tienes experiencia. Lo importante es trabajar con un proceso que tenga sentido para ti.</p></div>
