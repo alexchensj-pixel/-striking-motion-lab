@@ -171,22 +171,31 @@ function App() {
     <main id="contenido">
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
         <div id="inicio" className="hero journey-section">
-        <img className="hero-photo" src={image.heroLab} alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
-        <p className="hero-overline">{hero.kicker}</p>
-        <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < hero.titulo.length - 1 && <br/>}</React.Fragment>)}</h1>
-        <p className="hero-context">{spatialHeroContext}</p>
-        <div className="hero-credential-proof">
-          <p className="hero-credential-proof__label">ACREDITACIONES · WAKO / FEKM</p>
-          <CredentialGallery items={credentialItems} />
-        </div>
-        <p className="hero-offer">Sesiones individuales · Parejas · Grupos reducidos de hasta 4</p>
-        <div className="hero-actions">
-          <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
-          <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método</button>
-        </div>
-        <div className="hero-proof">{hero.confianza}</div>
-        <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
-        <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
+          <img className="hero-photo" src={image.heroLab} alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
+          <div className="hero-card">
+            <p className="hero-overline">{hero.kicker}</p>
+            <h1 className="hero-card-title">
+              <span>ENTRENA CON</span>
+              <span>METODOLOGÍA DE</span>
+              <span>COMPETICIÓN.</span>
+              <span className="hero-card-accent">APRENDE A GOLPEAR</span>
+              <span className="hero-card-accent">CON CRITERIO.</span>
+            </h1>
+            <p className="hero-context">Entrenamiento personalizado basado en la observación técnica, el análisis del movimiento y la corrección individual. Adaptado a tu nivel y tus objetivos, incluso si empiezas desde cero.</p>
+            <div className="hero-card-rule" />
+            <p className="hero-offer">INDIVIDUAL <i>·</i> PAREJAS <i>·</i> GRUPOS REDUCIDOS</p>
+            <div className="hero-actions">
+              <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>RESERVAR PRIMERA SESIÓN · 30 €</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
+              <button className="secondary-cta" type="button" onClick={() => go('metodo')}>CONOCER EL MÉTODO ↓</button>
+            </div>
+            <div className="hero-quicklinks">
+              <button type="button" onClick={() => go('entrenamiento')}>VER PRECIOS</button>
+              <span>·</span>
+              <button type="button" onClick={() => { chooseService('grupos'); go('entrenamiento'); }}>GRUPOS Y HORARIOS</button>
+            </div>
+            <div className="hero-card-rule hero-card-rule--bottom" />
+            <p className="hero-card-footer">TÉCNICA <i>·</i> ANÁLISIS <i>·</i> PROGRESIÓN</p>
+          </div>
         </div>
       </Chapter>
 
