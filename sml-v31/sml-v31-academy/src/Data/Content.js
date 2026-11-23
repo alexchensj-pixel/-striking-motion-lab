@@ -40,11 +40,11 @@ export const hero = {
   // Ruta secundaria (no compite con las dos anteriores).
   ctaB2B: 'Empresas · Hoteles · Eventos →',
   // V22 — mensaje principal de HOME (visible desde el primer fotograma; no depende de ninguna animación ni del scroll).
-  marca: 'Madrid · Muay Thai · Boxeo · K1',
-  titulo: ['Entrena con metodología', 'de competición.', 'Aprende a golpear con criterio.'],
-  disciplinasLinea: 'Entrenamiento personalizado, incluso si empiezas desde cero.',
-  ctaReservar: 'Reservar primera sesión · 30 €',
-  contexto: 'Observación técnica · Análisis individual · Progresión adaptada a tus objetivos',
+  marca: 'Striking Motion Lab',
+  titulo: ['Entrenamiento privado', 'de deportes de combate', 'en Madrid.'],
+  disciplinasLinea: 'Boxeo · K1 · Muay Thai',
+  ctaReservar: 'Reservar · 30 €',
+  contexto: 'Madrid · Sesiones privadas · Grupos reducidos',
   kicker: 'Madrid · Muay Thai · Boxeo · Kickboxing · K1',
   // Sin uso en pantalla. Reescrito: la web no recomienda disciplina automáticamente.
   texto: 'Entrenamiento privado de deportes de contacto en Madrid.',
