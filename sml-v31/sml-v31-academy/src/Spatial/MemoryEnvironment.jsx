@@ -9,6 +9,7 @@ import {
   Door,
 } from '../Scene/Environment/blockouts.jsx';
 import EntradaWorld from '../Scene/Environment/Entrada/EntradaWorld.jsx';
+import BridgeHall from '../Scene/Environment/Bridge/BridgeHall.jsx';
 
 // Keep every original spatial room mounted throughout the camera journey.
 // The previous active-chapter window caused rooms to disappear at transitions
@@ -36,6 +37,8 @@ export default function MemoryEnvironment() {
         <planeGeometry args={[300, 300]} />
         <meshStandardMaterial color="#07090d" roughness={1} />
       </mesh>
+      {/* The monumental industrial hall belongs to the Entrada → Character Select threshold. */}
+      <BridgeHall transitionOnly />
       {chapters.map(({ id }, index) => {
         const Blockout = blockouts[id];
         if (!Blockout) return null;
