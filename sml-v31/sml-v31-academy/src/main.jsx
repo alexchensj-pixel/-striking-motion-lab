@@ -1,25 +1,16 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import AppOriginal from './App/App.jsx';
-import MobileHome from './MobileHome.jsx';
 import LegalPage from './UI/Legal/LegalPage.jsx';
 import { RUTAS } from './Data/Legal.js';
 import './styles/global.css';
-import './Spatial/mobile-composition.css';
 
 const MiSML = lazy(() => import('./Client/MiSML.jsx'));
 const Academia = lazy(() => import('./Academy/Academia.jsx'));
 const SpatialApp = lazy(() => import('./Spatial/SpatialApp.jsx'));
 
 function PublicHome() {
-  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 760px)').matches);
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 760px)');
-    const update = () => setMobile(media.matches);
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
-  }, []);
-  return mobile ? <MobileHome /> : <Suspense fallback={null}><SpatialApp /></Suspense>;
+  return <Suspense fallback={null}><SpatialApp /></Suspense>;
 }
 
 const ruta = window.location.pathname.replace(/\/$/, '') || '/';
