@@ -211,8 +211,8 @@ function App() {
       <Threshold from="entrada" to="slot" />
       <Chapter id="slot" className="spatial-chapter spatial-chapter--pricing">
       <div id="entrenamiento" className="journey-section content-section pricing-section">
-        <div className="section-meta"><span>03 / 05</span><span>ENTRENAMIENTO · FORMATOS Y PRECIOS</span></div>
-        <p className="eyebrow">ELIGE CÓMO ENTRENAR</p><h2 className="pricing-title">Entrenamiento diseñado alrededor de ti.</h2>
+        <div className="section-meta"><span>05 / 08</span><span>ENTRENAMIENTO · FORMATOS Y PLANES</span></div>
+        <p className="eyebrow">TU SIGUIENTE NIVEL</p><h2 className="pricing-title">Tu entrenamiento. Tu siguiente nivel.</h2>
         <p className="pricing-social" aria-label="Valoración en Google: 5,0 estrellas y 18 reseñas">{site.rating.valor.replace('.', ',')} ★ · {site.rating.resenas} reseñas</p>
         <p className="lead">Muay Thai, boxeo, kickboxing y K1 en Madrid. Entrenamiento 1:1, en pareja o en grupos de hasta cuatro personas.</p>
         <div className="pricing-followup"><span>NO ES SOLO UNA SESIÓN. ES UN PROCESO.</span><p>El trabajo continúa entre sesiones: Arsenal consolida la técnica, Striker añade planificación y biblioteca personalizada, y Fight IQ incorpora estrategia y preparación específica. No compras solo horas de entrenamiento: sigues un proceso con dirección y objetivos.</p></div>
