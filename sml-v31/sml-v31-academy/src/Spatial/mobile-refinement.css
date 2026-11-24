@@ -248,3 +248,160 @@
  .spatial-chapter--pricing .pricing-format-copy small{font-size:8px!important}
 }
 @media(prefers-reduced-motion:reduce){.spatial-chapter *,.spatial-chapter *:before,.spatial-chapter *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* SPATIAL DEPTH PASS — real layered composition over the existing 3D world.
+   The R3F world and CameraRig remain the source of the environment and camera travel.
+   These planes add readable foreground/midground architecture to the DOM layer. */
+:root {
+  --sml-depth-line: rgba(173, 198, 214, .16);
+  --sml-depth-glow: rgba(255, 90, 20, .28);
+  --sml-depth-shadow: rgba(0, 0, 0, .72);
+}
+.spatial-chapter > .stage {
+  position: relative;
+  isolation: isolate;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+}
+.spatial-chapter > .stage::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  left: -12%; right: -12%; bottom: -13%; height: 48%;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: center bottom;
+  background-image:
+    linear-gradient(rgba(255,255,255,.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.075) 1px, transparent 1px),
+    linear-gradient(180deg, transparent 10%, rgba(255,90,20,.11) 100%);
+  background-size: 100% 46px, 54px 100%, 100% 100%;
+  mask-image: linear-gradient(to top, rgba(0,0,0,.82), transparent 92%);
+  opacity: .52;
+}
+.spatial-chapter > .stage::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.68), transparent 15%, transparent 85%, rgba(0,0,0,.68)),
+    linear-gradient(180deg, rgba(0,0,0,.18), transparent 24%, transparent 70%, rgba(0,0,0,.52));
+  box-shadow: inset 0 0 100px rgba(0,0,0,.36);
+}
+.spatial-chapter .journey-section {
+  z-index: 1;
+  transform-style: preserve-3d;
+  background: linear-gradient(90deg, rgba(5,7,10,.44), rgba(5,7,10,.12) 48%, rgba(5,7,10,.38)) !important;
+  text-shadow: 0 2px 22px rgba(0,0,0,.68);
+}
+.spatial-chapter .journey-section > * {
+  transform: translateZ(24px);
+}
+.spatial-chapter .journey-section > .section-meta,
+.spatial-chapter .journey-section > .eyebrow {
+  text-shadow: 0 0 18px rgba(0,0,0,.95), 0 0 28px rgba(255,90,20,.16);
+}
+/* Architectural perspective rails: two receding edges and a suspended ceiling light. */
+.spatial-chapter--entry .stage::after,
+.spatial-chapter--pricing .stage::after,
+.spatial-chapter--founder .stage::after,
+.spatial-chapter--booking .stage::after {
+  background:
+    linear-gradient(90deg, transparent 0 5.5%, rgba(155,190,210,.18) 5.65%, transparent 5.9% 94.1%, rgba(155,190,210,.18) 94.35%, transparent 94.5%),
+    linear-gradient(180deg, rgba(0,0,0,.26), transparent 22%, transparent 74%, rgba(0,0,0,.58));
+  box-shadow: inset 0 0 110px rgba(0,0,0,.42);
+}
+.spatial-chapter--entry .hero h1,
+.spatial-chapter--pricing .pricing-title,
+.spatial-chapter--founder .founder-section > h2,
+.spatial-chapter--booking .booking-section > h2 {
+  text-shadow: 0 5px 30px rgba(0,0,0,.82), 0 1px 0 rgba(255,255,255,.12);
+}
+/* Floating glass panels: visible side edge, inner reflection and a grounded cast shadow. */
+.spatial-chapter--pricing .format-detail-card,
+.spatial-chapter--pricing .training-card,
+.spatial-chapter--founder .credential-gallery__item,
+.spatial-chapter--founder .proof-card {
+  transform: perspective(1050px) rotateY(-2.2deg) rotateX(1deg) translateZ(30px) !important;
+  transform-origin: 50% 50%;
+  box-shadow: 0 28px 70px rgba(0,0,0,.56), 0 8px 22px rgba(0,0,0,.42), inset 1px 1px 0 rgba(255,255,255,.16) !important;
+}
+.spatial-chapter--pricing .format-detail-card::before,
+.spatial-chapter--pricing .training-card::before,
+.spatial-chapter--founder .credential-gallery__item::before,
+.spatial-chapter--founder .proof-card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(118deg, rgba(255,255,255,.12), transparent 19% 72%, rgba(255,90,20,.10));
+  opacity: .65;
+}
+.spatial-chapter--pricing .format-detail-media,
+.spatial-chapter--pricing .pricing-format-image,
+.spatial-chapter--founder .founder-human figure {
+  box-shadow: 0 22px 50px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.12);
+  transform: translateZ(18px);
+}
+.spatial-chapter--pricing .format-detail-media img,
+.spatial-chapter--pricing .format-detail-media video,
+.spatial-chapter--founder .founder-human img {
+  filter: contrast(1.08) saturate(.92);
+}
+.spatial-chapter--entry .hero-benefits,
+.spatial-chapter--entry .hero-format-card {
+  box-shadow: 0 22px 48px rgba(0,0,0,.38), inset 1px 1px 0 rgba(255,255,255,.12);
+  background: linear-gradient(135deg, rgba(27,33,42,.78), rgba(5,8,12,.58)) !important;
+  transform: perspective(900px) rotateY(-1.2deg) translateZ(34px);
+}
+.spatial-chapter--entry .primary-cta,
+.spatial-chapter--booking .primary-cta {
+  box-shadow: 0 14px 34px rgba(255,76,20,.25), 0 4px 0 rgba(125,35,8,.55), inset 0 1px 0 rgba(255,255,255,.35) !important;
+  transform: translateZ(42px);
+}
+@media (max-width: 760px) {
+  .spatial-chapter > .stage { perspective: 820px; }
+  .spatial-chapter > .stage::before {
+    left: -30%; right: -30%; bottom: -10%; height: 38%;
+    background-size: 100% 34px, 42px 100%, 100% 100%;
+    opacity: .42;
+  }
+  .spatial-chapter > .stage::after {
+    background:
+      linear-gradient(90deg, transparent 3%, rgba(155,190,210,.18) 3.3%, transparent 3.8% 96.2%, rgba(155,190,210,.18) 96.7%, transparent 97%),
+      linear-gradient(180deg, rgba(0,0,0,.08), transparent 22%, transparent 76%, rgba(0,0,0,.48));
+    box-shadow: inset 0 0 70px rgba(0,0,0,.3);
+  }
+  .spatial-chapter .journey-section {
+    background: linear-gradient(90deg, rgba(5,7,10,.26), rgba(5,7,10,.04) 50%, rgba(5,7,10,.22)) !important;
+  }
+  .spatial-chapter .journey-section > * { transform: translateZ(18px); }
+  .spatial-chapter--entry .hero-benefits,
+  .spatial-chapter--entry .hero-format-card {
+    transform: perspective(720px) rotateY(-.8deg) translateZ(26px);
+  }
+  .spatial-chapter--pricing .format-detail-card,
+  .spatial-chapter--pricing .training-card,
+  .spatial-chapter--founder .credential-gallery__item,
+  .spatial-chapter--founder .proof-card {
+    transform: perspective(900px) rotateY(-1.1deg) translateZ(20px) !important;
+    box-shadow: 0 20px 46px rgba(0,0,0,.52), inset 1px 1px 0 rgba(255,255,255,.13) !important;
+  }
+  .spatial-chapter--pricing .format-detail-media,
+  .spatial-chapter--pricing .pricing-format-image,
+  .spatial-chapter--founder .founder-human figure { transform: translateZ(12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spatial-chapter .journey-section > *,
+  .spatial-chapter--entry .hero-benefits,
+  .spatial-chapter--entry .hero-format-card,
+  .spatial-chapter--pricing .format-detail-card,
+  .spatial-chapter--pricing .training-card,
+  .spatial-chapter--founder .credential-gallery__item,
+  .spatial-chapter--founder .proof-card { transform: none !important; }
+}
