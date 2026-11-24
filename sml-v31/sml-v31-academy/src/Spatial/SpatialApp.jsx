@@ -75,8 +75,6 @@ const planComparisonRows = [
 
 function App() {
   const [active, setActive] = useState('inicio');
-  const [showMethod, setShowMethod] = useState(false);
-  const methodReturnScroll = useRef(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(-1);
   const [showPlanComparison, setShowPlanComparison] = useState(false);
@@ -91,8 +89,7 @@ function App() {
   const [bookingVisible, setBookingVisible] = useState(false);
 
   useEffect(() => {
-    if (showMethod) { setActive('metodo'); return undefined; }
-    const ids = navItems.filter(([id]) => id !== 'metodo').map(([id]) => id);
+    const ids = navItems.map(([id]) => id);
     const nodes = ids.map((id) => document.getElementById(chapterTarget[id] || id)).filter(Boolean);
     if (!('IntersectionObserver' in window)) return undefined;
     const observer = new IntersectionObserver((entries) => {
@@ -127,24 +124,11 @@ function App() {
   const go = (id) => {
     setActive(id);
     setMenuOpen(false);
-    if (id === 'metodo' || id === 'asesoria-lab') {
-      methodReturnScroll.current = window.scrollY;
-      setShowMethod(true);
-      window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id: 'metodo' } }));
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-      return;
-    }
     window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id } }));
     requestAnimationFrame(() => {
       const target = document.getElementById(chapterTarget[id] || id);
       if (!target) return;
-      if (id === 'metodo' || id === 'asesoria-lab') {
-        // Método activa su ruta 3D en el borde real de la sección; scrollIntoView respeta scroll-padding-top y se quedaba 90px antes.
-        const top = target.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({ top: top + 2, behavior: 'smooth' });
-      } else {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   };
   const formatPlans = existingPlans.filter((plan) => plan.tipo === 'formato');
@@ -176,7 +160,7 @@ function App() {
 
     {!bookingVisible && <button className="quick-booking" type="button" onClick={() => go('reserva')}><span>VER HORARIOS</span><span aria-hidden="true">↗</span></button>}
     <main id="contenido">
-      {!showMethod ? <>
+      <>
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
         <div id="inicio" className="hero journey-section">
         <p className="hero-overline">{hero.kicker}</p>
@@ -209,7 +193,51 @@ function App() {
         <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
         </div>
       </Chapter>
-      <Threshold from="entrada" to="slot" />
+      <Threshold from="entrada" to="asesoria-lab" />
+        <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
+          <div id="metodo" className="method-section journey-section">
+            <div className="method-stage">
+              <header className="method-intro">
+                <div className="method-intro-copy">
+                  <p className="eyebrow">EL MÉTODO <span>— CICLO DE APRENDIZAJE</span></p>
+                  <h2>UN ENTRENAMIENTO QUE <em>EVOLUCIONA CONTIGO.</em></h2>
+                  <p className="method-lead">Técnica, análisis y progreso real. Un proceso estructurado para que aprendas, mejores tu técnica y desarrolles tus capacidades.</p>
+                </div>
+                <div className="method-pillars" aria-label="Pilares del método">
+                  <div><span className="method-pillar-icon">⌁</span><strong>Multidisciplinar</strong><small>Boxeo · K1 · Muay Thai</small></div>
+                  <div><span className="method-pillar-icon">⌖</span><strong>Análisis</strong><small>Del movimiento</small></div>
+                  <div><span className="method-pillar-icon">◇</span><strong>Corrección</strong><small>Personalizada</small></div>
+                  <div><span className="method-pillar-icon">↗︎</span><strong>Progreso</strong><small>Medible</small></div>
+                </div>
+              </header>
+
+              <div className="method-journey-heading"><span>01 — 04</span><p>EL CICLO DE APRENDIZAJE</p><span>STRIKING MOTION LAB / MADRID</span></div>
+              <div className="method-journey">
+                {advisorySubstages.slice(1, 5).map((step, i) => {
+                  const media = methodStepMedia[i];
+                  return <article className={`method-step ${media ? 'has-media' : 'no-media'} ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
+                    <button className="method-step-copy" type="button" aria-expanded={activeMethodIndex === i} onClick={() => setActiveMethodIndex(i)}>
+                      <span className="method-step-number">{step.num}</span>
+                      <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
+                      <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
+                    </button>
+                    {media && <figure className="method-step-visual">{media.video ? <video ref={(el) => { if (el) el.muted = true; }} src={media.video} poster={media.poster} width={media.width} height={media.height} autoPlay muted loop playsInline preload="metadata" aria-label="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: `${media.width} / ${media.height}`, objectFit: 'contain', background: '#07090c' }}/> : <img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/>}<span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
+                  </article>;
+                })}
+              </div>
+
+              <div className="method-closing-panel"><p>MUCHO MÁS QUE ENTRENAR</p><h3>No solo entrenas. <span>Entiendes qué estás desarrollando.</span></h3><small>Aprende, comprende tu movimiento y construye tu propia evolución.</small></div>
+
+              <section className="method-booking" aria-label="Reserva de evaluación inicial">
+                <div className="method-booking-copy"><span>{evaluacionInicial.kickerMetodo}</span><h3>EVALUACIÓN<br/>INICIAL</h3><p>{spatialEvaluationText}</p></div>
+                <div className="method-booking-details"><strong>Primera sesión privada · {evaluacionInicial.precio}</strong><ul><li>Valoración de tu nivel y experiencia</li><li>Observación técnica y objetivos</li><li>{evaluacionInicial.nota}</li></ul><p>No necesitas comprar material. Si no tienes, lo llevo yo.</p></div>
+                <div className="method-booking-action"><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>RESERVAR EVALUACIÓN · 30 € ↗</span></a><small>Sin permanencia · Primera sesión privada</small></div>
+              </section>
+              <span className="method-coordinate">SML / METHOD — {String(activeMethodIndex + 1).padStart(2, '0')} : 04</span>
+            </div>
+          </div>
+        </Chapter>
+      <Threshold from="asesoria-lab" to="slot" />
       <Chapter id="slot" className="spatial-chapter spatial-chapter--pricing">
       <div id="entrenamiento" className="journey-section content-section pricing-section">
         <div className="section-meta"><span>05 / 08</span><span>ENTRENAMIENTO · FORMATOS Y PLANES</span></div>
@@ -363,52 +391,7 @@ function App() {
         <div className="b2b-actions"><a className="primary-cta" href={waLink('Hola, quiero diseñar una experiencia B2B con SML. Tipo de proyecto: empresa / hotel / evento / marca.')} target="_blank" rel="noopener noreferrer">Diseñar una experiencia ↗</a><a className="secondary-cta" href={waLink('Hola, quiero recibir información sobre formatos y colaboración B2B.')} target="_blank" rel="noopener noreferrer">Solicitar dossier ↗</a></div>
       </div>
       </Chapter>
-      </> : <>
-        <div className="method-view-controls"><button type="button" onClick={() => { setShowMethod(false); setActive("inicio"); requestAnimationFrame(() => window.scrollTo({ top: methodReturnScroll.current, behavior: "instant" })); }}>← Volver al recorrido</button></div>
-        <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
-          <div id="metodo" className="method-section journey-section">
-            <div className="method-stage">
-              <header className="method-intro">
-                <div className="method-intro-copy">
-                  <p className="eyebrow">EL MÉTODO <span>— CICLO DE APRENDIZAJE</span></p>
-                  <h2>UN ENTRENAMIENTO QUE <em>EVOLUCIONA CONTIGO.</em></h2>
-                  <p className="method-lead">Técnica, análisis y progreso real. Un proceso estructurado para que aprendas, mejores tu técnica y desarrolles tus capacidades.</p>
-                </div>
-                <div className="method-pillars" aria-label="Pilares del método">
-                  <div><span className="method-pillar-icon">⌁</span><strong>Multidisciplinar</strong><small>Boxeo · K1 · Muay Thai</small></div>
-                  <div><span className="method-pillar-icon">⌖</span><strong>Análisis</strong><small>Del movimiento</small></div>
-                  <div><span className="method-pillar-icon">◇</span><strong>Corrección</strong><small>Personalizada</small></div>
-                  <div><span className="method-pillar-icon">↗︎</span><strong>Progreso</strong><small>Medible</small></div>
-                </div>
-              </header>
-
-              <div className="method-journey-heading"><span>01 — 04</span><p>EL CICLO DE APRENDIZAJE</p><span>STRIKING MOTION LAB / MADRID</span></div>
-              <div className="method-journey">
-                {advisorySubstages.slice(1, 5).map((step, i) => {
-                  const media = methodStepMedia[i];
-                  return <article className={`method-step ${media ? 'has-media' : 'no-media'} ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
-                    <button className="method-step-copy" type="button" aria-expanded={activeMethodIndex === i} onClick={() => setActiveMethodIndex(i)}>
-                      <span className="method-step-number">{step.num}</span>
-                      <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
-                      <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
-                    </button>
-                    {media && <figure className="method-step-visual">{media.video ? <video ref={(el) => { if (el) el.muted = true; }} src={media.video} poster={media.poster} width={media.width} height={media.height} autoPlay muted loop playsInline preload="metadata" aria-label="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: `${media.width} / ${media.height}`, objectFit: 'contain', background: '#07090c' }}/> : <img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/>}<span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
-                  </article>;
-                })}
-              </div>
-
-              <div className="method-closing-panel"><p>MUCHO MÁS QUE ENTRENAR</p><h3>No solo entrenas. <span>Entiendes qué estás desarrollando.</span></h3><small>Aprende, comprende tu movimiento y construye tu propia evolución.</small></div>
-
-              <section className="method-booking" aria-label="Reserva de evaluación inicial">
-                <div className="method-booking-copy"><span>{evaluacionInicial.kickerMetodo}</span><h3>EVALUACIÓN<br/>INICIAL</h3><p>{spatialEvaluationText}</p></div>
-                <div className="method-booking-details"><strong>Primera sesión privada · {evaluacionInicial.precio}</strong><ul><li>Valoración de tu nivel y experiencia</li><li>Observación técnica y objetivos</li><li>{evaluacionInicial.nota}</li></ul><p>No necesitas comprar material. Si no tienes, lo llevo yo.</p></div>
-                <div className="method-booking-action"><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>RESERVAR EVALUACIÓN · 30 € ↗</span></a><small>Sin permanencia · Primera sesión privada</small></div>
-              </section>
-              <span className="method-coordinate">SML / METHOD — {String(activeMethodIndex + 1).padStart(2, '0')} : 04</span>
-            </div>
-          </div>
-        </Chapter>
-      </>}
+      </>
     </main>
 
     <footer className="footer footer-complete">
