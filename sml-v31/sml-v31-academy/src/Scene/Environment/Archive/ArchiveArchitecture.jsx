@@ -39,22 +39,47 @@ export default function ArchiveArchitecture({ weights }) {
     const panelTextures = PANEL_SPECS.map((spec) => {
       const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 1024;
       const g = canvas.getContext('2d');
-      const bg = g.createLinearGradient(0, 0, 768, 1024); bg.addColorStop(0, '#111a22'); bg.addColorStop(1, '#05090e');
-      g.fillStyle = bg; g.fillRect(0, 0, 768, 1024);
-      g.strokeStyle = 'rgba(84,217,232,.75)'; g.lineWidth = 5; g.strokeRect(22, 22, 724, 980);
-      g.fillStyle = '#54d9e8'; g.font = '700 32px Arial'; g.fillText('STRIKING MOTION LAB', 58, 92);
-      g.font = '700 76px Arial'; g.fillText(spec.number, 58, 205);
-      g.fillStyle = '#f2f6f8'; g.font = '700 48px Arial';
-      const words = spec.title.split(' '); let line = '', y = 300;
-      words.forEach((word) => { const test = line ? `${line} ${word}` : word; if (g.measureText(test).width > 630 && line) { g.fillText(line, 58, y); y += 58; line = word; } else line = test; });
-      if (line) { g.fillText(line, 58, y); y += 76; }
-      g.strokeStyle = 'rgba(84,217,232,.55)'; g.lineWidth = 3; g.beginPath(); g.moveTo(58, y); g.lineTo(710, y); g.stroke(); y += 78;
-      spec.lines.forEach((label) => { g.fillStyle = '#54d9e8'; g.fillRect(62, y - 25, 14, 14); g.fillStyle = '#dce7ed'; g.font = '600 30px Arial'; g.fillText(label, 100, y); y += 68; });
-      g.strokeStyle = 'rgba(84,217,232,.85)'; g.lineWidth = 5; g.beginPath();
-      if (spec.type === 'progress' || spec.type === 'motion') { g.moveTo(90, 900); g.lineTo(220, 850); g.lineTo(350, 790); g.lineTo(480, 690); g.lineTo(650, 590); }
-      else { g.moveTo(90, 900); g.lineTo(220, 830); g.lineTo(350, 870); g.lineTo(480, 760); g.lineTo(650, 800); }
-      g.stroke();
-      const t = new CanvasTexture(canvas); t.colorSpace = SRGBColorSpace; t.anisotropy = aniso; return t;
+      const ink = '#171614', orange = '#e85b19', paper = '#eee5d3', muted = '#766f63';
+      g.fillStyle = paper; g.fillRect(0, 0, 768, 1024);
+      for (let i = 0; i < 1800; i++) { const x=(i*137.5)%768, y=(i*83.7)%1024; g.fillStyle=i%3?'rgba(35,29,20,.035)':'rgba(255,255,255,.16)'; g.fillRect(x,y,1+(i%3),1); }
+      g.strokeStyle='rgba(23,22,20,.42)'; g.lineWidth=2; g.strokeRect(28,28,712,968);
+      g.strokeStyle=orange; g.lineWidth=7; g.beginPath(); g.moveTo(28,120); g.lineTo(28,28); g.lineTo(120,28); g.moveTo(648,996); g.lineTo(740,996); g.lineTo(740,904); g.stroke();
+      g.save(); g.translate(112,118); g.rotate(-0.12); g.fillStyle=orange; g.font='italic 900 112px Georgia'; g.fillText(spec.number,0,0); g.restore();
+      g.fillStyle=ink; g.font='900 47px Arial'; g.textBaseline='top';
+      const words=spec.title.split(' '); let line='', y=190;
+      words.forEach((word)=>{ const test=line?line+' '+word:word; if(g.measureText(test).width>650&&line){g.fillText(line,54,y);y+=54;line=word;}else line=test; });
+      if(line){g.fillText(line,54,y);y+=62;}
+      g.fillStyle=orange; g.fillRect(54,y+5,230,8); y+=52; g.fillStyle=muted; g.font='600 22px Arial';
+      const subtitles={motion:'BIOMECÁNICA · TÉCNICA · EFICIENCIA',method:'CICLO DE APRENDIZAJE',sports:'DISCIPLINAS DE COMBATE',progress:'SEGUIMIENTO · PROGRESO · OBJETIVO'};
+      g.fillText(subtitles[spec.type],56,y); y+=64;
+      const brush=(x,yy,w,h,color=orange)=>{g.save();g.translate(x,yy);g.rotate(-0.035);g.fillStyle=color;g.beginPath();g.moveTo(0,8);g.lineTo(w-18,0);g.lineTo(w,h*.28);g.lineTo(w-12,h);g.lineTo(10,h-5);g.closePath();g.fill();g.restore();};
+      const icon=(cx,cy,kind,color=ink)=>{g.save();g.translate(cx,cy);g.strokeStyle=color;g.lineWidth=7;g.lineCap='round';g.lineJoin='round';g.beginPath();
+        if(kind==='eye'){g.moveTo(-35,0);g.quadraticCurveTo(0,-34,35,0);g.quadraticCurveTo(0,34,-35,0);g.moveTo(0,-10);g.arc(0,0,10,0,Math.PI*2);}
+        else if(kind==='record'){g.ellipse(0,-22,27,10,0,0,Math.PI*2);g.moveTo(-27,-22);g.lineTo(-27,22);g.ellipse(0,22,27,10,0,0,Math.PI);g.moveTo(27,-22);g.lineTo(27,22);}
+        else if(kind==='chart'){g.moveTo(-30,28);g.lineTo(-30,-4);g.moveTo(-8,28);g.lineTo(-8,-22);g.moveTo(14,28);g.lineTo(14,-42);g.moveTo(-40,30);g.lineTo(38,30);}
+        else if(kind==='target'){g.arc(0,0,30,0,Math.PI*2);g.arc(0,0,10,0,Math.PI*2);g.moveTo(-43,0);g.lineTo(-28,0);g.moveTo(28,0);g.lineTo(43,0);}
+        else if(kind==='glove'){g.moveTo(-24,26);g.lineTo(-32,4);g.quadraticCurveTo(-42,-35,-10,-42);g.quadraticCurveTo(26,-48,34,-15);g.lineTo(25,20);g.lineTo(8,34);g.lineTo(-24,26);}
+        g.stroke();g.restore();};
+      if(spec.type==='motion'){
+        g.strokeStyle=ink;g.lineWidth=13;g.lineCap='round';g.beginPath();g.moveTo(310,y+30);g.lineTo(410,y+210);g.lineTo(340,y+390);g.stroke();
+        g.strokeStyle=orange;g.lineWidth=5;g.beginPath();g.arc(410,y+210,82,0,Math.PI*2);g.arc(410,y+210,118,0,Math.PI*2);g.stroke();
+        [[310,y+30],[410,y+210],[340,y+390]].forEach(([x,yy])=>{g.fillStyle=paper;g.beginPath();g.arc(x,yy,18,0,Math.PI*2);g.fill();g.strokeStyle=orange;g.lineWidth=7;g.stroke();});
+        g.fillStyle=ink;g.font='italic 700 28px Georgia';g.fillText('EJE · ÁNGULO · TRAYECTORIA',74,900);
+      }else if(spec.type==='method'){
+        const steps=[['eye','OBSERVAR'],['record','REGISTRAR'],['chart','ANALIZAR'],['target','CORREGIR']], pts=[[384,y+130],[190,y+300],[578,y+300],[384,y+485]];
+        g.strokeStyle=orange;g.lineWidth=8;g.beginPath();g.arc(384,y+300,205,.15,Math.PI*1.85);g.stroke();
+        steps.forEach(([kind,label],i)=>{const [x,yy]=pts[i];icon(x,yy,kind,orange);g.fillStyle=ink;g.font='900 24px Arial';g.textAlign='center';g.fillText(label,x,yy+58);});g.textAlign='left';
+      }else if(spec.type==='sports'){
+        const rows=[['MUAY THAI','band'],['BOXEO','glove'],['KICKBOXING · K1','glove']];
+        rows.forEach(([label,kind],i)=>{const yy=y+28+i*205;brush(58,yy,650,142,i===1?ink:orange);g.save();g.translate(160,yy+68);g.strokeStyle=i===1?paper:ink;g.lineWidth=8;g.lineCap='round';g.beginPath();
+          if(kind==='glove'){g.moveTo(-30,32);g.quadraticCurveTo(-55,-25,-8,-45);g.quadraticCurveTo(48,-48,42,5);g.lineTo(20,38);g.closePath();}else{g.ellipse(0,0,62,20,0,0,Math.PI*2);g.moveTo(-55,0);g.lineTo(-76,32);g.moveTo(55,0);g.lineTo(76,32);}g.stroke();g.restore();g.fillStyle=i===1?paper:ink;g.font='italic 900 37px Arial';g.fillText(label,290,yy+52);});
+      }else{
+        g.strokeStyle=ink;g.lineWidth=3;g.beginPath();g.moveTo(86,y+330);g.lineTo(680,y+330);g.moveTo(86,y+30);g.lineTo(86,y+330);g.stroke();
+        g.strokeStyle=orange;g.lineWidth=9;g.beginPath();g.moveTo(105,y+285);g.lineTo(220,y+250);g.lineTo(335,y+230);g.lineTo(450,y+145);g.lineTo(565,y+110);g.lineTo(660,y+45);g.stroke();
+        [['TÉCNICA','target'],['CONDICIÓN','chart'],['CONTROL','eye'],['ESTRATEGIA','record']].forEach(([label,kind],i)=>{const yy=y+405+i*92;icon(112,yy,kind,orange);g.fillStyle=ink;g.font='900 27px Arial';g.fillText(label,180,yy-17);g.strokeStyle='rgba(23,22,20,.25)';g.lineWidth=13;g.beginPath();g.moveTo(180,yy+24);g.lineTo(665,yy+24);g.stroke();g.strokeStyle=orange;g.lineWidth=13;g.beginPath();g.moveTo(180,yy+24);g.lineTo(180+[270,350,310,390][i],yy+24);g.stroke();});
+      }
+      g.fillStyle=ink;g.font='italic 700 20px Georgia';g.fillText('COMBAT TRAINING · FIELD NOTES',56,970);
+      const t=new CanvasTexture(canvas);t.colorSpace=SRGBColorSpace;t.anisotropy=aniso;return t;
     });
     const tx = {
       // BoxGeometry invierte la U entre +x y −x: el canto delantero (+z) cae a la izquierda en +x y a la derecha en −x
