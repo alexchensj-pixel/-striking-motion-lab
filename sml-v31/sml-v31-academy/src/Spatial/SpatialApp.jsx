@@ -163,21 +163,26 @@ function App() {
       <>
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
         <div id="inicio" className="hero journey-section">
-        <p className="hero-overline">{hero.kicker}</p>
-        <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < spatialHeroTitle.length - 1 && <br/>}</React.Fragment>)}</h1>
-        <p className="hero-context">Entrenamiento personal y en grupos reducidos para mejorar tu técnica, forma física y confianza, empieces desde cero o no.</p>
-        <div className="hero-benefits" aria-label="Qué incluye el entrenamiento">
-          <div className="hero-benefit"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25V17M13 25V10M21 25V5M29 25V13"/></svg><span>Análisis técnico<br/>personalizado</span></div>
-          <div className="hero-benefit"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><path d="M16 2v6M16 24v6M2 16h6M24 16h6M16 12v8M12 16h8"/></svg><span>Entrenamiento<br/>adaptado a tu nivel</span></div>
-          <div className="hero-benefit"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 12 6-12 6L4 9 16 3ZM4 16l12 6 12-6M4 23l12 6 12-6"/></svg><span>Progreso<br/>medible</span></div>
-        </div>
-        <div className="hero-start-note">¿Empiezas desde cero? No necesitas experiencia previa. Entrenamos desde tu nivel y llevo el material.</div>
-        <div className="hero-actions hero-actions--editorial">
-          <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>Reservar evaluación · 30 €</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
-          <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método <span aria-hidden="true">↗</span></button>
-        </div>
-        <p className="hero-cta-note">Sesión privada de evaluación. Si contratas un plan mensual, descontamos los 30 € del primer mes.</p>
-        <div className="hero-format-cards" aria-label="Elige tu formato de entrenamiento">
+        <div className="hero-spatial-layout">
+          <div className="hero-spatial-copy">
+            <p className="hero-overline">{hero.kicker}</p>
+            <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < spatialHeroTitle.length - 1 && <br/>}</React.Fragment>)}</h1>
+            <p className="hero-context">Entrenamiento personal y en grupos reducidos para mejorar tu técnica, forma física y confianza, empieces desde cero o no.</p>
+            <div className="hero-start-note">¿Empiezas desde cero? No necesitas experiencia previa. Entrenamos desde tu nivel y llevo el material.</div>
+            <div className="hero-actions hero-actions--editorial">
+              <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>Reservar evaluación · 30 €</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
+              <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método <span aria-hidden="true">↗</span></button>
+            </div>
+            <p className="hero-cta-note">Sesión privada de evaluación. Si contratas un plan mensual, descontamos los 30 € del primer mes.</p>
+          </div>
+          <aside className="hero-spatial-console" aria-label="Elige cómo quieres entrenar">
+            <div className="hero-benefits" aria-label="Qué incluye el entrenamiento">
+              <div className="hero-benefit"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25V17M13 25V10M21 25V5M29 25V13"/></svg><span>Análisis técnico<br/>personalizado</span></div>
+              <div className="hero-benefit"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><path d="M16 2v6M16 24v6M2 16h6M24 16h6M16 12v8M12 16h8"/></svg><span>Entrenamiento<br/>adaptado a tu nivel</span></div>
+              <div className="hero-benefit"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 12 6-12 6L4 9 16 3ZM4 16l12 6 12-6M4 23l12 6 12-6"/></svg><span>Progreso<br/>medible</span></div>
+            </div>
+            <p className="hero-console-label">01 / SELECCIONA TU FORMATO</p>
+            <div className="hero-format-cards" aria-label="Elige tu formato de entrenamiento">
           <button type="button" className={`hero-format-card ${activeService === 'individual' ? 'is-selected' : ''}`} aria-pressed={activeService === 'individual'} onClick={() => { chooseService('individual'); go('entrenamiento'); }}>
             <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="9" r="5"/><path d="M6 28v-3a10 10 0 0 1 20 0v3H6Z"/></svg><strong>1:1</strong><span>Individuales</span>
           </button>
@@ -187,9 +192,11 @@ function App() {
           <button type="button" className={`hero-format-card ${activeService === 'grupos' ? 'is-selected' : ''}`} aria-pressed={activeService === 'grupos'} onClick={() => { chooseService('grupos'); go('entrenamiento'); }}>
             <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8" r="3.5"/><circle cx="5.5" cy="12" r="3"/><circle cx="26.5" cy="12" r="3"/><path d="M9 27v-2a7 7 0 0 1 14 0v2H9ZM1 27v-2a6 6 0 0 1 5-5.9M31 27v-2a6 6 0 0 0-5-5.9"/></svg><strong>Grupos</strong><span>Hasta 4 personas</span>
           </button>
+            </div>
+            <div className="hero-proof">{hero.confianza}</div>
+            <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
+          </aside>
         </div>
-        <div className="hero-proof">{hero.confianza}</div>
-        <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
         <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
         </div>
       </Chapter>
