@@ -1,0 +1,73 @@
+
+/* SML · Immersive continuity layer
+   Visual-only layer for the existing persistent Three.js world and scroll chapters.
+   It does not replace content, alter booking logic, or add a second canvas. */
+:root {
+  --sml-ember: #e05a2b;
+  --sml-glass: rgba(13, 17, 23, .58);
+  --sml-edge: rgba(206, 220, 239, .22);
+  --sml-edge-hot: rgba(224, 90, 43, .34);
+}
+.spatial-chapter--pricing,.spatial-chapter--founder,.spatial-chapter--booking { --chapter-ember:var(--sml-ember); isolation:isolate; }
+.spatial-chapter--pricing .journey-section,.spatial-chapter--founder .journey-section,.spatial-chapter--booking .journey-section { position:relative; isolation:isolate; background:transparent!important; }
+.spatial-chapter--pricing .journey-section::after,.spatial-chapter--founder .journey-section::after,.spatial-chapter--booking .journey-section::after {
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.72;
+ background:
+ linear-gradient(90deg,transparent 5.8%,rgba(194,210,235,.15) 5.95%,transparent 6.1%),
+ linear-gradient(90deg,transparent 94%,rgba(194,210,235,.12) 94.15%,transparent 94.3%),
+ linear-gradient(180deg,transparent 17%,rgba(194,210,235,.10) 17.12%,transparent 17.24%),
+ linear-gradient(180deg,transparent 84%,rgba(224,90,43,.14) 84.12%,transparent 84.24%),
+ radial-gradient(ellipse at 50% 100%,rgba(224,90,43,.09),transparent 58%);
+ mix-blend-mode:screen;
+}
+.spatial-chapter--pricing .journey-section>*,.spatial-chapter--founder .journey-section>*,.spatial-chapter--booking .journey-section>* { position:relative;z-index:1; }
+.spatial-chapter--pricing .format-detail-card,.spatial-chapter--pricing .training-card,.spatial-chapter--pricing .single-session-card,.spatial-chapter--pricing .plan-comparison-panel {
+ border:1px solid var(--sml-edge)!important;
+ background:linear-gradient(145deg,rgba(24,30,39,.78),rgba(7,9,13,.66) 72%),var(--sml-glass)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 55px rgba(0,0,0,.24),0 0 28px rgba(224,90,43,.045);
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transform-style:preserve-3d;
+}
+.spatial-chapter--pricing .format-detail-card { position:relative;overflow:hidden; }
+.spatial-chapter--pricing .format-detail-card::before,.spatial-chapter--pricing .training-card::before {
+ content:"";position:absolute;inset:0 auto 0 0;width:1px;pointer-events:none;
+ background:linear-gradient(180deg,transparent,rgba(224,90,43,.72) 34%,rgba(224,90,43,.16) 76%,transparent);opacity:.8;
+}
+.spatial-chapter--pricing .format-detail-media { position:relative;overflow:hidden;background:#07090d; }
+.spatial-chapter--pricing .format-detail-media::after { content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(223,232,245,.18);box-shadow:inset 0 -45px 55px rgba(0,0,0,.38); }
+.spatial-chapter--pricing .pricing-format-card { border-color:rgba(206,220,239,.18);background:linear-gradient(145deg,rgba(18,23,30,.82),rgba(5,7,10,.72));box-shadow:inset 0 1px rgba(255,255,255,.07); }
+.spatial-chapter--pricing .pricing-format-card.is-active { border-color:rgba(224,90,43,.78);box-shadow:inset 2px 0 var(--sml-ember),0 0 26px rgba(224,90,43,.10); }
+.spatial-chapter--founder .founder-section { overflow:hidden; }
+.spatial-chapter--founder .founder-section::after {
+ opacity:.9;
+ background:
+ linear-gradient(90deg,transparent 14%,rgba(200,214,238,.20) 14.12%,transparent 14.3%),
+ linear-gradient(90deg,transparent 31%,rgba(200,214,238,.13) 31.12%,transparent 31.3%),
+ linear-gradient(90deg,transparent 68%,rgba(200,214,238,.15) 68.12%,transparent 68.3%),
+ linear-gradient(90deg,transparent 86%,rgba(200,214,238,.18) 86.12%,transparent 86.3%),
+ linear-gradient(180deg,transparent 10%,rgba(200,214,238,.10) 10.12%,transparent 10.3%),
+ linear-gradient(180deg,transparent 91%,rgba(224,90,43,.16) 91.12%,transparent 91.3%);
+}
+.spatial-chapter--founder .founder-human figure { position:relative;overflow:hidden;background:rgba(8,10,14,.58);border:1px solid var(--sml-edge);box-shadow:inset 0 1px rgba(255,255,255,.08),0 18px 48px rgba(0,0,0,.24); }
+.spatial-chapter--founder .founder-human img { filter:saturate(.88) contrast(1.04);transition:filter .35s ease,transform .7s cubic-bezier(.2,.7,.2,1); }
+.spatial-chapter--founder .founder-human figure:hover img { filter:saturate(1) contrast(1.06);transform:scale(1.025); }
+.spatial-chapter--founder .proof-card { border-top-color:rgba(206,220,239,.22); }
+.spatial-chapter--founder .proof-card>small,.spatial-chapter--founder .proof-card .eyebrow { color:var(--sml-ember); }
+.threshold { position:relative; }
+.threshold::after { content:"";position:absolute;left:6%;right:6%;top:50%;height:1px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(224,90,43,.42),rgba(215,228,245,.24),transparent);box-shadow:0 0 18px rgba(224,90,43,.12); }
+@media(max-width:760px) {
+ .spatial-chapter--pricing .journey-section,.spatial-chapter--founder .journey-section,.spatial-chapter--booking .journey-section { background:linear-gradient(180deg,rgba(5,7,10,.34),rgba(5,7,10,.60) 46%,rgba(5,7,10,.72))!important; }
+ .spatial-chapter--pricing .journey-section::after,.spatial-chapter--founder .journey-section::after,.spatial-chapter--booking .journey-section::after {
+  inset:0;opacity:.58;background:
+  linear-gradient(90deg,transparent 4%,rgba(200,214,238,.16) 4.15%,transparent 4.3%),
+  linear-gradient(90deg,transparent 96%,rgba(200,214,238,.13) 96.15%,transparent 96.3%),
+  linear-gradient(180deg,transparent 12%,rgba(200,214,238,.08) 12.15%,transparent 12.3%),
+  radial-gradient(ellipse at 50% 100%,rgba(224,90,43,.11),transparent 62%);
+ }
+ .spatial-chapter--pricing .format-detail-card,.spatial-chapter--pricing .training-card,.spatial-chapter--pricing .single-session-card {
+  background:linear-gradient(145deg,rgba(18,23,30,.78),rgba(6,8,12,.72))!important;border-color:rgba(206,220,239,.22)!important;box-shadow:inset 0 1px rgba(255,255,255,.08),0 14px 38px rgba(0,0,0,.24);
+ }
+ .spatial-chapter--pricing .format-detail-card { margin-inline:0; }
+ .spatial-chapter--founder .founder-human img { height:clamp(230px,68vw,310px); }
+ .threshold::after { left:10%;right:10%; }
+}
+@media(prefers-reduced-motion:reduce) { .spatial-chapter--founder .founder-human img { transition:none; } }
