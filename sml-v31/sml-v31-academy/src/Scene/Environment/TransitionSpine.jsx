@@ -1,4 +1,4 @@
-import { anchorZ, chapterOrder } from '../../Camera/waypoints.js';
+import { anchorZ, chapterOrder } from '../Camera/waypoints.js';
 
 const FROM_Z = anchorZ(chapterOrder.indexOf('character-select')) - 2;
 const TO_Z = anchorZ(chapterOrder.indexOf('asesoria-lab')) + 3;
