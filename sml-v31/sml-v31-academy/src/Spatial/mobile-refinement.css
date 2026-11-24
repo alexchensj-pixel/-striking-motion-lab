@@ -1,0 +1,187 @@
+/* SML mobile refinement — preserve the SpatialApp, 3D world and chapter journey.
+   These are composition/spacing changes only; no alternate flat homepage is mounted. */
+@media (max-width:760px) {
+  .spatial-chapter--entry .hero {
+    min-height: min(920px, calc(100svh - 70px));
+    padding: max(92px, calc(env(safe-area-inset-top) + 78px)) 20px 48px !important;
+    justify-content: center;
+    background: transparent !important;
+  }
+  .spatial-chapter--entry .hero h1 {
+    max-width: 10.5ch;
+    font-size: clamp(3.05rem, 12.2vw, 4.35rem);
+    line-height: .9;
+    text-wrap: balance;
+  }
+  .spatial-chapter--entry .hero-context {
+    max-width: 35ch;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .spatial-chapter--entry .hero-benefits {
+    margin: 16px 0 18px;
+    background: linear-gradient(110deg,rgba(7,9,13,.68),rgba(7,9,13,.38));
+    border: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(8px);
+  }
+  .spatial-chapter--entry .hero-start-note {
+    margin-top: 4px;
+    max-width: 38ch;
+  }
+  .spatial-chapter--entry .hero-format-cards {
+    margin-top: 12px;
+  }
+
+  /* Pricing remains a chapter over the 3D environment, but the content is denser. */
+  .spatial-chapter--pricing .pricing-section {
+    padding: 94px 18px 76px !important;
+    min-height: 0 !important;
+    background: linear-gradient(180deg,rgba(7,8,10,.82),rgba(7,8,10,.66)) !important;
+    backdrop-filter: blur(2px);
+  }
+  .spatial-chapter--pricing .pricing-section > .section-meta {
+    margin-bottom: 14px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .eyebrow {
+    margin-bottom: 8px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .pricing-title {
+    max-width: 11ch !important;
+    font-size: clamp(2.65rem, 10.8vw, 3.65rem) !important;
+    line-height: .91 !important;
+    margin-bottom: 12px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .pricing-social {
+    margin-bottom: 10px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .lead {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    margin-bottom: 14px !important;
+  }
+  .spatial-chapter--pricing .pricing-format-chooser {
+    margin: 14px 0 12px !important;
+  }
+  .spatial-chapter--pricing .pricing-format-image {
+    aspect-ratio: 1.35 / 1 !important;
+  }
+  .spatial-chapter--pricing .format-detail-media {
+    aspect-ratio: 2.05 / 1 !important;
+    max-height: 230px !important;
+  }
+  .spatial-chapter--pricing .format-detail-media img,
+  .spatial-chapter--pricing .format-detail-media video {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 230px !important;
+    object-fit: cover !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy {
+    padding: 17px 16px 18px !important;
+    gap: 8px !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy h3 {
+    font-size: 31px !important;
+    line-height: .98 !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy > p:not(.eyebrow) {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy .format-service-price {
+    font-size: 26px !important;
+  }
+
+  /* About Alex: preserve the credential documents, but stop them dominating the scroll. */
+  .spatial-chapter--founder .founder-section {
+    padding: 96px 18px 72px !important;
+    min-height: 0 !important;
+    background: linear-gradient(180deg,rgba(7,8,10,.72),rgba(7,8,10,.62)) !important;
+  }
+  .spatial-chapter--founder .founder-section > h2 {
+    max-width: 12ch !important;
+    font-size: clamp(2.35rem,9.2vw,3.15rem) !important;
+    line-height: .98 !important;
+    margin-bottom: 16px !important;
+  }
+  .spatial-chapter--founder .credential-gallery {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin: 14px 0 18px !important;
+  }
+  .spatial-chapter--founder .credential-gallery__proofhead {
+    padding: 11px 13px 10px !important;
+    grid-template-columns: auto 1fr !important;
+  }
+  .spatial-chapter--founder .credential-gallery__proofhead > strong {
+    font-size: 42px !important;
+  }
+  .spatial-chapter--founder .credential-gallery__open {
+    height: clamp(132px, 39vw, 176px) !important;
+    min-height: 132px !important;
+    padding: 8px !important;
+  }
+  .spatial-chapter--founder .credential-gallery__open img {
+    object-fit: contain !important;
+  }
+  .spatial-chapter--founder .credential-gallery figcaption {
+    padding: 8px 12px 10px !important;
+  }
+  .spatial-chapter--founder .founder-human {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 9px !important;
+    margin: 16px 0 !important;
+  }
+  .spatial-chapter--founder .founder-human figure {
+    min-width: 0;
+    margin: 0;
+  }
+  .spatial-chapter--founder .founder-human img {
+    width: 100% !important;
+    height: 150px !important;
+    min-height: 0 !important;
+    max-height: 180px !important;
+    aspect-ratio: 4 / 3 !important;
+    object-fit: cover !important;
+  }
+  .spatial-chapter--founder .founder-human figcaption {
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+    padding-top: 6px;
+  }
+  .spatial-chapter--founder .proof-card {
+    margin: 9px 0 !important;
+    padding: 15px !important;
+    background: rgba(8,10,14,.62) !important;
+    backdrop-filter: blur(8px);
+  }
+  .spatial-chapter--founder .proof-card blockquote {
+    margin: 9px 0 !important;
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* A discreet persistent booking control, not a full-width slab. */
+  .quick-booking {
+    right: 14px !important;
+    left: auto !important;
+    bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    min-height: 42px !important;
+    padding: 11px 14px !important;
+    gap: 10px !important;
+    border-radius: 3px !important;
+    font-size: 9px !important;
+    letter-spacing: .08em !important;
+  }
+  .threshold {
+    height: 4svh !important;
+    min-height: 26px !important;
+  }
+}
+@media(max-width:390px) {
+  .spatial-chapter--entry .hero { padding-left:17px !important; padding-right:17px !important; }
+  .spatial-chapter--pricing .pricing-section,
+  .spatial-chapter--founder .founder-section { padding-left:16px !important; padding-right:16px !important; }
+  .spatial-chapter--founder .founder-human img { height:132px !important; }
+}

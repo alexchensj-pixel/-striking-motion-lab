@@ -13,6 +13,7 @@ import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
 import CredentialGallery from './CredentialGallery.jsx';
 import Calendly from '../Experience/Reserva/Calendly.jsx';
 import './styles.css';
+import './mobile-refinement.css';
 import './inline-group-map.css';
 
 class SpatialBoundary extends React.Component {
