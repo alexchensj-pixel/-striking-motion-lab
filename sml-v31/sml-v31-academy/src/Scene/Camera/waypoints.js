@@ -167,8 +167,8 @@ function routeKeys(key, A, B, aspect) {
     // Travelling explícito por el eje del corredor físico: atraviesa los siete pórticos
     // de TransitionSpine y entra en el laboratorio mirando a la máquina, sin atajo diagonal.
     return [
-      midKey(A, B, 0.3, 0, 1.7, -39, 0, 1.7, -47),
-      midKey(A, B, 0.68, 0, 1.8, -60, 0, 1.8, -69),
+      midKey(A, B, 0.3, 0, -39, 0, -47),
+      midKey(A, B, 0.68, 0, -60, 0, -69),
     ];
   }
   if (key === 'asesoria-lab>slot') {
