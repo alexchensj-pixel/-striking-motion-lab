@@ -185,3 +185,66 @@
   .spatial-chapter--founder .founder-section { padding-left:16px !important; padding-right:16px !important; }
   .spatial-chapter--founder .founder-human img { height:132px !important; }
 }
+
+
+/* Cinematic visual system pass: preserve 3D chapters; refine legibility and media. */
+:root{--sml-orange:#ff5a14;--sml-glass:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.025))}
+.spatial-chapter{position:relative;overflow:visible}
+.spatial-chapter>.stage{overflow:hidden}
+.spatial-chapter .journey-section{position:relative;isolation:isolate;background:transparent}
+.spatial-chapter .journey-section:after{content:"";position:absolute;z-index:-1;inset:auto 0 0;height:48%;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.82) 8%,rgba(0,0,0,.32) 58%,transparent)}
+.spatial-chapter .section-meta{position:relative!important;inset:auto!important;z-index:3;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px;width:100%;margin:0 0 20px!important;font-size:9px;line-height:1.4;letter-spacing:.13em}
+.spatial-chapter .section-meta>span{min-width:0}.spatial-chapter .section-meta>span:last-child{text-align:right}
+.spatial-chapter--pricing .training-card,.spatial-chapter--pricing .format-detail-card,.spatial-chapter--founder .credential-gallery__item,.spatial-chapter--founder .proof-card,.business-section .b2b-offer,.business-section .b2b-proposal{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.16)!important;border-radius:14px!important;background:var(--sml-glass),linear-gradient(145deg,rgba(12,14,17,.94),rgba(5,7,9,.92))!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 42px rgba(0,0,0,.28)}
+.spatial-chapter--pricing .training-card:after,.spatial-chapter--founder .credential-gallery__item:after,.spatial-chapter--founder .proof-card:after,.business-section .b2b-offer:after,.business-section .b2b-proposal:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-bottom:2px solid var(--sml-orange);box-shadow:inset 0 -8px 28px rgba(255,90,20,.13),0 0 22px rgba(255,90,20,.12)}
+.spatial-chapter--pricing .training-card>*,.spatial-chapter--founder .credential-gallery__item>*,.spatial-chapter--founder .proof-card>*,.business-section .b2b-offer>*,.business-section .b2b-proposal>*{position:relative;z-index:1}
+.spatial-chapter--pricing .format-detail-media,.spatial-chapter--pricing .pricing-format-image,.spatial-chapter--founder .founder-human figure{position:relative;overflow:hidden;background:#08090b}
+.spatial-chapter--pricing .format-detail-media img,.spatial-chapter--pricing .format-detail-media video,.spatial-chapter--pricing .pricing-format-image img,.spatial-chapter--founder .founder-human img{display:block;width:100%;height:100%;object-fit:cover}
+.spatial-chapter--pricing .format-detail-media:after{content:"";position:absolute;inset:35% 0 0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.78),transparent)}
+.spatial-chapter--founder .credential-gallery__item{transform:perspective(900px) rotateY(-3deg) rotateX(1deg);transform-origin:center}
+.spatial-chapter--founder .credential-gallery__open{background:rgba(0,0,0,.34)}.spatial-chapter--founder .credential-gallery__open img{width:100%;height:100%;object-fit:contain}
+.spatial-chapter--entry .hero h1,.spatial-chapter--pricing .pricing-title,.spatial-chapter--founder .founder-section>h2,.spatial-chapter--booking .booking-section>h2,.business-section h2{hyphens:none!important;-webkit-hyphens:none!important;word-break:normal!important;overflow-wrap:normal!important;text-wrap:balance}
+.spatial-chapter--entry .hero h1{font-size:clamp(36px,10.8vw,62px);line-height:.94;max-width:100%}
+.spatial-chapter--entry .hero:before{background:linear-gradient(to top,rgba(0,0,0,.84),rgba(0,0,0,.32) 54%,rgba(0,0,0,.08))!important}
+.spatial-chapter--pricing .training-card{transform:perspective(900px) rotateY(-2deg) rotateX(1deg)!important}
+.spatial-chapter--pricing .format-detail-card{border-radius:14px!important}
+.spatial-chapter--booking .booking-section{position:relative;background:radial-gradient(ellipse at 50% 58%,rgba(255,90,20,.09),transparent 48%)!important}
+.spatial-chapter--booking .booking-section:before{content:"";position:absolute;z-index:-1;width:min(76vw,620px);aspect-ratio:1;left:50%;top:52%;transform:translate(-50%,-50%);border:1px solid rgba(255,90,20,.18);border-radius:50%;box-shadow:0 0 0 24px rgba(255,90,20,.025),0 0 0 72px rgba(255,90,20,.018),inset 0 0 48px rgba(255,90,20,.035);pointer-events:none}
+.spatial-chapter--booking .booking-calendar,.spatial-chapter--booking .booking-calendar-heading,.spatial-chapter--booking .booking-grid,.spatial-chapter--booking .booking-steps,.spatial-chapter--booking .what-to-bring{position:relative;z-index:1}
+.spatial-chapter--booking .sml-booking__error p{display:none!important}.spatial-chapter--booking .sml-booking__error .sml-booking__submit{display:inline-flex}
+@media(max-width:760px){
+ .spatial-chapter>.stage{min-height:100svh}
+ .spatial-chapter .journey-section{height:auto!important;min-height:100svh!important;justify-content:flex-end;padding-top:calc(env(safe-area-inset-top) + 94px)!important;padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
+ .spatial-chapter .section-meta{position:relative!important;top:auto!important;left:auto!important;right:auto!important;margin:0 0 16px!important;font-size:8px;letter-spacing:.1em}
+ .spatial-chapter .section-meta>span:last-child{max-width:70%}
+ .spatial-chapter--entry .hero{min-height:100svh!important;height:auto!important;justify-content:center;padding:calc(env(safe-area-inset-top) + 90px) 18px calc(70px + env(safe-area-inset-bottom))!important;background:transparent!important}
+ .spatial-chapter--entry .hero h1{font-size:clamp(34px,10.5vw,48px)!important;line-height:.94!important;max-width:100%!important;letter-spacing:-.025em!important}
+ .spatial-chapter--entry .hero-context{max-width:34ch}
+ .spatial-chapter--pricing .pricing-section,.spatial-chapter--founder .founder-section,.spatial-chapter--booking .booking-section,.spatial-chapter .business-section{height:auto!important;min-height:100svh!important;overflow:visible!important}
+ .spatial-chapter--pricing .training-card,.spatial-chapter--founder .credential-gallery__item{transform:none!important}
+ .spatial-chapter--pricing .pricing-format-cards{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+ .spatial-chapter--pricing .pricing-format-card{min-width:0!important}
+ .spatial-chapter--pricing .pricing-format-copy strong,.spatial-chapter--pricing .pricing-format-copy small{overflow-wrap:anywhere;word-break:normal}
+ .spatial-chapter--pricing .format-detail-media{aspect-ratio:16/9!important;max-height:none!important}
+ .spatial-chapter--pricing .format-detail-media img,.spatial-chapter--pricing .format-detail-media video{width:100%!important;height:100%!important;max-height:none!important;min-height:0!important;object-fit:cover!important}
+ .spatial-chapter--founder .credential-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .spatial-chapter--founder .credential-gallery__item,.spatial-chapter--founder .credential-gallery__proofhead{min-width:0}
+ .spatial-chapter--founder .credential-gallery__proofhead strong{font-size:clamp(27px,9vw,42px)!important}
+ .spatial-chapter--founder .credential-gallery__proofhead b,.spatial-chapter--founder .credential-gallery__proofhead small{overflow-wrap:anywhere}
+ .spatial-chapter--founder .founder-human{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .spatial-chapter--founder .founder-human img{height:auto!important;aspect-ratio:4/3}
+ .spatial-chapter--booking .booking-section:before{width:88vw;top:50%}
+ .spatial-chapter--booking .booking-calendar,.spatial-chapter--booking .sml-booking__calendar,.spatial-chapter--booking .sml-booking__times{min-width:0}
+ .spatial-chapter--booking .sml-booking__layout{grid-template-columns:minmax(0,1fr)!important}
+ .spatial-chapter--booking .sml-booking__error .sml-booking__submit{width:100%;justify-content:center}
+}
+@media(max-width:390px){
+ .spatial-chapter--entry .hero{padding-left:16px!important;padding-right:16px!important}
+ .spatial-chapter--entry .hero h1{font-size:clamp(32px,9.7vw,38px)!important}
+ .spatial-chapter .section-meta{gap:6px 9px}
+ .spatial-chapter .section-meta>span:last-child{max-width:66%}
+ .spatial-chapter--pricing .pricing-format-copy{padding:8px 6px!important}
+ .spatial-chapter--pricing .pricing-format-copy strong{font-size:10px!important}
+ .spatial-chapter--pricing .pricing-format-copy small{font-size:8px!important}
+}
+@media(prefers-reduced-motion:reduce){.spatial-chapter *,.spatial-chapter *:before,.spatial-chapter *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
