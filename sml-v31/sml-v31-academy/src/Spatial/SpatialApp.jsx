@@ -215,9 +215,8 @@ function App() {
         <p className="eyebrow">TU SIGUIENTE NIVEL</p><h2 className="pricing-title">Tu entrenamiento. Tu siguiente nivel.</h2>
         <p className="pricing-social" aria-label="Valoración en Google: 5,0 estrellas y 18 reseñas">{site.rating.valor.replace('.', ',')} ★ · {site.rating.resenas} reseñas</p>
         <p className="lead">Muay Thai, boxeo, kickboxing y K1 en Madrid. Entrenamiento 1:1, en pareja o en grupos de hasta cuatro personas.</p>
-        <div className="pricing-followup"><span>NO ES SOLO UNA SESIÓN. ES UN PROCESO.</span><p>El trabajo continúa entre sesiones: Arsenal consolida la técnica, Striker añade planificación y biblioteca personalizada, y Fight IQ incorpora estrategia y preparación específica. No compras solo horas de entrenamiento: sigues un proceso con dirección y objetivos.</p></div>
         <div className="pricing-format-chooser">
-          <div className="pricing-format-intro"><span className="eyebrow">03 / CLASES</span><h3>Elige cómo entrenar.</h3><p>Entrenamiento adaptado a tu nivel, objetivo y disponibilidad.</p><a href="#service-pricing-panel" onClick={(event) => { event.preventDefault(); document.getElementById('service-pricing-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Ver formatos y precios <span aria-hidden="true">↗</span></a></div>
+          <div className="pricing-format-intro"><span className="eyebrow">ELIGE TU FORMATO</span><h3>¿Cómo quieres entrenar?</h3><p>Selecciona una opción para ver qué incluye y cuánto cuesta.</p></div>
           <nav className="pricing-tabs pricing-format-cards" role="tablist" aria-label="Tipo de entrenamiento">
             <button type="button" id="tab-grupos" role="tab" aria-selected={activeService === 'grupos'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'grupos' ? 'is-active' : ''}`} onClick={() => chooseService('grupos')}>
               <span className="pricing-format-image"><img src="/Grupo_parejas_poster.jpg" alt="" loading="lazy"/><span className="pricing-format-play" aria-hidden="true">▶</span></span><span className="pricing-format-copy"><strong>Grupos reducidos</strong><small>Hasta 4 personas</small></span>
@@ -232,8 +231,7 @@ function App() {
         </div>
         <div id="service-pricing-panel" className="pricing-tab-panel" role="tabpanel" aria-labelledby={`tab-${activeService}`}>
           {activeService === 'individual' && <>
-            {entrenamientoMedia.sala?.poster && <figure className="service-media"><img src={entrenamientoMedia.sala.poster} alt="Entrenamiento privado: trabajo técnico de golpeo y corrección individual" loading="eager"/><figcaption>Trabajo técnico individual · Sesiones privadas</figcaption></figure>}
-            <SessionPhoto photo={fotosSesion.individual[0]} alt="Sesión individual de entrenamiento en Striking Motion Lab" caption="Sesión individual · Atención personalizada" framing="wide" />
+            <div className="format-detail-media"><img src={fotosSesion.individual[0].src} alt="Sesión individual de entrenamiento en Striking Motion Lab" loading="lazy"/><span>SESIÓN INDIVIDUAL · ATENCIÓN PERSONALIZADA</span></div>
             <div className="plan-cards-heading">
               <div><p className="eyebrow">PLANES MENSUALES · 1:1</p><h3 className="subsection-title">Elige tu plan de entrenamiento.</h3></div>
               <p>Cada plan incluye el anterior y añade más frecuencia y trabajo específico.</p>
@@ -276,7 +274,6 @@ function App() {
               <a href={waLink('Hola, quiero consultar disponibilidad para una sesión individual 1:1.')} target="_blank" rel="noopener noreferrer">Consultar sesión <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
               <p className="format-risk-note">60 min · Sin plan mensual ni permanencia · cambios con 24 h de antelación.</p>
             </div>
-            <SessionPhoto photo={fotosSesion.individual[1]} alt="Entrenamiento individual: trabajo técnico en una sesión 1:1" caption="Entrenamiento 1:1 · Trabajo técnico" framing="wide" />
             <div className="plan-comparison-control">
               <button type="button" className="plan-comparison-toggle" aria-expanded={showPlanComparison} aria-controls="plan-comparison" onClick={() => setShowPlanComparison((value) => !value)}>{showPlanComparison ? 'Ocultar comparación' : 'Comparar qué incluye cada plan'} <span>{showPlanComparison ? '−' : '+'}</span></button>
             </div>
@@ -290,15 +287,16 @@ function App() {
             </div>}
           </>}
           {activeService === 'parejas' && <>
-            <SessionPhoto photo={fotosSesion.parejas[0]} alt="Sesión de entrenamiento en pareja en Striking Motion Lab" caption="Entrenamiento en pareja · Sesión compartida" framing="wide" />
-            <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO COMPARTIDO</p><h3 className="subsection-title">Entrenad juntos.</h3></div><p>Una sesión privada para dos personas, adaptada a vuestro nivel y objetivos.</p></div>
-            <article className="training-card format-service-card"><small>SESIÓN PARA 2 PERSONAS</small><h3>Parejas</h3><div className="format-service-price">{money(coupleFormat.precio)} <span>/ persona / sesión</span></div><p>{coupleFormat.texto}</p><a href={waLink('Hola, quiero consultar disponibilidad para entrenar en pareja.')} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a><p className="format-risk-note">Sin permanencia · cambios con 24 h de antelación. La evaluación inicial no se descuenta en este formato.</p></article>
+            <article className="format-detail-card">
+              <div className="format-detail-media"><img src={fotosSesion.parejas[0].src} alt="Sesión de entrenamiento en pareja" loading="lazy"/><span>ENTRENAMIENTO COMPARTIDO · 2 PERSONAS</span></div>
+              <div className="format-detail-copy"><p className="eyebrow">ENTRENAMIENTO COMPARTIDO</p><h3>Entrenad juntos.</h3><div className="format-service-price">{money(coupleFormat.precio)} <span>/ persona / sesión</span></div><p>{coupleFormat.texto}</p><a className="format-detail-cta" href={waLink('Hola, quiero consultar disponibilidad para entrenar en pareja.')} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <span>↗</span></a><small>Sin permanencia · cambios con 24 h de antelación. La evaluación inicial no se descuenta en este formato.</small></div>
+            </article>
           </>}
           {activeService === 'grupos' && <>
-            <div className="service-video"><video autoPlay muted loop playsInline webkit-playsinline="true" preload="auto" poster="/Grupo_parejas_poster.jpg" aria-label="Vídeo de entrenamiento al aire libre en grupo reducido"><source src="/Grupo_parejas_12s_safari.mp4" type="video/mp4" /></video></div>
-            <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO EN EQUIPO</p><h3 className="subsection-title">Grupo reducido.</h3></div><p>Entrenamiento compartido, con atención técnica y un máximo de cuatro personas.</p></div>
-            <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article>
-            <SessionPhoto photo={fotosSesion.grupos[1]} alt="Entrenamiento en grupo reducido con atención técnica" caption="Entrenamiento en grupo · Atención técnica" framing="wide" />
+            <article className="format-detail-card format-detail-card--group">
+              <div className="format-detail-media"><video autoPlay muted loop playsInline webkit-playsinline="true" preload="metadata" poster="/Grupo_parejas_poster.jpg" aria-label="Vídeo de entrenamiento al aire libre en grupo reducido"><source src="/Grupo_parejas_12s_safari.mp4" type="video/mp4" /></video><span>ENTRENAMIENTO EN EQUIPO · MÁXIMO 4 PERSONAS</span></div>
+              <div className="format-detail-copy"><p className="eyebrow">GRUPO REDUCIDO</p><h3>Entrena en equipo.</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<small>Sin permanencia · plazas sujetas a zona y disponibilidad. Si no existe un grupo compatible, puedes apuntarte para formarlo.</small></div>
+            </article>
           </>}
         </div>
       </div>
