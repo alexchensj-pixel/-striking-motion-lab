@@ -14,6 +14,12 @@ import { paintSlabSide, paintSlabEnd, paintArchiveFloor, paintStreak } from './a
 // brillo de sus volúmenes, de su canto luminoso y del reflejo en el suelo. Aparece y se apaga con getArchiveGain().
 const INSET = 0.002;
 const STREAK = { w: 0.5, len: 3.5 }; // reflejo del canto en el suelo (m)
+const PANEL_SPECS = [
+  { index: 1, number: '01', title: 'ANÁLISIS DEL MOVIMIENTO', lines: ['OBSERVAR · REGISTRAR', 'ANALIZAR · CORREGIR'], type: 'motion' },
+  { index: 3, number: '02', title: 'MÉTODO DE ENTRENAMIENTO', lines: ['TÉCNICA', 'PLANIFICACIÓN', 'SEGUIMIENTO'], type: 'method' },
+  { index: 6, number: '03', title: 'DISCIPLINAS', lines: ['MUAY THAI', 'BOXEO', 'KICKBOXING · K1'], type: 'sports' },
+  { index: 7, number: '04', title: 'EVOLUCIÓN', lines: ['TÉCNICA', 'CONDICIÓN', 'ESTRATEGIA', 'CONFIANZA'], type: 'progress' },
+];
 
 export default function ArchiveArchitecture({ weights }) {
   const root = useRef();
@@ -30,6 +36,26 @@ export default function ArchiveArchitecture({ weights }) {
       return t;
     };
     const PPM = { slab: 96, floor: 20 };
+    const panelTextures = PANEL_SPECS.map((spec) => {
+      const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 1024;
+      const g = canvas.getContext('2d');
+      const bg = g.createLinearGradient(0, 0, 768, 1024); bg.addColorStop(0, '#111a22'); bg.addColorStop(1, '#05090e');
+      g.fillStyle = bg; g.fillRect(0, 0, 768, 1024);
+      g.strokeStyle = 'rgba(84,217,232,.75)'; g.lineWidth = 5; g.strokeRect(22, 22, 724, 980);
+      g.fillStyle = '#54d9e8'; g.font = '700 32px Arial'; g.fillText('STRIKING MOTION LAB', 58, 92);
+      g.font = '700 76px Arial'; g.fillText(spec.number, 58, 205);
+      g.fillStyle = '#f2f6f8'; g.font = '700 48px Arial';
+      const words = spec.title.split(' '); let line = '', y = 300;
+      words.forEach((word) => { const test = line ? `${line} ${word}` : word; if (g.measureText(test).width > 630 && line) { g.fillText(line, 58, y); y += 58; line = word; } else line = test; });
+      if (line) { g.fillText(line, 58, y); y += 76; }
+      g.strokeStyle = 'rgba(84,217,232,.55)'; g.lineWidth = 3; g.beginPath(); g.moveTo(58, y); g.lineTo(710, y); g.stroke(); y += 78;
+      spec.lines.forEach((label) => { g.fillStyle = '#54d9e8'; g.fillRect(62, y - 25, 14, 14); g.fillStyle = '#dce7ed'; g.font = '600 30px Arial'; g.fillText(label, 100, y); y += 68; });
+      g.strokeStyle = 'rgba(84,217,232,.85)'; g.lineWidth = 5; g.beginPath();
+      if (spec.type === 'progress' || spec.type === 'motion') { g.moveTo(90, 900); g.lineTo(220, 850); g.lineTo(350, 790); g.lineTo(480, 690); g.lineTo(650, 590); }
+      else { g.moveTo(90, 900); g.lineTo(220, 830); g.lineTo(350, 870); g.lineTo(480, 760); g.lineTo(650, 800); }
+      g.stroke();
+      const t = new CanvasTexture(canvas); t.colorSpace = SRGBColorSpace; t.anisotropy = aniso; return t;
+    });
     const tx = {
       // BoxGeometry invierte la U entre +x y −x: el canto delantero (+z) cae a la izquierda en +x y a la derecha en −x
       sideP: tex(SD * PPM.slab, SH * PPM.slab, (g, w, h) => paintSlabSide(g, w, h, { ppm: PPM.slab, frontAtLeft: true, seed: 3 })),
@@ -59,14 +85,17 @@ export default function ArchiveArchitecture({ weights }) {
     const body = new BoxGeometry(SW - 2 * INSET, SH - 2 * INSET, SD - 2 * INSET);
     const floorGeo = new PlaneGeometry(FLOOR.size[0], FLOOR.size[1]);
     const streakGeo = new PlaneGeometry(STREAK.w, STREAK.len);
-    return { tx, dark, floor, slabs, mats, body, floorGeo, streakGeo };
+    const panelGeo = new PlaneGeometry(SD * 0.88, SH * 0.88);
+    const panelMaterials = panelTextures.map((map) => new MeshBasicMaterial({ map, transparent: true, opacity: 0, depthWrite: false, toneMapped: false }));
+    return { tx, dark, floor, slabs, mats, body, floorGeo, streakGeo, panelTextures, panelGeo, panelMaterials };
   }, [gl, SW, SH, SD]);
 
   useEffect(() => () => {
     res.dark.dispose(); res.floor.dispose();
     res.slabs.forEach((s) => { s.px.dispose(); s.nx.dispose(); s.end.dispose(); s.streak.dispose(); });
     Object.values(res.tx).forEach((t) => t.dispose());
-    res.body.dispose(); res.floorGeo.dispose(); res.streakGeo.dispose();
+    res.body.dispose(); res.floorGeo.dispose(); res.streakGeo.dispose(); res.panelGeo.dispose();
+    res.panelMaterials.forEach((m) => m.dispose()); res.panelTextures.forEach((t) => t.dispose());
   }, [res]);
 
   useFrame(() => {
@@ -84,6 +113,7 @@ export default function ArchiveArchitecture({ weights }) {
       s.end.color.setScalar(g * (0.8 + 0.4 * w[i]));  // rendija del canto: tenue siempre, más viva al enfocar (la cara es hormigón oscuro)
       s.streak.opacity = g * (0.15 + 0.85 * w[i]) * 0.2; // reflejo en el suelo
     });
+    res.panelMaterials.forEach((m, i) => { m.opacity = g * (0.72 + 0.28 * w[PANEL_SPECS[i].index]); });
   });
 
   return (
@@ -96,6 +126,9 @@ export default function ArchiveArchitecture({ weights }) {
           {/* Reflejo del canto luminoso: nace en el frente del volumen (z = +1,5) y se alarga hacia la cámara */}
           <mesh position={[0, FLOOR.y + 0.004, SD / 2 + STREAK.len / 2]} rotation-x={-Math.PI / 2} geometry={res.streakGeo} material={s.streak} renderOrder={2} />
         </group>
+      ))}
+      {PANEL_SPECS.map((spec, i) => (
+        <mesh key={`panel-${spec.index}`} position={[slabX(spec.index) + ARCHIVE.size[0] / 2 + 0.012, ARCHIVE.y, 0]} rotation-y={Math.PI / 2} geometry={res.panelGeo} material={res.panelMaterials[i]} renderOrder={3} />
       ))}
     </group>
   );
