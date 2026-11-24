@@ -130,7 +130,7 @@ export default function SalesLanding() {
         <div className="sml-v3__faq-side"><SectionLabel n="08">FAQ Y CONTACTO</SectionLabel><h2>Preguntas<br/><em>frecuentes.</em></h2><p>Resolvemos las dudas más habituales antes de empezar.</p><img src="/IMG_3495.webp" alt="Guantes de entrenamiento" loading="lazy"/></div>
         <div className="sml-v3__faq-content"><div className="sml-v3__accordions">{faqs.map(([q,a],i)=><details key={q} open={i===0}><summary>{q}<span>＋</span></summary><p>{a}</p></details>)}</div>
           <div className="sml-v3__ready"><h3>¿Listo para empezar?</h3><p>Reserva tu evaluación, resuelve tus dudas o cuéntame tus objetivos. Te responderé personalmente.</p><a className="sml-v3__button" href="#reserva">Reservar evaluación · 30 € ↗</a></div>
-          <div className="sml-v3__contact-links"><a href={waLink('Hola, quiero información sobre los entrenamientos.')}><b>◉</b>WhatsApp<small>Respuesta rápida</small></a><a href="mailto:hola@strikingmotionlab.com"><b>✉</b>Email<small>Contacto directo</small></a><a href={site.maps}><b>⌖</b>Madrid<small>Entrenamiento en tu zona</small></a></div>
+          <div className="sml-v3__contact-links"><a href={waLink('Hola, quiero información sobre los entrenamientos.')}><b>◉</b>WhatsApp<small>Respuesta rápida</small></a><a href={site.instagram.url}><b>◎</b>Instagram<small>Contacto directo</small></a><a href={site.maps}><b>⌖</b>Madrid<small>Entrenamiento en tu zona</small></a></div>
         </div>
       </section>
 
