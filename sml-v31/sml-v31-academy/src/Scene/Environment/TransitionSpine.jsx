@@ -42,7 +42,6 @@ function PortalFrame({ z, index }) {
 export default function TransitionSpine() {
   return (
     <group>
-      {/* A continuous walkable deck physically joins the character gallery to the training lab. */}
       <mesh position={[0, 0.025, (FROM_Z + TO_Z) / 2]} receiveShadow>
         <boxGeometry args={[14, 0.12, LENGTH + 2]} />
         <meshStandardMaterial color="#111720" metalness={0.32} roughness={0.82} />
@@ -58,7 +57,6 @@ export default function TransitionSpine() {
       {Array.from({ length: FRAME_COUNT }, (_, i) => (
         <PortalFrame key={i} index={i} z={FROM_Z - i * FRAME_SPACING} />
       ))}
-      {/* Recessed floor guides establish a continuous axis through the transition. */}
       {[-5.9, 5.9].map((x) => (
         <mesh key={x} position={[x, 0.092, (FROM_Z + TO_Z) / 2]}>
           <boxGeometry args={[0.045, 0.018, LENGTH - 1]} />
