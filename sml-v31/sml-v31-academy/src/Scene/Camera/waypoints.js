@@ -150,7 +150,7 @@ const stagePose = (id, p) => { const c = stageCamera(id, p); return { pos: c.pos
 // que acababa de dejar y reaparecía en otra sala. Ahora el viaje es continuo: sale de la última estación de un capítulo, rodea la pieza que
 // deja atrás (plataforma de la 03, bastidor de la 04, hilera de volúmenes de la 05) y llega a la primera estación del siguiente mirando
 // siempre hacia delante. Los dos extremos son EXACTAMENTE stageCamera (con el aspect real): ya no hay salto al entrar/salir del umbral.
-const CONTINUOUS_THRESHOLDS = new Set(['asesoria-lab>slot', 'slot>proof-chen', 'proof-chen>reserva']);
+const CONTINUOUS_THRESHOLDS = new Set(['entrada>asesoria-lab', 'asesoria-lab>slot', 'slot>proof-chen', 'proof-chen>reserva']);
 // Ease de viaje: arranca y termina suave pero sin pararse (la cámara ya viene asentada de la estación; no debe "reiniciarse").
 const travelEase = (p) => p + 0.6 * (smooth01(Math.min(1, Math.max(0, p))) - p);
 
@@ -163,6 +163,14 @@ const midKey = (A, B, f, x, z, lx, lz) => {
 };
 
 function routeKeys(key, A, B, aspect) {
+  if (key === 'entrada>asesoria-lab') {
+    // Travelling explícito por el eje del corredor físico: atraviesa los siete pórticos
+    // de TransitionSpine y entra en el laboratorio mirando a la máquina, sin atajo diagonal.
+    return [
+      midKey(A, B, 0.3, 0, 1.7, -39, 0, 1.7, -47),
+      midKey(A, B, 0.68, 0, 1.8, -60, 0, 1.8, -69),
+    ];
+  }
   if (key === 'asesoria-lab>slot') {
     // Sale por el lado de la plataforma (4 m de ancho) y atraviesa el hueco del marco del fondo de la sala (ROOM).
     const sx = PLATFORM.size[0] / 2 + 0.9;
@@ -329,6 +337,7 @@ export const segmentFeel = {
   // HOME (V22): entrada arquitectónica — seguimiento pesado (k bajo) y cámara rígida (sin balanceo de puntero).
   entrada: { k: 1.6, parallax: 0 },
   'entrada>character-select': { k: 4, parallax: 0.25 },
+  'entrada>asesoria-lab': { k: 3.2, parallax: 0.08 },
   // 03→06: travelling continuo — seguimiento algo más pesado y casi sin balanceo de puntero (la trayectoria ya es suave).
   'asesoria-lab>slot': { k: 4, parallax: 0.25 },
   'slot>proof-chen': { k: 4, parallax: 0.25 },

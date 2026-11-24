@@ -1,3 +1,4 @@
+import { useThree } from '@react-three/fiber';
 import { anchorZ, chapterOrder } from '../Camera/waypoints.js';
 
 const FROM_Z = anchorZ(chapterOrder.indexOf('character-select')) - 2;
@@ -40,8 +41,12 @@ function PortalFrame({ z, index }) {
 }
 
 export default function TransitionSpine() {
+  const { size } = useThree();
+  const aspect = size.width / Math.max(1, size.height);
+  // El corredor se adapta al campo de visión real: en móvil deja de quedar fuera del encuadre.
+  const widthScale = aspect < 0.8 ? 0.2 : aspect < 1.2 ? 0.38 : 0.62;
   return (
-    <group>
+    <group scale={[widthScale, 1, 1]}>
       <mesh position={[0, 0.025, (FROM_Z + TO_Z) / 2]} receiveShadow>
         <boxGeometry args={[14, 0.12, LENGTH + 2]} />
         <meshStandardMaterial color="#111720" metalness={0.32} roughness={0.82} />
