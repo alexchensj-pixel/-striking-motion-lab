@@ -11,6 +11,7 @@ import {
 import EntradaWorld from '../Scene/Environment/Entrada/EntradaWorld.jsx';
 import BridgeHall from '../Scene/Environment/Bridge/BridgeHall.jsx';
 import TransitionSpine from '../Scene/Environment/TransitionSpine.jsx';
+import SpatialSpine from './SpatialSpine.jsx';
 
 // Keep every original spatial room mounted throughout the camera journey.
 // The original SML environment keeps these rooms alive so transitions never expose empty stretches.
@@ -38,6 +39,8 @@ export default function MemoryEnvironment() {
       <BridgeHall transitionOnly />
       {/* A real architectural connector now closes the former empty gap: Character Select → training lab. */}
       <TransitionSpine />
+      {/* Nave estructural continua: conecta físicamente todas las estancias del recorrido. */}
+      <SpatialSpine />
       {chapters.map(({ id }, index) => {
         const Blockout = blockouts[id];
         if (!Blockout) return null;
