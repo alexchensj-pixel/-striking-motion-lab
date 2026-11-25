@@ -7,8 +7,8 @@ import {
 import { anchorZ, chapterOrder } from '../Scene/Camera/waypoints.js';
 import { ENTRADA_END_Z } from '../Scene/Environment/Entrada/constants.js';
 import { scrollState, BRIDGE_END, REVEAL_START, isCoarsePointer } from '../Scene/Transitions/scrollState.js';
-import { smoothstep } from '../Entrada/geo.js';
-import { image as mediaImage, video as mediaVideo } from '../../../Data/Media.js';
+import { smoothstep } from '../Scene/Environment/Entrada/geo.js';
+import { image as mediaImage, video as mediaVideo } from '../Data/Media.js';
 
 // HUD de depuración en pantalla, SOLO con ?debug=1 en la URL — sin esto, cero coste y cero cambio visual.
 // Pensado para verificar en el propio móvil (sin Mac/inspector remoto) qué de las tres causas posibles es:
