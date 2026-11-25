@@ -6,7 +6,7 @@ import {
 } from 'three';
 import { anchorZ, chapterOrder } from '../Scene/Camera/waypoints.js';
 import { ENTRADA_END_Z } from '../Scene/Environment/Entrada/constants.js';
-import { scrollState, BRIDGE_END, REVEAL_START, isCoarsePointer } from '../../Transitions/scrollState.js';
+import { scrollState, BRIDGE_END, REVEAL_START, isCoarsePointer } from '../Scene/Transitions/scrollState.js';
 import { smoothstep } from '../Entrada/geo.js';
 import { image as mediaImage, video as mediaVideo } from '../../../Data/Media.js';
 
