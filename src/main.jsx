@@ -11,7 +11,7 @@ const App = lazy(() => import('./App/App.jsx'));
 const MethodPage = lazy(() => import('./Experience/MethodPage/MethodPage.jsx'));
 const MiSML = lazy(() => import('./Client/MiSML.jsx'));
 
-const ruta = window.location.pathname.replace(/\\/+$/, '') || '/';
+const ruta = window.location.pathname.replace(/\/+$/, '') || '/';
 const legalTipo = ruta === RUTAS.privacidad ? 'privacidad' : ruta === RUTAS.aviso ? 'aviso' : null;
 const esMiSML = ruta === '/mi-sml' || ruta.startsWith('/mi-sml/');
 const esMetodo = ruta === '/metodo';
