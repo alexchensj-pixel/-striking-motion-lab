@@ -18,8 +18,8 @@ export const PORTAL_Z = [-2, -10];    // Portal 01 · Portal 02
 export const LOCK_Z = -6.5;           // punto magnético (la cámara se "asienta" aquí, sin detenerse)
 export const FOG_START_Z = -15;       // la niebla volumétrica arranca aquí y crece hacia -50
 
-// Softbox superior 4 m × 1 m · Y 5.5 · Z -8 · 4200 K (≈ #ffd3af, aproximación de Tanner Helland).
-export const SOFTBOX = { pos: [0, 5.5, -8], size: [4, 1], kelvin: 4200, color: '#ffd3af' };
+// Softbox superior 4 m × 1 m · Y 5.5 · Z -8 · 6500 K (luz fría de estudio).
+export const SOFTBOX = { pos: [0, 5.5, -8], size: [4, 1], kelvin: 6500, color: '#d7eaf5' };
 
 // Huecos espaciales de los atletas de la Escena 02. La X se DERIVA del mismo índice que usa Pillars/
 // blockouts.jsx para colocar cada vitrina real (disciplines.map((d,i) => cellX(i))) — no es un valor

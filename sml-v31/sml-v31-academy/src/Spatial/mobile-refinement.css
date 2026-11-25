@@ -1,0 +1,407 @@
+/* SML mobile refinement — preserve the SpatialApp, 3D world and chapter journey.
+   These are composition/spacing changes only; no alternate flat homepage is mounted. */
+@media (max-width:760px) {
+  .spatial-chapter--entry .hero {
+    min-height: min(920px, calc(100svh - 70px));
+    padding: max(92px, calc(env(safe-area-inset-top) + 78px)) 20px 48px !important;
+    justify-content: center;
+    background: transparent !important;
+  }
+  .spatial-chapter--entry .hero h1 {
+    max-width: 10.5ch;
+    font-size: clamp(3.05rem, 12.2vw, 4.35rem);
+    line-height: .9;
+    text-wrap: balance;
+  }
+  .spatial-chapter--entry .hero-context {
+    max-width: 35ch;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .spatial-chapter--entry .hero-benefits {
+    margin: 16px 0 18px;
+    background: linear-gradient(110deg,rgba(7,9,13,.68),rgba(7,9,13,.38));
+    border: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(8px);
+  }
+  .spatial-chapter--entry .hero-start-note {
+    margin-top: 4px;
+    max-width: 38ch;
+  }
+  .spatial-chapter--entry .hero-format-cards {
+    margin-top: 12px;
+  }
+
+  /* Pricing remains a chapter over the 3D environment, but the content is denser. */
+  .spatial-chapter--pricing .pricing-section {
+    padding: 94px 18px 76px !important;
+    min-height: 0 !important;
+    background: linear-gradient(180deg,rgba(7,8,10,.82),rgba(7,8,10,.66)) !important;
+    backdrop-filter: blur(2px);
+  }
+  .spatial-chapter--pricing .pricing-section > .section-meta {
+    margin-bottom: 14px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .eyebrow {
+    margin-bottom: 8px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .pricing-title {
+    max-width: 11ch !important;
+    font-size: clamp(2.65rem, 10.8vw, 3.65rem) !important;
+    line-height: .91 !important;
+    margin-bottom: 12px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .pricing-social {
+    margin-bottom: 10px !important;
+  }
+  .spatial-chapter--pricing .pricing-section > .lead {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    margin-bottom: 14px !important;
+  }
+  .spatial-chapter--pricing .pricing-format-chooser {
+    margin: 14px 0 12px !important;
+  }
+  .spatial-chapter--pricing .pricing-format-image {
+    aspect-ratio: 1.35 / 1 !important;
+  }
+  .spatial-chapter--pricing .format-detail-media {
+    aspect-ratio: 2.05 / 1 !important;
+    max-height: 230px !important;
+  }
+  .spatial-chapter--pricing .format-detail-media img,
+  .spatial-chapter--pricing .format-detail-media video {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 230px !important;
+    object-fit: cover !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy {
+    padding: 17px 16px 18px !important;
+    gap: 8px !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy h3 {
+    font-size: 31px !important;
+    line-height: .98 !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy > p:not(.eyebrow) {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+  .spatial-chapter--pricing .format-detail-copy .format-service-price {
+    font-size: 26px !important;
+  }
+
+  /* About Alex: preserve the credential documents, but stop them dominating the scroll. */
+  .spatial-chapter--founder .founder-section {
+    padding: 96px 18px 72px !important;
+    min-height: 0 !important;
+    background: linear-gradient(180deg,rgba(7,8,10,.72),rgba(7,8,10,.62)) !important;
+  }
+  .spatial-chapter--founder .founder-section > h2 {
+    max-width: 12ch !important;
+    font-size: clamp(2.35rem,9.2vw,3.15rem) !important;
+    line-height: .98 !important;
+    margin-bottom: 16px !important;
+  }
+  .spatial-chapter--founder .credential-gallery {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin: 14px 0 18px !important;
+  }
+  .spatial-chapter--founder .credential-gallery__proofhead {
+    padding: 11px 13px 10px !important;
+    grid-template-columns: auto 1fr !important;
+  }
+  .spatial-chapter--founder .credential-gallery__proofhead > strong {
+    font-size: 42px !important;
+  }
+  .spatial-chapter--founder .credential-gallery__open {
+    height: clamp(132px, 39vw, 176px) !important;
+    min-height: 132px !important;
+    padding: 8px !important;
+  }
+  .spatial-chapter--founder .credential-gallery__open img {
+    object-fit: contain !important;
+  }
+  .spatial-chapter--founder .credential-gallery figcaption {
+    padding: 8px 12px 10px !important;
+  }
+  .spatial-chapter--founder .founder-human {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 9px !important;
+    margin: 16px 0 !important;
+  }
+  .spatial-chapter--founder .founder-human figure {
+    min-width: 0;
+    margin: 0;
+  }
+  .spatial-chapter--founder .founder-human img {
+    width: 100% !important;
+    height: 150px !important;
+    min-height: 0 !important;
+    max-height: 180px !important;
+    aspect-ratio: 4 / 3 !important;
+    object-fit: cover !important;
+  }
+  .spatial-chapter--founder .founder-human figcaption {
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+    padding-top: 6px;
+  }
+  .spatial-chapter--founder .proof-card {
+    margin: 9px 0 !important;
+    padding: 15px !important;
+    background: rgba(8,10,14,.62) !important;
+    backdrop-filter: blur(8px);
+  }
+  .spatial-chapter--founder .proof-card blockquote {
+    margin: 9px 0 !important;
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* A discreet persistent booking control, not a full-width slab. */
+  .quick-booking {
+    right: 14px !important;
+    left: auto !important;
+    bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    min-height: 42px !important;
+    padding: 11px 14px !important;
+    gap: 10px !important;
+    border-radius: 3px !important;
+    font-size: 9px !important;
+    letter-spacing: .08em !important;
+  }
+  .threshold {
+    height: 4svh !important;
+    min-height: 26px !important;
+  }
+}
+@media(max-width:390px) {
+  .spatial-chapter--entry .hero { padding-left:17px !important; padding-right:17px !important; }
+  .spatial-chapter--pricing .pricing-section,
+  .spatial-chapter--founder .founder-section { padding-left:16px !important; padding-right:16px !important; }
+  .spatial-chapter--founder .founder-human img { height:132px !important; }
+}
+
+
+/* Cinematic visual system pass: preserve 3D chapters; refine legibility and media. */
+:root{--sml-orange:#ff5a14;--sml-glass:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.025))}
+.spatial-chapter{position:relative;overflow:visible}
+.spatial-chapter>.stage{overflow:hidden}
+.spatial-chapter .journey-section{position:relative;isolation:isolate;background:transparent}
+.spatial-chapter .journey-section:after{content:"";position:absolute;z-index:-1;inset:auto 0 0;height:48%;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.82) 8%,rgba(0,0,0,.32) 58%,transparent)}
+.spatial-chapter .section-meta{position:relative!important;inset:auto!important;z-index:3;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px;width:100%;margin:0 0 20px!important;font-size:9px;line-height:1.4;letter-spacing:.13em}
+.spatial-chapter .section-meta>span{min-width:0}.spatial-chapter .section-meta>span:last-child{text-align:right}
+.spatial-chapter--pricing .training-card,.spatial-chapter--pricing .format-detail-card,.spatial-chapter--founder .credential-gallery__item,.spatial-chapter--founder .proof-card,.business-section .b2b-offer,.business-section .b2b-proposal{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.16)!important;border-radius:14px!important;background:var(--sml-glass),linear-gradient(145deg,rgba(12,14,17,.94),rgba(5,7,9,.92))!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 42px rgba(0,0,0,.28)}
+.spatial-chapter--pricing .training-card:after,.spatial-chapter--founder .credential-gallery__item:after,.spatial-chapter--founder .proof-card:after,.business-section .b2b-offer:after,.business-section .b2b-proposal:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-bottom:2px solid var(--sml-orange);box-shadow:inset 0 -8px 28px rgba(255,90,20,.13),0 0 22px rgba(255,90,20,.12)}
+.spatial-chapter--pricing .training-card>*,.spatial-chapter--founder .credential-gallery__item>*,.spatial-chapter--founder .proof-card>*,.business-section .b2b-offer>*,.business-section .b2b-proposal>*{position:relative;z-index:1}
+.spatial-chapter--pricing .format-detail-media,.spatial-chapter--pricing .pricing-format-image,.spatial-chapter--founder .founder-human figure{position:relative;overflow:hidden;background:#08090b}
+.spatial-chapter--pricing .format-detail-media img,.spatial-chapter--pricing .format-detail-media video,.spatial-chapter--pricing .pricing-format-image img,.spatial-chapter--founder .founder-human img{display:block;width:100%;height:100%;object-fit:cover}
+.spatial-chapter--pricing .format-detail-media:after{content:"";position:absolute;inset:35% 0 0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.78),transparent)}
+.spatial-chapter--founder .credential-gallery__item{transform:perspective(900px) rotateY(-3deg) rotateX(1deg);transform-origin:center}
+.spatial-chapter--founder .credential-gallery__open{background:rgba(0,0,0,.34)}.spatial-chapter--founder .credential-gallery__open img{width:100%;height:100%;object-fit:contain}
+.spatial-chapter--entry .hero h1,.spatial-chapter--pricing .pricing-title,.spatial-chapter--founder .founder-section>h2,.spatial-chapter--booking .booking-section>h2,.business-section h2{hyphens:none!important;-webkit-hyphens:none!important;word-break:normal!important;overflow-wrap:normal!important;text-wrap:balance}
+.spatial-chapter--entry .hero h1{font-size:clamp(36px,10.8vw,62px);line-height:.94;max-width:100%}
+.spatial-chapter--entry .hero:before{background:linear-gradient(to top,rgba(0,0,0,.84),rgba(0,0,0,.32) 54%,rgba(0,0,0,.08))!important}
+.spatial-chapter--pricing .training-card{transform:perspective(900px) rotateY(-2deg) rotateX(1deg)!important}
+.spatial-chapter--pricing .format-detail-card{border-radius:14px!important}
+.spatial-chapter--booking .booking-section{position:relative;background:radial-gradient(ellipse at 50% 58%,rgba(255,90,20,.09),transparent 48%)!important}
+.spatial-chapter--booking .booking-section:before{content:"";position:absolute;z-index:-1;width:min(76vw,620px);aspect-ratio:1;left:50%;top:52%;transform:translate(-50%,-50%);border:1px solid rgba(255,90,20,.18);border-radius:50%;box-shadow:0 0 0 24px rgba(255,90,20,.025),0 0 0 72px rgba(255,90,20,.018),inset 0 0 48px rgba(255,90,20,.035);pointer-events:none}
+.spatial-chapter--booking .booking-calendar,.spatial-chapter--booking .booking-calendar-heading,.spatial-chapter--booking .booking-grid,.spatial-chapter--booking .booking-steps,.spatial-chapter--booking .what-to-bring{position:relative;z-index:1}
+.spatial-chapter--booking .sml-booking__error p{display:none!important}.spatial-chapter--booking .sml-booking__error .sml-booking__submit{display:inline-flex}
+@media(max-width:760px){
+ .spatial-chapter>.stage{min-height:100svh}
+ .spatial-chapter .journey-section{height:auto!important;min-height:100svh!important;justify-content:flex-end;padding-top:calc(env(safe-area-inset-top) + 94px)!important;padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
+ .spatial-chapter .section-meta{position:relative!important;top:auto!important;left:auto!important;right:auto!important;margin:0 0 16px!important;font-size:8px;letter-spacing:.1em}
+ .spatial-chapter .section-meta>span:last-child{max-width:70%}
+ .spatial-chapter--entry .hero{min-height:100svh!important;height:auto!important;justify-content:center;padding:calc(env(safe-area-inset-top) + 90px) 18px calc(70px + env(safe-area-inset-bottom))!important;background:transparent!important}
+ .spatial-chapter--entry .hero h1{font-size:clamp(34px,10.5vw,48px)!important;line-height:.94!important;max-width:100%!important;letter-spacing:-.025em!important}
+ .spatial-chapter--entry .hero-context{max-width:34ch}
+ .spatial-chapter--pricing .pricing-section,.spatial-chapter--founder .founder-section,.spatial-chapter--booking .booking-section,.spatial-chapter .business-section{height:auto!important;min-height:100svh!important;overflow:visible!important}
+ .spatial-chapter--pricing .training-card,.spatial-chapter--founder .credential-gallery__item{transform:none!important}
+ .spatial-chapter--pricing .pricing-format-cards{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+ .spatial-chapter--pricing .pricing-format-card{min-width:0!important}
+ .spatial-chapter--pricing .pricing-format-copy strong,.spatial-chapter--pricing .pricing-format-copy small{overflow-wrap:anywhere;word-break:normal}
+ .spatial-chapter--pricing .format-detail-media{aspect-ratio:16/9!important;max-height:none!important}
+ .spatial-chapter--pricing .format-detail-media img,.spatial-chapter--pricing .format-detail-media video{width:100%!important;height:100%!important;max-height:none!important;min-height:0!important;object-fit:cover!important}
+ .spatial-chapter--founder .credential-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .spatial-chapter--founder .credential-gallery__item,.spatial-chapter--founder .credential-gallery__proofhead{min-width:0}
+ .spatial-chapter--founder .credential-gallery__proofhead strong{font-size:clamp(27px,9vw,42px)!important}
+ .spatial-chapter--founder .credential-gallery__proofhead b,.spatial-chapter--founder .credential-gallery__proofhead small{overflow-wrap:anywhere}
+ .spatial-chapter--founder .founder-human{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .spatial-chapter--founder .founder-human img{height:auto!important;aspect-ratio:4/3}
+ .spatial-chapter--booking .booking-section:before{width:88vw;top:50%}
+ .spatial-chapter--booking .booking-calendar,.spatial-chapter--booking .sml-booking__calendar,.spatial-chapter--booking .sml-booking__times{min-width:0}
+ .spatial-chapter--booking .sml-booking__layout{grid-template-columns:minmax(0,1fr)!important}
+ .spatial-chapter--booking .sml-booking__error .sml-booking__submit{width:100%;justify-content:center}
+}
+@media(max-width:390px){
+ .spatial-chapter--entry .hero{padding-left:16px!important;padding-right:16px!important}
+ .spatial-chapter--entry .hero h1{font-size:clamp(32px,9.7vw,38px)!important}
+ .spatial-chapter .section-meta{gap:6px 9px}
+ .spatial-chapter .section-meta>span:last-child{max-width:66%}
+ .spatial-chapter--pricing .pricing-format-copy{padding:8px 6px!important}
+ .spatial-chapter--pricing .pricing-format-copy strong{font-size:10px!important}
+ .spatial-chapter--pricing .pricing-format-copy small{font-size:8px!important}
+}
+@media(prefers-reduced-motion:reduce){.spatial-chapter *,.spatial-chapter *:before,.spatial-chapter *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* SPATIAL DEPTH PASS — real layered composition over the existing 3D world.
+   The R3F world and CameraRig remain the source of the environment and camera travel.
+   These planes add readable foreground/midground architecture to the DOM layer. */
+:root {
+  --sml-depth-line: rgba(173, 198, 214, .16);
+  --sml-depth-glow: rgba(255, 90, 20, .28);
+  --sml-depth-shadow: rgba(0, 0, 0, .72);
+}
+.spatial-chapter > .stage {
+  position: relative;
+  isolation: isolate;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+}
+.spatial-chapter > .stage::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  left: -12%; right: -12%; bottom: -13%; height: 48%;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: center bottom;
+  background-image:
+    linear-gradient(rgba(255,255,255,.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.075) 1px, transparent 1px),
+    linear-gradient(180deg, transparent 10%, rgba(255,90,20,.11) 100%);
+  background-size: 100% 46px, 54px 100%, 100% 100%;
+  mask-image: linear-gradient(to top, rgba(0,0,0,.82), transparent 92%);
+  opacity: .52;
+}
+.spatial-chapter > .stage::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.68), transparent 15%, transparent 85%, rgba(0,0,0,.68)),
+    linear-gradient(180deg, rgba(0,0,0,.18), transparent 24%, transparent 70%, rgba(0,0,0,.52));
+  box-shadow: inset 0 0 100px rgba(0,0,0,.36);
+}
+.spatial-chapter .journey-section {
+  z-index: 1;
+  transform-style: preserve-3d;
+  background: linear-gradient(90deg, rgba(5,7,10,.44), rgba(5,7,10,.12) 48%, rgba(5,7,10,.38)) !important;
+  text-shadow: 0 2px 22px rgba(0,0,0,.68);
+}
+.spatial-chapter .journey-section > * {
+  transform: translateZ(24px);
+}
+.spatial-chapter .journey-section > .section-meta,
+.spatial-chapter .journey-section > .eyebrow {
+  text-shadow: 0 0 18px rgba(0,0,0,.95), 0 0 28px rgba(255,90,20,.16);
+}
+/* Architectural perspective rails: two receding edges and a suspended ceiling light. */
+.spatial-chapter--entry .stage::after,
+.spatial-chapter--pricing .stage::after,
+.spatial-chapter--founder .stage::after,
+.spatial-chapter--booking .stage::after {
+  background:
+    linear-gradient(90deg, transparent 0 5.5%, rgba(155,190,210,.18) 5.65%, transparent 5.9% 94.1%, rgba(155,190,210,.18) 94.35%, transparent 94.5%),
+    linear-gradient(180deg, rgba(0,0,0,.26), transparent 22%, transparent 74%, rgba(0,0,0,.58));
+  box-shadow: inset 0 0 110px rgba(0,0,0,.42);
+}
+.spatial-chapter--entry .hero h1,
+.spatial-chapter--pricing .pricing-title,
+.spatial-chapter--founder .founder-section > h2,
+.spatial-chapter--booking .booking-section > h2 {
+  text-shadow: 0 5px 30px rgba(0,0,0,.82), 0 1px 0 rgba(255,255,255,.12);
+}
+/* Floating glass panels: visible side edge, inner reflection and a grounded cast shadow. */
+.spatial-chapter--pricing .format-detail-card,
+.spatial-chapter--pricing .training-card,
+.spatial-chapter--founder .credential-gallery__item,
+.spatial-chapter--founder .proof-card {
+  transform: perspective(1050px) rotateY(-2.2deg) rotateX(1deg) translateZ(30px) !important;
+  transform-origin: 50% 50%;
+  box-shadow: 0 28px 70px rgba(0,0,0,.56), 0 8px 22px rgba(0,0,0,.42), inset 1px 1px 0 rgba(255,255,255,.16) !important;
+}
+.spatial-chapter--pricing .format-detail-card::before,
+.spatial-chapter--pricing .training-card::before,
+.spatial-chapter--founder .credential-gallery__item::before,
+.spatial-chapter--founder .proof-card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(118deg, rgba(255,255,255,.12), transparent 19% 72%, rgba(255,90,20,.10));
+  opacity: .65;
+}
+.spatial-chapter--pricing .format-detail-media,
+.spatial-chapter--pricing .pricing-format-image,
+.spatial-chapter--founder .founder-human figure {
+  box-shadow: 0 22px 50px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.12);
+  transform: translateZ(18px);
+}
+.spatial-chapter--pricing .format-detail-media img,
+.spatial-chapter--pricing .format-detail-media video,
+.spatial-chapter--founder .founder-human img {
+  filter: contrast(1.08) saturate(.92);
+}
+.spatial-chapter--entry .hero-benefits,
+.spatial-chapter--entry .hero-format-card {
+  box-shadow: 0 22px 48px rgba(0,0,0,.38), inset 1px 1px 0 rgba(255,255,255,.12);
+  background: linear-gradient(135deg, rgba(27,33,42,.78), rgba(5,8,12,.58)) !important;
+  transform: perspective(900px) rotateY(-1.2deg) translateZ(34px);
+}
+.spatial-chapter--entry .primary-cta,
+.spatial-chapter--booking .primary-cta {
+  box-shadow: 0 14px 34px rgba(255,76,20,.25), 0 4px 0 rgba(125,35,8,.55), inset 0 1px 0 rgba(255,255,255,.35) !important;
+  transform: translateZ(42px);
+}
+@media (max-width: 760px) {
+  .spatial-chapter > .stage { perspective: 820px; }
+  .spatial-chapter > .stage::before {
+    left: -30%; right: -30%; bottom: -10%; height: 38%;
+    background-size: 100% 34px, 42px 100%, 100% 100%;
+    opacity: .42;
+  }
+  .spatial-chapter > .stage::after {
+    background:
+      linear-gradient(90deg, transparent 3%, rgba(155,190,210,.18) 3.3%, transparent 3.8% 96.2%, rgba(155,190,210,.18) 96.7%, transparent 97%),
+      linear-gradient(180deg, rgba(0,0,0,.08), transparent 22%, transparent 76%, rgba(0,0,0,.48));
+    box-shadow: inset 0 0 70px rgba(0,0,0,.3);
+  }
+  .spatial-chapter .journey-section {
+    background: linear-gradient(90deg, rgba(5,7,10,.26), rgba(5,7,10,.04) 50%, rgba(5,7,10,.22)) !important;
+  }
+  .spatial-chapter .journey-section > * { transform: translateZ(18px); }
+  .spatial-chapter--entry .hero-benefits,
+  .spatial-chapter--entry .hero-format-card {
+    transform: perspective(720px) rotateY(-.8deg) translateZ(26px);
+  }
+  .spatial-chapter--pricing .format-detail-card,
+  .spatial-chapter--pricing .training-card,
+  .spatial-chapter--founder .credential-gallery__item,
+  .spatial-chapter--founder .proof-card {
+    transform: perspective(900px) rotateY(-1.1deg) translateZ(20px) !important;
+    box-shadow: 0 20px 46px rgba(0,0,0,.52), inset 1px 1px 0 rgba(255,255,255,.13) !important;
+  }
+  .spatial-chapter--pricing .format-detail-media,
+  .spatial-chapter--pricing .pricing-format-image,
+  .spatial-chapter--founder .founder-human figure { transform: translateZ(12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spatial-chapter .journey-section > *,
+  .spatial-chapter--entry .hero-benefits,
+  .spatial-chapter--entry .hero-format-card,
+  .spatial-chapter--pricing .format-detail-card,
+  .spatial-chapter--pricing .training-card,
+  .spatial-chapter--founder .credential-gallery__item,
+  .spatial-chapter--founder .proof-card { transform: none !important; }
+}

@@ -1,44 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 
-const SRC = 'https://assets.calendly.com/assets/external/widget.js';
-
-// Carga el script oficial de Calendly una sola vez y resuelve con window.Calendly.
-function loadCalendly() {
-  if (window.Calendly) return Promise.resolve(window.Calendly);
-  return new Promise((resolve, reject) => {
-    let s = document.querySelector(`script[src="${SRC}"]`);
-    if (!s) {
-      s = document.createElement('script');
-      s.src = SRC;
-      s.async = true;
-      document.body.appendChild(s);
-    }
-    s.addEventListener('load', () => resolve(window.Calendly));
-    s.addEventListener('error', reject);
-  });
-}
-
-// Calendario inline (reserva directa). Si el script no carga, queda el enlace para abrirlo en otra pestaña.
+// Iframe nativo: evita depender de la inicialización dinámica del widget.js de terceros en Safari/iOS.
 export default function Calendly({ url, fallbackHref }) {
-  const ref = useRef(null);
-  const [failed, setFailed] = useState(false);
-
   useEffect(() => {
-    let cancelled = false;
-    loadCalendly()
-      .then((C) => {
-        if (cancelled || !ref.current || !C?.initInlineWidget) return;
-        ref.current.innerHTML = '';
-        C.initInlineWidget({ url, parentElement: ref.current });
-      })
-      .catch(() => !cancelled && setFailed(true));
-    return () => { cancelled = true; };
-  }, [url]);
+    const onMsg = (e) => {
+      if (e.origin !== 'https://calendly.com') return;
+      if (e.data?.event === 'calendly.event_scheduled') {
+        window.dispatchEvent(new CustomEvent('sml:calendly-booked'));
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
 
   return (
     <div className="rs__calendly">
-      <div ref={ref} className="rs__calendly-frame" />
-      {failed && <p className="ph-text">No se ha podido cargar el calendario. <a className="link" href={fallbackHref} target="_blank" rel="noopener noreferrer">Abrirlo en otra pestaña</a></p>}
+      <iframe className="rs__calendly-frame" src={url}
+        title="Calendario para reservar la evaluación inicial"
+        loading="lazy" allow="payment"
+        referrerPolicy="strict-origin-when-cross-origin" />
+      <p className="rs__calendly-fallback">
+        ¿No aparece el calendario? <a className="link" href={fallbackHref} target="_blank" rel="noopener noreferrer">Abrir Calendly en otra pestaña</a>
+      </p>
     </div>
   );
 }

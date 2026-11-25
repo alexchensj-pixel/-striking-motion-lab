@@ -134,7 +134,7 @@ export default function Calendly({ fallbackHref = "https://calendly.com/alexchen
           </form>}
         </div>
       </div>
-      {error && <div className="sml-booking__error" role="alert"><p>{error}</p><a className="sml-booking__submit" href={fallbackHref} target="_blank" rel="noopener noreferrer">Ver horarios y reservar ↗</a></div>}
+      {error && <div className="sml-booking__error" role="status"><a className="sml-booking__submit" href={fallbackHref} target="_blank" rel="noopener noreferrer">Reservar directamente ↗</a></div>}
       <p className="sml-booking__foot">Horario de Madrid · La reserva queda confirmada al finalizar el proceso.</p>
     </section>
   );

@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import CameraRig from '../Scene/Camera/index.jsx';
 import Lighting from '../Scene/Lighting/index.jsx';
 import Environment from './MemoryEnvironment.jsx';
+import HeroArchitecture from '../Scene/Environment/Entrada/HeroArchitecture.jsx';
 
 // One persistent SML 3D world. Camera progress is driven only by the original Chapter/Threshold hooks.
 export default function LegacyWorld() {
@@ -12,6 +13,7 @@ export default function LegacyWorld() {
         <color attach="background" args={['#050608']} />
         <fog attach="fog" args={['#050608', 12, 75]} />
         <CameraRig />
+        <HeroArchitecture />
         <Suspense fallback={null}><Lighting /><Environment /></Suspense>
       </Canvas>
     </div>

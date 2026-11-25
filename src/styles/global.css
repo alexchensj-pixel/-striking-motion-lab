@@ -2696,3 +2696,14 @@ button, [role="button"], a.button, .tr__btn { cursor: pointer; }
   .threshold[data-threshold="entrada>character-select"] { height: 105svh; }
   .bridge__momento { top: 64%; }
 }
+
+
+/* RESERVA · integración limpia del calendario (móvil y escritorio). */
+.rs__body[data-reserving="true"] { width:min(100%,58rem); max-width:min(100%,58rem); margin-inline:auto; padding:clamp(1rem,3vw,2rem); background:rgba(5,6,8,.94); border:1px solid rgba(217,221,230,.16); overflow:hidden; }
+.rs__panel,.rs__calendly { min-width:0; width:100%; }
+.rs__calendly-frame { display:block; width:100%; min-width:0; height:clamp(620px,76svh,780px); margin:1rem 0 .5rem; border:0; background:#0a0a0a; }
+.rs__calendly-fallback { margin:.5rem 0 1rem; font-family:var(--font-sans); font-size:.9rem; line-height:1.5; color:rgba(226,231,240,.82); }
+@media(max-width:700px) {
+ .rs__body[data-reserving="true"] { width:100%; max-width:100%; padding:1rem .85rem calc(6rem + env(safe-area-inset-bottom,0px)); border-left:0; border-right:0; }
+ .rs__calendly-frame { height:690px; }
+}

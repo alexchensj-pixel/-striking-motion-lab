@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LegacyWorld from './LegacyWorld.jsx';
 import Chapter from '../Experience/Chapter.jsx';
 import Threshold from '../Scene/Transitions/Threshold.jsx';
@@ -13,6 +13,7 @@ import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
 import CredentialGallery from './CredentialGallery.jsx';
 import Calendly from '../Experience/Reserva/Calendly.jsx';
 import './styles.css';
+import './mobile-refinement.css';
 import './inline-group-map.css';
 
 class SpatialBoundary extends React.Component {
@@ -29,14 +30,15 @@ const navItems = [
 ];
 const chapterTarget = { inicio: 'entrada', metodo: 'asesoria-lab', entrenamiento: 'slot', alex: 'proof-chen', reserva: 'reserva', empresas: 'empresas' };
 const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot: 'entrenamiento', 'proof-chen': 'alex', reserva: 'reserva' };
-const spatialHeroTitle = ['Entrena con metodología de competición.', 'Aprende a golpear con criterio.'];
-const spatialHeroContext = 'Observación técnica, análisis individual y entrenamiento adaptado a tus objetivos. Aprende a moverte, golpear y defenderte con un proceso diseñado alrededor de ti.';
+const spatialHeroTitle = ['Técnica de competición.', 'A tu medida.'];
+const spatialHeroContext = 'Observación técnica, análisis individual y entrenamiento adaptado a tu nivel y tus objetivos. Aprende a moverte, golpear y defenderte con criterio.';
 const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
 const credentialItems = [
   { id: 'wako', src: image.credencialWako, width: 900, height: 826, alt: 'Certificado oficial WAKO a nombre de CHEN HAN: 3.º puesto en K1, categoría -57 kg, en los I Juegos de Combate 2025 · Copa de España, club GK1 Team Trust Fitness Center', caption: '3.º puesto · K1 -57 kg · Juegos de Combate 2025 · Copa de España', eyebrow: 'RESULTADO DE COMPETICIÓN', stat: '3.º', detail: 'K1 · −57 KG', note: 'Juegos de Combate 2025 · Copa de España' },
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
 const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
+const methodStepMedia = [null, { video: '/Striking_Motion_Lab_Analisis_Movimiento.mov', poster: '/method-movement-poster.webp', src: '/method-movement-poster.webp', width: 512, height: 848 }, null, null];
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
@@ -81,7 +83,7 @@ function App() {
   const [activeService, setActiveService] = useState('grupos');
   const [activeMethodIndex, setActiveMethodIndex] = useState(0);
   const handleMethodProgress = (progress) => {
-    const nextStep = Math.min(4, Math.floor(Math.max(0, Math.min(0.999, progress)) * 5));
+    const nextStep = Math.min(3, Math.floor(Math.max(0, Math.min(0.999, progress)) * 4));
     setActiveMethodIndex((current) => current === nextStep ? current : nextStep);
   };
   const [bookingVisible, setBookingVisible] = useState(false);
@@ -126,13 +128,7 @@ function App() {
     requestAnimationFrame(() => {
       const target = document.getElementById(chapterTarget[id] || id);
       if (!target) return;
-      if (id === 'metodo' || id === 'asesoria-lab') {
-        // Método activa su ruta 3D en el borde real de la sección; scrollIntoView respeta scroll-padding-top y se quedaba 90px antes.
-        const top = target.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({ top: top + 2, behavior: 'smooth' });
-      } else {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   };
   const formatPlans = existingPlans.filter((plan) => plan.tipo === 'formato');
@@ -144,11 +140,6 @@ function App() {
     setActiveService(id);
     window.history.replaceState(null, '', `#${id}`);
   };
-  const serviceTabs = [
-    { id: 'grupos', label: 'Grupos reducidos', detail: 'Hasta 4 · por zona' },
-    { id: 'parejas', label: 'Parejas', detail: 'Entrenad juntos' },
-    { id: 'individual', label: '1:1', detail: 'Atención individual' },
-  ];
 
   return <>
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
@@ -169,77 +160,78 @@ function App() {
 
     {!bookingVisible && <button className="quick-booking" type="button" onClick={() => go('reserva')}><span>VER HORARIOS</span><span aria-hidden="true">↗</span></button>}
     <main id="contenido">
+      <>
       <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
-        <div id="inicio" className="hero journey-section">
-        <img className="hero-photo" src={image.heroLab} alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
-        <p className="hero-overline">{hero.kicker}</p>
-        <h1>{spatialHeroTitle.map((line, i) => <React.Fragment key={line}>{line}{i < hero.titulo.length - 1 && <br/>}</React.Fragment>)}</h1>
-        <p className="hero-context">{spatialHeroContext}</p>
-        <div className="hero-credential-proof">
-          <p className="hero-credential-proof__label">ACREDITACIONES · WAKO / FEKM</p>
-          <CredentialGallery items={credentialItems} />
-        </div>
-        <p className="hero-offer">Sesiones individuales · Parejas · Grupos reducidos de hasta 4</p>
-        <div className="hero-actions">
-          <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span><svg className="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
-          <button className="secondary-cta" type="button" onClick={() => go('metodo')}>Conocer el método</button>
-        </div>
-        <div className="hero-proof">{hero.confianza}</div>
-        <div className="hero-quicklinks"><button type="button" onClick={() => go('entrenamiento')}>Ver precios</button><button type="button" onClick={() => go('empresas')}>Empresas y eventos</button><button type="button" className="intro-skip" onClick={() => go('entrenamiento')}>Saltar introducción ↓</button></div>
-        <div className="scroll-cue">DESLIZA PARA EXPLORAR ↓</div>
-        </div>
+        <div id="inicio" className="hero journey-section hero-world-anchor-placeholder" aria-hidden="true" />
       </Chapter>
-
       <Threshold from="entrada" to="asesoria-lab" />
+        <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
+          <div id="metodo" className="method-section journey-section">
+            <div className="method-stage">
+              <header className="method-intro">
+                <div className="method-intro-copy">
+                  <p className="eyebrow">EL MÉTODO <span>— CICLO DE APRENDIZAJE</span></p>
+                  <h2>UN ENTRENAMIENTO QUE <em>EVOLUCIONA CONTIGO.</em></h2>
+                  <p className="method-lead">Técnica, análisis y progreso real. Un proceso estructurado para que aprendas, mejores tu técnica y desarrolles tus capacidades.</p>
+                </div>
+                <div className="method-pillars" aria-label="Pilares del método">
+                  <div><span className="method-pillar-icon">⌁</span><strong>Multidisciplinar</strong><small>Boxeo · K1 · Muay Thai</small></div>
+                  <div><span className="method-pillar-icon">⌖</span><strong>Análisis</strong><small>Del movimiento</small></div>
+                  <div><span className="method-pillar-icon">◇</span><strong>Corrección</strong><small>Personalizada</small></div>
+                  <div><span className="method-pillar-icon">↗︎</span><strong>Progreso</strong><small>Medible</small></div>
+                </div>
+              </header>
 
-      <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
-      <div id="metodo" className="method-section journey-section">
-        <div className="method-stage">
-          <div className="method-copy">
-            <p className="eyebrow">UN PROCESO PERSONAL</p>
-            <h2>{advisorySubstages[0].titular.map((line, i) => <React.Fragment key={line}>{line}{i === 0 && <br/>}</React.Fragment>)}</h2>
-            <div className="method-evaluation">
-              <span>{evaluacionInicial.kickerMetodo}</span>
-              <div className="method-evaluation-title"><h3>{evaluacionInicial.titulo}</h3><small className="method-evaluation-price">Primera evaluación · {evaluacionInicial.precio}</small></div>
-              <p className="method-evaluation-note">{spatialEvaluationText}</p>
-              <p className="method-material-note">No necesitas comprar nada para empezar. Si no tienes material, lo llevo yo.</p>
-              <p className="method-evaluation-terms">{evaluacionInicial.nota}</p>
-              <a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>{hero.ctaReservar}</span></a>
-              <p className="method-cta-note">Sin permanencia en los planes.</p>
-              <button className="text-link" type="button" aria-expanded={showMore} onClick={() => setShowMore((value) => !value)}>{showMore ? 'Cerrar información −' : `${evaluacionInicial.ctaMas} +`}</button>
-              {showMore && <ul>{evaluacionInicial.mas.map(([a, b]) => <li key={a}><b>{a}:</b> {b}</li>)}</ul>}
-              {showMore && <SessionPhoto photo={fotosSesion.metodologia} alt="Apoyo visual del método de trabajo de Striking Motion Lab" caption="Método de trabajo · Apoyo visual" />}
+              <div className="method-journey-heading"><span>01 — 04</span><p>EL CICLO DE APRENDIZAJE</p><span>STRIKING MOTION LAB / MADRID</span></div>
+              <div className="method-journey">
+                {advisorySubstages.slice(1, 5).map((step, i) => {
+                  const media = methodStepMedia[i];
+                  return <article className={`method-step ${media ? 'has-media' : 'no-media'} ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
+                    <button className="method-step-copy" type="button" aria-expanded={activeMethodIndex === i} onClick={() => setActiveMethodIndex(i)}>
+                      <span className="method-step-number">{step.num}</span>
+                      <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
+                      <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
+                    </button>
+                    {media && <figure className="method-step-visual">{media.video ? <video ref={(el) => { if (el) el.muted = true; }} src={media.video} poster={media.poster} width={media.width} height={media.height} autoPlay muted loop playsInline preload="metadata" aria-label="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: `${media.width} / ${media.height}`, objectFit: 'contain', background: '#07090c' }}/> : <img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/>}<span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
+                  </article>;
+                })}
+              </div>
+
+              <div className="method-closing-panel"><p>MUCHO MÁS QUE ENTRENAR</p><h3>No solo entrenas. <span>Entiendes qué estás desarrollando.</span></h3><small>Aprende, comprende tu movimiento y construye tu propia evolución.</small></div>
+
+              <section className="method-booking" aria-label="Reserva de evaluación inicial">
+                <div className="method-booking-copy"><span>{evaluacionInicial.kickerMetodo}</span><h3>EVALUACIÓN<br/>INICIAL</h3><p>{spatialEvaluationText}</p></div>
+                <div className="method-booking-details"><strong>Primera sesión privada · {evaluacionInicial.precio}</strong><ul><li>Valoración de tu nivel y experiencia</li><li>Observación técnica y objetivos</li><li>{evaluacionInicial.nota}</li></ul><p>No necesitas comprar material. Si no tienes, lo llevo yo.</p></div>
+                <div className="method-booking-action"><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>RESERVAR EVALUACIÓN · 30 € ↗</span></a><small>Sin permanencia · Primera sesión privada</small></div>
+              </section>
+              <span className="method-coordinate">SML / METHOD — {String(activeMethodIndex + 1).padStart(2, '0')} : 04</span>
             </div>
           </div>
-          <div className="method-stations" aria-label="Cinco pasos del método">
-            {advisorySubstages.slice(1).map((step, i) => <button type="button" className={activeMethodIndex === i ? 'method-station active' : 'method-station'} key={step.id} aria-current={activeMethodIndex === i ? 'step' : undefined} onClick={() => { const section = document.getElementById('asesoria-lab'); if (section) { const travel = section.offsetHeight - window.innerHeight; window.scrollTo({ top: section.offsetTop + travel * ((i + .5) / 5), behavior: 'smooth' }); } }}>
-              <span className="station-number">{step.num}</span><span className="station-content"><strong>{step.n}</strong>{activeMethodIndex === i && <><span className="station-description">{step.texto}</span>{step.elementos && <span className="station-tags">{step.elementos.join(' · ')}</span>}{step.destacada && <span className="station-highlight">{step.destacada}</span>}</>}</span>
-              {step.etiqueta && activeMethodIndex !== i && <small>{step.etiqueta}</small>}
-            </button>)}
-            <p className="method-closing">No solo entrenas. <span>Entiendes qué estás desarrollando.</span></p>
-          </div>
-          <span className="method-coordinate">LAB / 03 — {String(activeMethodIndex + 1).padStart(2, '0')} : 05</span>
-        </div>
-        </div>
-      </Chapter>
-
+        </Chapter>
       <Threshold from="asesoria-lab" to="slot" />
       <Chapter id="slot" className="spatial-chapter spatial-chapter--pricing">
       <div id="entrenamiento" className="journey-section content-section pricing-section">
-        <div className="section-meta"><span>03 / 05</span><span>ENTRENAMIENTO · FORMATOS Y PRECIOS</span></div>
-        <p className="eyebrow">ELIGE CÓMO ENTRENAR</p><h2 className="pricing-title">Entrenamiento diseñado alrededor de ti.</h2>
+        <div className="section-meta"><span>05 / 08</span><span>ENTRENAMIENTO · FORMATOS Y PLANES</span></div>
+        <p className="eyebrow">TU SIGUIENTE NIVEL</p><h2 className="pricing-title">Tu entrenamiento. Tu siguiente nivel.</h2>
         <p className="pricing-social" aria-label="Valoración en Google: 5,0 estrellas y 18 reseñas">{site.rating.valor.replace('.', ',')} ★ · {site.rating.resenas} reseñas</p>
         <p className="lead">Muay Thai, boxeo, kickboxing y K1 en Madrid. Entrenamiento 1:1, en pareja o en grupos de hasta cuatro personas.</p>
-        <div className="pricing-followup"><span>NO ES SOLO UNA SESIÓN. ES UN PROCESO.</span><p>El trabajo continúa entre sesiones: Arsenal consolida la técnica, Striker añade planificación y biblioteca personalizada, y Fight IQ incorpora estrategia y preparación específica. No compras solo horas de entrenamiento: sigues un proceso con dirección y objetivos.</p></div>
-        <nav className="pricing-tabs" role="tablist" aria-label="Tipo de entrenamiento">
-          {serviceTabs.map((tab) => <a key={tab.id} id={`tab-${tab.id}`} href={`#${tab.id}`} role="tab" aria-selected={activeService === tab.id} aria-controls="service-pricing-panel" className={`pricing-tab ${activeService === tab.id ? 'is-active' : ''}`} onClick={(event) => { event.preventDefault(); chooseService(tab.id); }}>
-            <strong>{tab.label}</strong><span>{tab.detail}</span>
-          </a>)}
-        </nav>
+        <div className="pricing-format-chooser">
+          <div className="pricing-format-intro"><span className="eyebrow">ELIGE TU FORMATO</span><h3>¿Cómo quieres entrenar?</h3><p>Selecciona una opción para ver qué incluye y cuánto cuesta.</p></div>
+          <nav className="pricing-tabs pricing-format-cards" role="tablist" aria-label="Tipo de entrenamiento">
+            <button type="button" id="tab-grupos" role="tab" aria-selected={activeService === 'grupos'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'grupos' ? 'is-active' : ''}`} onClick={() => chooseService('grupos')}>
+              <span className="pricing-format-image"><img src="/Grupo_parejas_poster.jpg" alt="" loading="lazy"/><span className="pricing-format-play" aria-hidden="true">▶</span></span><span className="pricing-format-copy"><strong>Grupos reducidos</strong><small>Hasta 4 personas</small></span>
+            </button>
+            <button type="button" id="tab-parejas" role="tab" aria-selected={activeService === 'parejas'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'parejas' ? 'is-active' : ''}`} onClick={() => chooseService('parejas')}>
+              <span className="pricing-format-image"><img src={fotosSesion.parejas[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>Parejas</strong><small>Entrena junto a otra persona</small></span>
+            </button>
+            <button type="button" id="tab-individual" role="tab" aria-selected={activeService === 'individual'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'individual' ? 'is-active' : ''}`} onClick={() => chooseService('individual')}>
+              <span className="pricing-format-image"><img src={fotosSesion.individual[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>1:1</strong><small>Atención individual</small></span>
+            </button>
+          </nav>
+        </div>
         <div id="service-pricing-panel" className="pricing-tab-panel" role="tabpanel" aria-labelledby={`tab-${activeService}`}>
           {activeService === 'individual' && <>
-            {entrenamientoMedia.sala?.poster && <figure className="service-media"><img src={entrenamientoMedia.sala.poster} alt="Entrenamiento privado: trabajo técnico de golpeo y corrección individual" loading="eager"/><figcaption>Trabajo técnico individual · Sesiones privadas</figcaption></figure>}
-            <SessionPhoto photo={fotosSesion.individual[0]} alt="Sesión individual de entrenamiento en Striking Motion Lab" caption="Sesión individual · Atención personalizada" framing="wide" />
+            <div className="format-detail-media"><img src={fotosSesion.individual[0].src} alt="Sesión individual de entrenamiento en Striking Motion Lab" loading="lazy"/><span>SESIÓN INDIVIDUAL · ATENCIÓN PERSONALIZADA</span></div>
             <div className="plan-cards-heading">
               <div><p className="eyebrow">PLANES MENSUALES · 1:1</p><h3 className="subsection-title">Elige tu plan de entrenamiento.</h3></div>
               <p>Cada plan incluye el anterior y añade más frecuencia y trabajo específico.</p>
@@ -282,7 +274,6 @@ function App() {
               <a href={waLink('Hola, quiero consultar disponibilidad para una sesión individual 1:1.')} target="_blank" rel="noopener noreferrer">Consultar sesión <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
               <p className="format-risk-note">60 min · Sin plan mensual ni permanencia · cambios con 24 h de antelación.</p>
             </div>
-            <SessionPhoto photo={fotosSesion.individual[1]} alt="Entrenamiento individual: trabajo técnico en una sesión 1:1" caption="Entrenamiento 1:1 · Trabajo técnico" framing="wide" />
             <div className="plan-comparison-control">
               <button type="button" className="plan-comparison-toggle" aria-expanded={showPlanComparison} aria-controls="plan-comparison" onClick={() => setShowPlanComparison((value) => !value)}>{showPlanComparison ? 'Ocultar comparación' : 'Comparar qué incluye cada plan'} <span>{showPlanComparison ? '−' : '+'}</span></button>
             </div>
@@ -296,15 +287,16 @@ function App() {
             </div>}
           </>}
           {activeService === 'parejas' && <>
-            <SessionPhoto photo={fotosSesion.parejas[0]} alt="Sesión de entrenamiento en pareja en Striking Motion Lab" caption="Entrenamiento en pareja · Sesión compartida" framing="wide" />
-            <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO COMPARTIDO</p><h3 className="subsection-title">Entrenad juntos.</h3></div><p>Una sesión privada para dos personas, adaptada a vuestro nivel y objetivos.</p></div>
-            <article className="training-card format-service-card"><small>SESIÓN PARA 2 PERSONAS</small><h3>Parejas</h3><div className="format-service-price">{money(coupleFormat.precio)} <span>/ persona / sesión</span></div><p>{coupleFormat.texto}</p><a href={waLink('Hola, quiero consultar disponibilidad para entrenar en pareja.')} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a><p className="format-risk-note">Sin permanencia · cambios con 24 h de antelación. La evaluación inicial no se descuenta en este formato.</p></article>
+            <article className="format-detail-card">
+              <div className="format-detail-media"><img src={fotosSesion.parejas[0].src} alt="Sesión de entrenamiento en pareja" loading="lazy"/><span>ENTRENAMIENTO COMPARTIDO · 2 PERSONAS</span></div>
+              <div className="format-detail-copy"><p className="eyebrow">ENTRENAMIENTO COMPARTIDO</p><h3>Entrenad juntos.</h3><div className="format-service-price">{money(coupleFormat.precio)} <span>/ persona / sesión</span></div><p>{coupleFormat.texto}</p><a className="format-detail-cta" href={waLink('Hola, quiero consultar disponibilidad para entrenar en pareja.')} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <span>↗</span></a><small>Sin permanencia · cambios con 24 h de antelación. La evaluación inicial no se descuenta en este formato.</small></div>
+            </article>
           </>}
           {activeService === 'grupos' && <>
-            <div className="service-video"><video autoPlay muted loop playsInline webkit-playsinline="true" preload="auto" poster="/Grupo_parejas_poster.jpg" aria-label="Vídeo de entrenamiento al aire libre en grupo reducido"><source src="/Grupo_parejas_12s_safari.mp4" type="video/mp4" /></video></div>
-            <div className="plan-cards-heading"><div><p className="eyebrow">ENTRENAMIENTO EN EQUIPO</p><h3 className="subsection-title">Grupo reducido.</h3></div><p>Entrenamiento compartido, con atención técnica y un máximo de cuatro personas.</p></div>
-            <article className="training-card format-service-card"><small>GRUPO REDUCIDO · MÁXIMO 4 PERSONAS</small><h3>Grupos reducidos</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<p className="format-risk-note">Sin permanencia · grupos sujetos a zona y plazas disponibles. Si no existe uno compatible, puedes apuntarte para formarlo.</p></article>
-            <SessionPhoto photo={fotosSesion.grupos[1]} alt="Entrenamiento en grupo reducido con atención técnica" caption="Entrenamiento en grupo · Atención técnica" framing="wide" />
+            <article className="format-detail-card format-detail-card--group">
+              <div className="format-detail-media"><video autoPlay muted loop playsInline webkit-playsinline="true" preload="metadata" poster="/Grupo_parejas_poster.jpg" aria-label="Vídeo de entrenamiento al aire libre en grupo reducido"><source src="/Grupo_parejas_12s_safari.mp4" type="video/mp4" /></video><span>ENTRENAMIENTO EN EQUIPO · MÁXIMO 4 PERSONAS</span></div>
+              <div className="format-detail-copy"><p className="eyebrow">GRUPO REDUCIDO</p><h3>Entrena en equipo.</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<small>Sin permanencia · plazas sujetas a zona y disponibilidad. Si no existe un grupo compatible, puedes apuntarte para formarlo.</small></div>
+            </article>
           </>}
         </div>
       </div>
@@ -337,7 +329,7 @@ function App() {
       </div>
 
       <div id="empresas" className="journey-section content-section business-section">
-        <style>{`.business-section .b2b-intro{max-width:760px;margin-bottom:34px}.business-section .b2b-offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0 46px}.business-section .b2b-offer{border:1px solid rgba(255,255,255,.13);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));padding:24px;min-height:190px}.business-section .b2b-offer .eyebrow{margin-bottom:14px}.business-section .b2b-offer h3{font-size:clamp(20px,2.5vw,28px);margin:0 0 10px}.business-section .b2b-offer p{color:rgba(241,241,238,.72);line-height:1.65;margin:0}.business-section .b2b-case{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:28px;padding:28px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);margin:24px 0 34px}.business-section .b2b-facts{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0}.business-section .b2b-fact strong{display:block;font-size:30px;color:#e05a2b}.business-section .b2b-fact span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(241,241,238,.65)}.business-section .b2b-proposals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 30px}.business-section .b2b-proposal{padding:20px;border:1px solid rgba(255,255,255,.12)}.business-section .b2b-proposal p{color:rgba(241,241,238,.7);line-height:1.6}.business-section .b2b-process{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}.business-section .b2b-process article{border-left:2px solid #e05a2b;padding:4px 14px}.business-section .b2b-process strong{display:block;margin-bottom:7px}.business-section .b2b-process span{font-size:14px;line-height:1.55;color:rgba(241,241,238,.68)}.business-section .b2b-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}@media(max-width:680px){.business-section .b2b-offers,.business-section .b2b-proposals,.business-section .b2b-case,.business-section .b2b-process{grid-template-columns:1fr}.business-section .b2b-offer{min-height:0}.business-section .b2b-case{gap:12px}.business-section .b2b-facts{gap:18px}}`}</style>
+        <style>{`.business-section .b2b-intro{max-width:760px;margin-bottom:34px}.business-section .b2b-offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0 46px}.business-section .b2b-offer{border:1px solid rgba(255,255,255,.13);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));padding:24px;min-height:190px}.business-section .b2b-offer .eyebrow{margin-bottom:14px}.business-section .b2b-offer h3{font-size:clamp(20px,2.5vw,28px);margin:0 0 10px}.business-section .b2b-offer p{color:rgba(241,241,238,.72);line-height:1.65;margin:0}.business-section .b2b-case{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:28px;padding:28px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);margin:24px 0 34px}.business-section .b2b-facts{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0}.business-section .b2b-fact strong{display:block;font-size:30px;color:#54d9e8}.business-section .b2b-fact span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(241,241,238,.65)}.business-section .b2b-proposals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 30px}.business-section .b2b-proposal{padding:20px;border:1px solid rgba(255,255,255,.12)}.business-section .b2b-proposal p{color:rgba(241,241,238,.7);line-height:1.6}.business-section .b2b-process{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}.business-section .b2b-process article{border-left:2px solid #54d9e8;padding:4px 14px}.business-section .b2b-process strong{display:block;margin-bottom:7px}.business-section .b2b-process span{font-size:14px;line-height:1.55;color:rgba(241,241,238,.68)}.business-section .b2b-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}@media(max-width:680px){.business-section .b2b-offers,.business-section .b2b-proposals,.business-section .b2b-case,.business-section .b2b-process{grid-template-columns:1fr}.business-section .b2b-offer{min-height:0}.business-section .b2b-case{gap:12px}.business-section .b2b-facts{gap:18px}}`}</style>
         <div className="section-meta"><span>BUSINESS / B2B</span><span>PRIVATE EXPERIENCES · MADRID</span></div>
         <div className="b2b-intro">
           <p className="eyebrow">COMBAT SPORTS, DESIGNED FOR YOUR AUDIENCE</p>
@@ -370,6 +362,7 @@ function App() {
         <div className="b2b-actions"><a className="primary-cta" href={waLink('Hola, quiero diseñar una experiencia B2B con SML. Tipo de proyecto: empresa / hotel / evento / marca.')} target="_blank" rel="noopener noreferrer">Diseñar una experiencia ↗</a><a className="secondary-cta" href={waLink('Hola, quiero recibir información sobre formatos y colaboración B2B.')} target="_blank" rel="noopener noreferrer">Solicitar dossier ↗</a></div>
       </div>
       </Chapter>
+      </>
     </main>
 
     <footer className="footer footer-complete">

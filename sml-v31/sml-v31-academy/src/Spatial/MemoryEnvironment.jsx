@@ -9,11 +9,12 @@ import {
   Door,
 } from '../Scene/Environment/blockouts.jsx';
 import EntradaWorld from '../Scene/Environment/Entrada/EntradaWorld.jsx';
+import BridgeHall from '../Scene/Environment/Bridge/BridgeHall.jsx';
+import TransitionSpine from '../Scene/Environment/TransitionSpine.jsx';
+import SpatialSpine from './SpatialSpine.jsx';
 
 // Keep every original spatial room mounted throughout the camera journey.
-// The previous active-chapter window caused rooms to disappear at transitions
-// and exposed empty stretches whenever scroll/camera progress got ahead of the
-// active chapter observer. The original SML environment keeps these rooms alive.
+// The original SML environment keeps these rooms alive so transitions never expose empty stretches.
 const blockouts = {
   entrada: EntradaWorld,
   'character-select': Pillars,
@@ -26,8 +27,6 @@ const blockouts = {
 export default function MemoryEnvironment() {
   const { size } = useThree();
   const portrait = size.width / Math.max(1, size.height) < 0.8;
-  // The distant floor grid is a spatial backdrop. Lower it on portrait screens
-  // so its perspective horizon does not run through the hero service copy.
   const backdropFloorY = portrait ? -0.9 : 0;
   return (
     <>
@@ -36,6 +35,12 @@ export default function MemoryEnvironment() {
         <planeGeometry args={[300, 300]} />
         <meshStandardMaterial color="#07090d" roughness={1} />
       </mesh>
+      {/* Monumental industrial hall: Entrada → Character Select. */}
+      <BridgeHall transitionOnly />
+      {/* A real architectural connector now closes the former empty gap: Character Select → training lab. */}
+      <TransitionSpine />
+      {/* Nave estructural continua: conecta físicamente todas las estancias del recorrido. */}
+      <SpatialSpine />
       {chapters.map(({ id }, index) => {
         const Blockout = blockouts[id];
         if (!Blockout) return null;
