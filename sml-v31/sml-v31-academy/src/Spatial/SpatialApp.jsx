@@ -1,378 +1,667 @@
-import React, { useEffect, useRef, useState } from 'react';
-import LegacyWorld from './LegacyWorld.jsx';
-import EntryInterface from './EntryInterface.jsx';
-import Chapter from '../Experience/Chapter.jsx';
-import Threshold from '../Scene/Transitions/Threshold.jsx';
+import { useMemo, useRef } from 'react';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import {
-  site, hero, advisorySubstages, evaluacionInicial,
-  dossierItems, reserva, faq, empresas, cierre, waLink
-} from '../Data/Content.js';
-import { image, eci, entrenamientoMedia, fotosSesion } from '../Data/Media.js';
-import { existingPlans, kitInicio } from '../Data/Programs.js';
-import { RUTAS } from '../Data/Legal.js';
-import GrupoFinder from '../Experience/Slot/GrupoFinder.jsx';
-import CredentialGallery from './CredentialGallery.jsx';
-import Calendly from '../Experience/Reserva/Calendly.jsx';
-import './styles.css';
-import './mobile-refinement.css';
-import './inline-group-map.css';
+  AdditiveBlending, Color, DoubleSide, LinearFilter, MathUtils, MeshBasicMaterial, MeshStandardMaterial,
+  ShaderMaterial, SRGBColorSpace, TextureLoader, Vector3, VideoTexture,
+} from 'three';
+import { anchorZ, chapterOrder } from '../../Camera/waypoints.js';
+import { ENTRADA_END_Z } from '../Entrada/constants.js';
+import { scrollState, BRIDGE_END, REVEAL_START, isCoarsePointer } from '../../Transitions/scrollState.js';
+import { smoothstep } from '../Entrada/geo.js';
+import { image as mediaImage, video as mediaVideo } from '../../../Data/Media.js';
 
-class SpatialBoundary extends React.Component {
-  constructor(props) { super(props); this.state = { failed: false }; }
-  static getDerivedStateFromError() { return { failed: true }; }
-  componentDidCatch(error) { console.error('SML spatial scene unavailable:', error); }
-  render() { return this.state.failed ? <div className="world-fallback" aria-hidden="true" /> : this.props.children; }
+// HUD de depuración en pantalla, SOLO con ?debug=1 en la URL — sin esto, cero coste y cero cambio visual.
+// Pensado para verificar en el propio móvil (sin Mac/inspector remoto) qué de las tres causas posibles es:
+// vídeo no reproduce (paused/readyState/error), plano fuera de cámara (podiumXNow/distToPodium), o
+// desincronía (active/cases). Se retira quitando el parámetro de la URL, no hay que tocar código.
+const DEBUG = typeof window !== 'undefined' && window.location.search.includes('debug=1');
+function useDebugHud() {
+  const elRef = useRef(null);
+  if (DEBUG && typeof document !== 'undefined' && !elRef.current) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;bottom:8px;left:8px;z-index:99999;background:rgba(0,0,0,.8);'
+      + 'color:#0f0;font:11px/1.45 monospace;padding:8px 10px;border-radius:6px;pointer-events:none;'
+      + 'white-space:pre;max-width:94vw;';
+    document.body.appendChild(el);
+    elRef.current = el;
+  }
+  return elRef;
 }
 
-const navItems = [
-  ['inicio', 'Inicio'], ['metodo', 'Método'],
-  ['entrenamiento', 'Precios'], ['alex', 'Sobre Alex'], ['reserva', 'Reservar'],
-  ['empresas', 'Empresas'],
-];
-const chapterTarget = { inicio: 'entrada', metodo: 'asesoria-lab', entrenamiento: 'slot', alex: 'proof-chen', reserva: 'reserva', empresas: 'empresas' };
-const activeNavForChapter = { entrada: 'inicio', 'asesoria-lab': 'metodo', slot: 'entrenamiento', 'proof-chen': 'alex', reserva: 'reserva' };
-const spatialHeroTitle = ['Técnica de competición.', 'A tu medida.'];
-const spatialHeroContext = 'Observación técnica, análisis individual y entrenamiento adaptado a tu nivel y tus objetivos. Aprende a moverte, golpear y defenderte con criterio.';
-const spatialEvaluationText = 'No es una clase de prueba: es una sesión privada para analizar tu punto de partida, observar cómo te mueves y definir qué necesitas trabajar.';
-const credentialItems = [
-  { id: 'wako', src: image.credencialWako, width: 900, height: 826, alt: 'Certificado oficial WAKO a nombre de CHEN HAN: 3.º puesto en K1, categoría -57 kg, en los I Juegos de Combate 2025 · Copa de España, club GK1 Team Trust Fitness Center', caption: '3.º puesto · K1 -57 kg · Juegos de Combate 2025 · Copa de España', eyebrow: 'RESULTADO DE COMPETICIÓN', stat: '3.º', detail: 'K1 · −57 KG', note: 'Juegos de Combate 2025 · Copa de España' },
-  { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
-];
-const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
-const methodStepMedia = [null, { video: '/Striking_Motion_Lab_Analisis_Movimiento.mov', poster: '/method-movement-poster.webp', src: '/method-movement-poster.webp', width: 512, height: 848 }, null, null];
-const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
+// === BRIDGE HALL =================================================================================
+// Arquitectura 3D REAL del tramo Entrada (01) → Character Select (02) — el "Bridge". Sustituye la
+// antigua escenografía en CSS (gradientes/box-shadow simulando pilares, cielo y suelo — ver el
+// historial de Experience/Entrada/Bridge.jsx): ese texto ahora flota sobre el MUNDO 3D real, con
+// geometría, materiales, cámara y niebla existentes, en vez de una imagen pintada detrás.
+//
+// No es un capítulo (no vive en Data/Content.js#chapters, no tiene anchorZ propio): es la nave que
+// ENVUELVE el tramo final del corredor de la Entrada (Environment/Entrada/*, sin tocar) y la sala de
+// Character Select (blockouts.jsx#Pillars, sin tocar) — ambas piezas siguen intactas; esto solo añade
+// los muros/pilares/cerchas que las rodean, para que el recorrido de cámara (Camera/waypoints.js,
+// tramo 'entrada>character-select': Z -20 → -26, mirada -34 → -40) se lea como un único espacio
+// físico, no como dos escenas cosidas por una transición.
+//
+// Referencia de dirección de arte: nave industrial monumental, pilares de acero en perspectiva,
+// cerchas a media altura, pasarelas, ventanas técnicas y vetas de luz fría en el suelo. Se interpreta
+// como GEOMETRÍA/MATERIALES/LUZ reales — la estructura que se atraviesa (pilares, cerchas, pasarelas,
+// podios) sigue siendo 100% geometría real, nunca textura, plano 2D, HUD ni wireframe.
+//
+// EXCEPCIÓN JUSTIFICADA (pedido explícito, sept 2026): además de la geometría, ahora hay UN único plano
+// de fondo lejano (BACKDROP) con la foto de referencia real, colocado en Z_FAR — detrás de TODA la
+// estructura 3D, nunca sustituyéndola ni pegada a ella. Actúa como telón atmosférico ("la nave sigue
+// más allá de lo modelado"), igual que en la foto se pierde en profundidad. Ver <mesh> BACKDROP más abajo.
+// Corrección (sept 2026): la foto, al ser más estrecha que la nave, dejaba vacío a los lados (se veía
+// el color de fondo de la escena, un recorte plano casi negro). Se añadió un muro de fondo (BACK_WALL_*)
+// del mismo acero oscuro que pilares/cerchas, detrás de la foto y a todo el ancho, que cierra ese hueco.
+// Paleta de la geometría: mismo acero oscuro que Portals.jsx/Corridor.jsx y el mismo acento
+// azul-grisáceo de Character Select (CharacterSelectLighting.jsx → '#8fa8d6').
+//
+// Dos huecos físicos (podios + luz cenital, ver PODIUM_X) que ahora llevan cada uno su vídeo (mismo
+// tratamiento que los luchadores de Character Select: vídeo sobre negro puro, blending aditivo, sin
+// canal alfa → válido en iPhone), ver PodiumFighter más abajo y Data/Media.js#tysonBridge/mcgregorBridge.
 
-const monthlyPlanCopy = {
-  arsenal: {
-    descriptor: 'FUNDAMENTOS',
-    identity: 'Empiezas con evaluación y análisis en vídeo para orientar qué corregir en tus siguientes sesiones.',
-    intro: 'INCLUYE',
-    highlights: ['Evaluación técnica inicial', 'Análisis técnico en vídeo', 'Comba de entrenamiento de boxeo'],
-    cta: 'Empezar con Arsenal',
-  },
-  striker: {
-    descriptor: 'DESARROLLO',
-    identity: 'Añade planificación personalizada y una biblioteca de ejercicios para dar continuidad al trabajo entre sesiones.',
-    intro: 'TODO ARSENAL +',
-    highlights: ['Plan de entrenamiento personalizado', 'Biblioteca personalizada de ejercicios', 'Trabajo específico según objetivos'],
-    cta: 'Reservar Striker',
-    popular: true,
-  },
-  'fight-iq': {
-    descriptor: 'DOMINIO',
-    identity: 'Para desarrollar estrategia, estilo y preparación específica de combate con seguimiento técnico.',
-    intro: 'TODO STRIKER +',
-    highlights: ['Preparación específica para combate', 'Estrategia y táctica', 'Desarrollo del estilo de pelea y sparring supervisado, progresivo y adaptado a tu nivel técnico; no es un requisito para empezar'],
-    cta: 'Reservar Fight IQ',
-  },
-};
+const CS_Z = anchorZ(chapterOrder.indexOf('character-select')); // -40: ancla real de Character Select
 
-const planComparisonRows = [
-  { label: 'Técnica y vídeo', arsenal: 'Evaluación + análisis en vídeo', striker: 'Incluido', fightIq: 'Incluido' },
-  { label: 'Personalización', arsenal: '—', striker: 'Plan + biblioteca + objetivos', fightIq: 'Incluida' },
-  { label: 'Estrategia y combate', arsenal: '—', striker: '—', fightIq: 'Táctica + estilo + sparring supervisado' },
-  { label: 'Frecuencia', arsenal: '1 sesión/semana', striker: '2 sesiones/semana', fightIq: '3 sesiones/semana' },
-];
+// El Bridge ocupa solo el corredor espacial entre el final de Entrada y la entrada de Character Select.
+// No se adelanta dentro de Escena 01 ni se prolonga hasta la sala de Character Select.
+const Z_NEAR = ENTRADA_END_Z;
+const CHARACTER_SELECT_ENTRY_Z = -26;
+const Z_FAR = CHARACTER_SELECT_ENTRY_Z;
+const FRAME_COUNT = 5;
+const FRAME_Z = Array.from({ length: FRAME_COUNT }, (_, i) => Z_NEAR + (i / (FRAME_COUNT - 1)) * (Z_FAR - Z_NEAR));
+const Z_SPAN = Z_NEAR - Z_FAR;
+const Z_MID = (Z_NEAR + Z_FAR) / 2;
 
-function App() {
-  const [active, setActive] = useState('inicio');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [faqOpen, setFaqOpen] = useState(-1);
-  const [showPlanComparison, setShowPlanComparison] = useState(false);
-  const [showMore, setShowMore] = useState(false);
-  const [showGroupFinder, setShowGroupFinder] = useState(false);
-  const [activeService, setActiveService] = useState('grupos');
-  const [activeMethodIndex, setActiveMethodIndex] = useState(0);
-  const handleMethodProgress = (progress) => {
-    const nextStep = Math.min(3, Math.floor(Math.max(0, Math.min(0.999, progress)) * 4));
-    setActiveMethodIndex((current) => current === nextStep ? current : nextStep);
-  };
-  const [bookingVisible, setBookingVisible] = useState(false);
+// El suelo técnico de la Entrada (Corridor.jsx) mide 12 m de ancho (CORRIDOR.width) y sigue existiendo
+// tal cual bajo este tramo. Aquí solo se añaden dos "alas" de suelo NUEVAS, pegadas a sus bordes, que
+// ensanchan la nave sin tocar ni un vértice de ese suelo original.
+const CORRIDOR_HALF_W = 6;
+const WING_OUTER = 9.6;
+const WING_MID_X = (CORRIDOR_HALF_W + WING_OUTER) / 2;
+const WING_W = WING_OUTER - CORRIDOR_HALF_W;
 
-  useEffect(() => {
-    const ids = navItems.map(([id]) => id);
-    const nodes = ids.map((id) => document.getElementById(chapterTarget[id] || id)).filter(Boolean);
-    if (!('IntersectionObserver' in window)) return undefined;
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActive(activeNavForChapter[visible.target.id] || visible.target.id);
-    }, { rootMargin: '-25% 0px -55% 0px', threshold: [0, .15, .35, .6] });
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, []);
+const PILLAR_X = 8.3; // sobre el ala nueva, cerca de su borde exterior
+const PILLAR_H = 15; // muy por encima de los 6 m de la Entrada: aporta la escala monumental pedida
+const PILLAR_W = 0.7;
+const PILLAR_D = 0.9;
+const TOP_Y = PILLAR_H;
+const MID_Y = PILLAR_H * 0.52;
+const LEDGE_Y = PILLAR_H * 0.34;
 
-  useEffect(() => {
-    const target = document.getElementById('reserva');
-    if (!target || !('IntersectionObserver' in window)) return undefined;
-    const observer = new IntersectionObserver(([entry]) => setBookingVisible(entry.isIntersecting), { rootMargin: '-15% 0px -15% 0px' });
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, []);
+// FIX (sept 2026, "Tyson y McGregor aparecen y desaparecen a la vez"): la causa real NO era caché ni
+// ?debug=1 — era que los dos <PodiumFighter> (uno por luchador) leían el MISMO ref (`podiumFighterGain`,
+// alimentado por una única ventana `cases`), así que su vídeo entraba y salía de presencia exactamente
+// a la vez, sin importar que cada uno tuviera su propio podio/posición. Fix real: dos ventanas de
+// progreso LOCAL independientes y EXCLUYENTES (nunca ambas > 0 en el mismo frame), una por personaje,
+// espejo exacto del timeline de texto de Entrada/Bridge.jsx#build (momento "C" — ver ahí C_IN, C_TYSON_OUT,
+// C_MCGREGOR_IN, C_OUT): la figura en vídeo de cada podio gana/pierde presencia en el mismo instante en
+// que su propio texto aparece/desaparece, nunca en el instante del otro.
+//
+// Reestructuración del Bridge en 3 bloques (umbral 340vh → 180vh; ver Bridge.jsx): los dos vídeos aparecen en
+// el bloque 1 (EL CUERPO) como ejemplos opuestos, uno detrás de otro, y en el bloque 2 (EL COMBATE) quedan
+// presentes A LA VEZ — «a partir de ambos ejemplos». Durante el bloque 1 se mantiene la exclusión de siempre
+// (nunca ambos > 0 en el mismo frame: Tyson termina en TYSON_OUT antes de que McGregor empiece en MCGREGOR_IN).
+//
+// TYSON — bloque 1: lead-in ANTES de su texto (TYSON_IN → TYSON_PLATEAU_IN, la figura ya está sólida cuando
+// aparece el copy) y salida que coincide con el fundido de su texto (C_TYSON_OUT / C_TYSON_GONE en Bridge.jsx).
+const TYSON_IN = 0.12;
+const TYSON_PLATEAU_IN = 0.155;  // = C_IN (Bridge.jsx): sólido justo cuando aparece "PIENSA EN MIKE TYSON:"
+const TYSON_PLATEAU_OUT = 0.275; // = C_TYSON_OUT (Bridge.jsx)
+const TYSON_OUT = 0.295;         // = C_TYSON_GONE (Bridge.jsx): invisible del todo — Tyson YA se fue
 
-  useEffect(() => {
-    const validTabs = new Set(['individual', 'parejas', 'grupos']);
-    const syncTabFromHash = () => {
-      const requested = window.location.hash.slice(1);
-      if (validTabs.has(requested)) setActiveService(requested);
-    };
-    syncTabFromHash();
-    window.addEventListener('hashchange', syncTabFromHash);
-    return () => window.removeEventListener('hashchange', syncTabFromHash);
-  }, []);
+// McGREGOR — arranca su fundido de entrada cuando arranca su texto (nunca antes) y se sostiene a través del
+// bloque 2; sale con la misma ventana que Tyson, con margen antes de que empiece EL MAPA (MAPA_IN = 0.57).
+const MCGREGOR_IN = 0.30;         // = C_MCGREGOR_IN (Bridge.jsx) — 0.005 después de TYSON_OUT: hueco real
+const MCGREGOR_PLATEAU_IN = 0.32;
+const MCGREGOR_PLATEAU_OUT = 0.535; // = COMBATE_OUT (Bridge.jsx): se apagan ambos con el cierre del bloque 2
+const MCGREGOR_OUT = 0.565;         // invisible del todo justo antes de MAPA_IN (0.57)
+
+// TYSON, bloque 2: vuelve a ganar presencia en cuanto entra EL COMBATE (McGregor ya está) y sale con él.
+const TYSON2_IN = 0.43;             // = C_OUT + FADE (Bridge.jsx): justo cuando termina el texto de McGregor
+const TYSON2_PLATEAU_IN = 0.46;
+const TYSON2_PLATEAU_OUT = MCGREGOR_PLATEAU_OUT;
+const TYSON2_OUT = MCGREGOR_OUT;
+
+// Dos huecos reservados para Tyson / McGregor, DENTRO del suelo original (dentro de ±6 m) — dos podios
+// enfrentados, mismo eje que el momento "C" del copy del Bridge (dos casos, uno a cada lado).
+// PODIUM_X_BASE es la separación "de diseño" (deseada); el valor REAL que se usa cada frame (ver
+// `podiumXNow` en el useFrame principal) se recalcula con el fov/aspect/distancia de cámara reales — ver
+// el bloque de comentarios de más abajo, "por qué PODIUM_X no puede ser un número fijo".
+const PODIUM_X_BASE = 3.5;
+// CORRECCIÓN (sept 2026, "los personajes no se ven aunque el vídeo ya reproduce"): PODIUM_Z pasó por dos
+// valores rotos antes de este: Z_MID (punto medio geométrico, la cámara ya lo había rebasado cuando
+// aparecía el texto) y "el punto exacto donde está la cámara en el pico del pulso" (peor aún: distancia
+// ≈0, el podio literalmente encima de la cámara). El siguiente intento, Z_FAR, sí resolvió lo de
+// "detrás/encima de cámara" — pero introdujo un problema distinto, confirmado viendo la grabación real
+// del móvil: a 1-2,8 m de distancia (lo que da Z_FAR durante la ventana `cases`), un plano de
+// PODIUM_FIGHTER_H = 2,7 m de alto llena casi toda la pantalla — no se ve como una figura, se ve como una
+// mancha borrosa pegada al objetivo. Fix real: alejar el podio más allá de Z_FAR. El suelo de ESTA nave
+// (WING_FLOOR) termina en Z_FAR, pero el suelo BASE del corredor (Corridor.jsx, CORRIDOR.zFar = -50) sigue
+// mucho más allá — hay piso de sobra hasta llegar al backdrop (BACKDROP_Z = Z_FAR-3 = -29). PODIUM_Z se
+// deja 2 m antes del backdrop (nunca clava en él) para maximizar la distancia cámara↔podio disponible
+// dentro de la ventana `cases`: con esto, la distancia real pasa a ser ~3.0-4.8 m en vez de ~1.0-2.8 m —
+// suficiente, combinado con la reducción de PODIUM_FIGHTER_H más abajo, para leerse como una figura en vez
+// de un borrón. (Z_FAR - 1 equivale a BACKDROP_Z + 2, pero BACKDROP_Z se declara más abajo en este mismo
+// archivo — TDZ de `const` en JS — así que se expresa en términos de Z_FAR, ya declarado arriba.)
+const PODIUM_Z = Z_FAR - 1;
+const PODIUM_R = 1.15;
 
 
 
-  const go = (id) => {
-    setActive(id);
-    setMenuOpen(false);
-    window.dispatchEvent(new CustomEvent('sml:navigate', { detail: { id } }));
-    requestAnimationFrame(() => {
-      const target = document.getElementById(chapterTarget[id] || id);
-      if (!target) return;
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// BACKDROP — plano único con la foto de referencia, al fondo del todo (más allá de Z_FAR, para que
+// quede detrás incluso del último StructuralFrame). Tamaño BASE derivado de la proporción REAL de la
+// foto (704×1525, vertical) — se usa solo como referencia de aspecto para el recorte de textura.
+//
+// CORRECCIÓN (sept 2026, pedido explícito): a tamaño fijo, la foto (más estrecha que el viewport en la
+// mayoría de pantallas) se leía como un recorte con bordes — se veía el muro de fondo a los lados en vez
+// de foto. Ahora el plano se redimensiona CADA FRAME (ver useFrame en BridgeHall) para cubrir siempre el
+// encuadre visible completo a su distancia (mismo criterio que CSS `background-size: cover`): se calcula
+// el ancho/alto visibles según el fov y la posición real de la cámara (que avanza en Z durante el Bridge)
+// y el aspect ratio real de pantalla, y el plano se escala para cubrirlos con margen. Para no deformar la
+// foto al agrandarla, el material recorta la textura (repeat/offset) al aspecto real del plano en vez de
+// estirarla — se pierde un poco de foto por los bordes (igual que "cover"), nunca se ve una franja vacía.
+const BACKDROP_IMG_ASPECT = 704 / 1525; // ancho / alto
+const BACKDROP_H = 17; // ligeramente por encima de PILLAR_H (15): asoma sobre la última cercha
+const BACKDROP_W = BACKDROP_H * BACKDROP_IMG_ASPECT;
+const BACKDROP_Z = Z_FAR - 3;
+const BACKDROP_COVER_MARGIN = 1.03; // margen extra sobre el encuadre exacto, para que no asome el borde del plano por redondeos
+
+// MURO DE FONDO — corrección (sept 2026): al ser la foto más estrecha que la nave (WING_OUTER*2 ≈ 19 m
+// vs BACKDROP_W ≈ 7,85 m), a los lados del plano quedaba vacío sin geometría — se veía el color de fondo
+// de la escena (#050608, casi negro) como un recorte plano. Este muro, del mismo lenguaje de acero oscuro
+// que el resto de la nave, cierra ese hueco detrás de la foto: los laterales pasan a leerse como pared
+// real de la nave en vez de vacío.
+const BACK_WALL_W = WING_OUTER * 2 + PILLAR_W + 2; // cubre de sobra el ancho visible entre pilares/alas
+const BACK_WALL_H = BACKDROP_H + 2;
+const BACK_WALL_Z = BACKDROP_Z - 0.6; // justo detrás de la foto, nunca delante
+
+// Colores: acero/hormigón oscuro (idéntico registro tonal a Corridor.jsx/Portals.jsx) + acento
+// azul-grisáceo de Character Select. Sin saturación, sin neón.
+const STEEL = '#454d57';
+const STEEL_DARK = '#262b32';
+const WING_FLOOR = '#1c2128';
+const EDGE = '#33393f';
+const ACCENT_COOL = '#8fa8d6'; // mismo azul que CharacterSelectLighting.jsx
+const ACCENT_WARM = '#f4caa0'; // eco muy atenuado del softbox 4200K de la Entrada (SOFTBOX.color)
+
+function StructuralFrame({ z, steelMat, darkMat, glowMat }) {
+  return (
+    <group position={[0, 0, z]}>
+      {[-1, 1].map((s) => (
+        <group key={s} position={[s * PILLAR_X, 0, 0]}>
+          <mesh position={[0, PILLAR_H / 2, 0]} castShadow receiveShadow material={steelMat}>
+            <boxGeometry args={[PILLAR_W, PILLAR_H, PILLAR_D]} />
+          </mesh>
+          {/* placa de anclaje, mismo lenguaje que Portals.jsx */}
+          <mesh position={[0, 0.07, 0]} receiveShadow material={darkMat}>
+            <boxGeometry args={[PILLAR_W + 0.5, 0.14, PILLAR_D + 0.5]} />
+          </mesh>
+          {/* pasarela/ledge a media altura, con antepecho bajo — insinúa un nivel superior transitable */}
+          <mesh position={[-s * 0.75, LEDGE_Y, 0]} castShadow receiveShadow material={darkMat}>
+            <boxGeometry args={[1.5, 0.12, 1.3]} />
+          </mesh>
+          <mesh position={[-s * 1.45, LEDGE_Y + 0.5, 0]} material={darkMat}>
+            <boxGeometry args={[0.06, 0.9, 1.3]} />
+          </mesh>
+          {/* dos riostras diagonales entre la pasarela y la cercha superior: lectura de celosía real,
+              construida con volúmenes (nunca líneas) */}
+          {[-1, 1].map((d) => (
+            <mesh
+              key={d}
+              position={[0, (MID_Y + TOP_Y) / 2, d * 0.35]}
+              rotation={[Math.atan2(TOP_Y - MID_Y, 0.7), 0, 0]}
+              material={darkMat}
+            >
+              <boxGeometry args={[0.16, Math.hypot(TOP_Y - MID_Y, 0.7) * 1.02, 0.16]} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+      {/* cercha superior: viga cajón continua de lado a lado */}
+      <mesh position={[0, TOP_Y, 0]} castShadow receiveShadow material={steelMat}>
+        <boxGeometry args={[PILLAR_X * 2 + PILLAR_W, 0.65, PILLAR_D]} />
+      </mesh>
+      {/* riostra media, más ligera */}
+      <mesh position={[0, MID_Y, 0]} receiveShadow material={darkMat}>
+        <boxGeometry args={[PILLAR_X * 2 + PILLAR_W, 0.22, 0.4]} />
+      </mesh>
+      {/* franja técnica retroiluminada bajo la cercha superior: la única "luz de interfaz" permitida —
+          una veta continua, sin texto ni iconografía, mismo acento que Character Select */}
+      <mesh position={[0, TOP_Y - 0.42, 0]} material={glowMat}>
+        <boxGeometry args={[PILLAR_X * 2 - 1, 0.04, 0.06]} />
+      </mesh>
+    </group>
+  );
+}
+
+function Podium({ x, z, ringMat, bodyMat, lightRef }) {
+  return (
+    <group position={[x, 0, z]}>
+      <mesh position={[0, 0.07, 0]} castShadow receiveShadow material={bodyMat}>
+        <cylinderGeometry args={[PODIUM_R, PODIUM_R * 1.08, 0.14, 40]} />
+      </mesh>
+      <mesh position={[0, 0.142, 0]} rotation={[-Math.PI / 2, 0, 0]} material={ringMat}>
+        <ringGeometry args={[PODIUM_R * 0.82, PODIUM_R * 0.92, 48]} />
+      </mesh>
+      <pointLight ref={lightRef} position={[0, 3.2, 0]} color={ACCENT_COOL} distance={5.5} decay={2} intensity={0} />
+    </group>
+  );
+}
+
+// PODIUM_FIGHTER_VERT/FRAG: mismo shader mínimo que Fighter.jsx (Environment/Fighter.jsx) — vídeo sobre negro
+// puro sumado a la escena (blending aditivo): el negro no aporta nada = "transparente", sin canal alfa, así
+// que funciona en iPhone. Aquí no hace falta el cruce still↔vídeo ni el reflejo de Fighter.jsx: cada figura
+// del podio hace un loop continuo y discreto (ambiental), no una animación disparada por foco/selección.
+const PODIUM_FIGHTER_VERT = `varying vec2 vUv;
+void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const PODIUM_FIGHTER_FRAG = `uniform sampler2D uVideo;
+uniform float uGain;
+varying vec2 vUv;
+void main() { gl_FragColor = vec4(texture2D(uVideo, vUv).rgb * uGain, 1.0); }`;
+
+// Altura de figura sobre el podio — registro similar a CELL.fighterHeight (Character Select), algo más
+// discreta porque aquí es un elemento ambiental del Bridge, no el protagonista de la escena.
+// Bajada de 2.7 a 2.0 junto con el alejamiento de PODIUM_Z (ver comentario de más arriba): a la distancia
+// real disponible en este tramo (~3-4.8 m), 2.7 m de alto seguía siendo demasiado grande — ocupaba la
+// mayor parte del encuadre vertical y se veía como un borrón, no como una figura con proporciones legibles.
+const PODIUM_FIGHTER_H = 2.0;
+
+// Sin prop `active` propio a propósito: el <mesh> vive dentro de <group ref={groupRef} visible={active}>
+// (ver return de BridgeHall) — cuando esa `visible` es false, three.js ya no renderiza este subárbol, así
+// que no hace falta duplicar aquí el cálculo de `active` del Bridge.
+//
+// CORRECCIÓN (sept 2026, "el vídeo no se ve"): tenía DOS fallos reales, no de import/asset:
+//
+// 1) `play()` estaba encadenado a `el.readyState >= 2`. Con `preload = 'metadata'` el navegador (sobre
+//    todo Safari/iOS) NO baja frames reales hasta que se intenta reproducir — readyState se queda en 0/1
+//    indefinidamente. Resultado: nunca se cumplía la condición para llamar a play(), nunca se pedían
+//    frames, readyState nunca subía → bucle cerrado sobre sí mismo, el <video> jamás abandonaba el pausa.
+//    Fix: se llama a play() igual que en Fighter.jsx/RosterGroup.jsx (los vídeos que sí funcionan) —
+//    intento con backoff de 3 s si el navegador lo rechaza (autoplay bloqueado), SIN esperar a readyState.
+//    readyState solo se usa (vía VideoTexture, internamente en three) para decidir cuándo hay frame que
+//    subir a la textura; ya no decide si se intenta reproducir.
+// 2) `uGain` se amortiguaba siempre hacia 1 en cuanto el componente estaba montado — es decir, en cuanto
+//    el Bridge estaba activo (todo el tramo, no solo el momento Tyson/McGregor). No había ninguna conexión
+//    con el progreso del Bridge. Fix: recibe `gainRef` — cada PodiumFighter el SUYO propio (ver
+//    podiumFighterGainA/B en el useFrame principal de BridgeHall: dos ventanas de progreso local
+//    independientes y excluyentes, una por personaje, no una única ventana compartida) — el objetivo de
+//    la amortiguación pasa a ser `gainRef.current` en vez de la constante `1`, así el vídeo de CADA
+//    figura entra y sale de escena exactamente cuando el Bridge presenta SU propio instante, nunca el
+//    del otro personaje. Los podios (geometría) siguen intactos; solo la FIGURA en vídeo de cada uno
+//    queda atada a su propio tramo, independiente del otro podio.
+function PodiumFighter({ x, z, src, aspect, gainRef, statusRef }) {
+  const mesh = useRef(null);
+  const st = useRef({ pending: false, blockedAt: -1e9 });
+
+  const media = useMemo(() => {
+    const el = document.createElement('video');
+    el.src = src;
+    el.loop = true;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.playsInline = true;
+    el.setAttribute('playsinline', '');
+    el.setAttribute('webkit-playsinline', '');
+    // 'auto' (antes 'metadata'): es una instrucción real al navegador para que empiece a descargar y
+    // decodificar el vídeo completo desde YA, no solo la cabecera — y arranca en cuanto se crea este
+    // <video>, que es exactamente cuando se monta <BridgeHall> (Environment/index.jsx la renderiza sin
+    // condición alguna, desde el primer frame de toda la experiencia) — es decir, antes de que el usuario
+    // haya podido hacer ni un solo scroll. Es la ÚNICA de las dos figuras del Bridge con 'auto': Fighter.jsx
+    // sigue en 'metadata' a propósito porque a él SÍ le sobra tiempo real (Character Select llega mucho
+    // más tarde en el recorrido) y no conviene gastar datos de más ahí.
+    el.preload = 'auto';
+    el.load();
+    const vtex = new VideoTexture(el);
+    vtex.minFilter = LinearFilter;
+    vtex.magFilter = LinearFilter;
+    vtex.generateMipmaps = false;
+    const mat = new ShaderMaterial({
+      uniforms: { uVideo: { value: vtex }, uGain: { value: 0 } },
+      vertexShader: PODIUM_FIGHTER_VERT,
+      fragmentShader: PODIUM_FIGHTER_FRAG,
+      transparent: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      side: DoubleSide,
+      toneMapped: false,
     });
-  };
-  const formatPlans = existingPlans.filter((plan) => plan.tipo === 'formato');
-  const monthlyPlans = existingPlans.filter((plan) => plan.tipo === 'mensual');
-  const individualFormat = formatPlans.find((plan) => plan.id === '1-1');
-  const coupleFormat = formatPlans.find((plan) => plan.id === 'duo');
-  const groupFormat = formatPlans.find((plan) => plan.id === 'grupo');
-  const chooseService = (id) => {
-    setActiveService(id);
-    window.history.replaceState(null, '', `#${id}`);
-  };
+    return { el, mat };
+  }, [src]);
 
-  return <>
-    <a className="skip-link" href="#contenido">Saltar al contenido</a>
-    <SpatialBoundary><LegacyWorld /></SpatialBoundary>
-    <div className="hero-world-overlay"><EntryInterface hero={hero} site={site} activeService={activeService} chooseService={chooseService} go={go} /></div>
-    <div className="grain" aria-hidden="true" />
-    <header className="topbar">
-      <a className="brand" href="#inicio" onClick={(e) => { e.preventDefault(); go('inicio'); }} aria-label="Striking Motion Lab, inicio">
-        <span className="brand-mark">S<span>/</span>ML</span>
-        <span className="brand-caption">STRIKING MOTION LAB<br/>MADRID</span>
-      </a>
-      <button className="menu-toggle" onClick={() => setMenuOpen((value) => !value)} aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen ? 'Cerrar navegación' : 'Abrir navegación'}><span/><span/></button>
-      <nav id="site-navigation" className={menuOpen ? 'nav nav-open' : 'nav'} aria-label="Navegación principal">
-        {navItems.map(([id, label]) => <button key={id} type="button" aria-current={active === id ? 'location' : undefined} onClick={() => go(id)}>{label}</button>)}
-        <a href="/academia">Academia ↗</a><a href="/mi-sml">Mi SML ↗</a>
-      </nav>
-      <span className="top-index">SPATIAL EXPERIENCE / 001</span>
-    </header>
+  useFrame((_, dt) => {
+    const { el, mat } = media;
+    const s = st.current;
+    const now = performance.now();
+    // Mismo mecanismo de intento/backoff que Fighter.jsx y RosterGroup.jsx: se llama a play()
+    // en cuanto el vídeo está en pausa (sin esperar a readyState), con reintento cada 3 s si el
+    // navegador lo rechaza (autoplay bloqueado) — así readyState SÍ puede llegar a subir con datos reales.
+    if (el.paused && !s.pending && now - s.blockedAt > 3000) {
+      s.pending = true;
+      const p = el.play();
+      if (p && p.then) {
+        p.then(() => { s.pending = false; }).catch(() => { s.pending = false; s.blockedAt = now; });
+      } else {
+        s.pending = false;
+      }
+    }
+    // Si el móvil bloquea el autoplay, el vídeo se queda en su primer fotograma (sin audio, sin control
+    // visible) — mismo comportamiento aceptado ya en Fighter.jsx para el mismo caso.
+    const target = gainRef?.current ?? 0;
+    // GATE de readiness (protección, no sustituye al preload de arriba): mismo umbral que ya usa y prueba
+    // Fighter.jsx (readyState>=2 = HAVE_CURRENT_DATA, el navegador confirma que existe ya un frame real
+    // decodificado). Pase lo que pase con el scroll, uGain nunca sube de 0 hasta que esto es cierto — así
+    // que aunque la red vaya más lenta de lo normal y el 'auto' de arriba no llegue a tiempo, el resultado
+    // determinista es "se queda invisible un poco más y aparece en cuanto esté listo", nunca un frame roto
+    // o a medio decodificar. En cuanto readyState pasa a ≥2, el damp normal hace que suba hacia el target
+    // real del scroll en el mismo frame siguiente — no hay espera añadida una vez que el vídeo está listo.
+    const ready = el.readyState >= 2;
+    mat.uniforms.uGain.value = MathUtils.damp(mat.uniforms.uGain.value, ready ? target : 0, 4, dt);
+    if (statusRef) {
+      statusRef.current = {
+        src: el.currentSrc || el.src, paused: el.paused, readyState: el.readyState,
+        networkState: el.networkState, error: el.error ? `${el.error.code}:${el.error.message || ''}` : null,
+        gain: mat.uniforms.uGain.value, target,
+      };
+    }
+  });
 
-    {!bookingVisible && <button className="quick-booking" type="button" onClick={() => go('reserva')}><span>VER HORARIOS</span><span aria-hidden="true">↗</span></button>}
-    <main id="contenido">
-      <>
-      <Chapter id="entrada" className="spatial-chapter spatial-chapter--entry">
-        <div id="inicio" className="hero journey-section hero-world-anchor-placeholder" aria-hidden="true" />
-      </Chapter>
-      <Threshold from="entrada" to="asesoria-lab" />
-        <Chapter id="asesoria-lab" className="spatial-chapter spatial-chapter--method" onProgress={handleMethodProgress}>
-          <div id="metodo" className="method-section journey-section">
-            <div className="method-stage">
-              <header className="method-intro">
-                <div className="method-intro-copy">
-                  <p className="eyebrow">EL MÉTODO <span>— CICLO DE APRENDIZAJE</span></p>
-                  <h2>UN ENTRENAMIENTO QUE <em>EVOLUCIONA CONTIGO.</em></h2>
-                  <p className="method-lead">Técnica, análisis y progreso real. Un proceso estructurado para que aprendas, mejores tu técnica y desarrolles tus capacidades.</p>
-                </div>
-                <div className="method-pillars" aria-label="Pilares del método">
-                  <div><span className="method-pillar-icon">⌁</span><strong>Multidisciplinar</strong><small>Boxeo · K1 · Muay Thai</small></div>
-                  <div><span className="method-pillar-icon">⌖</span><strong>Análisis</strong><small>Del movimiento</small></div>
-                  <div><span className="method-pillar-icon">◇</span><strong>Corrección</strong><small>Personalizada</small></div>
-                  <div><span className="method-pillar-icon">↗︎</span><strong>Progreso</strong><small>Medible</small></div>
-                </div>
-              </header>
-
-              <div className="method-journey-heading"><span>01 — 04</span><p>EL CICLO DE APRENDIZAJE</p><span>STRIKING MOTION LAB / MADRID</span></div>
-              <div className="method-journey">
-                {advisorySubstages.slice(1, 5).map((step, i) => {
-                  const media = methodStepMedia[i];
-                  return <article className={`method-step ${media ? 'has-media' : 'no-media'} ${activeMethodIndex === i ? 'is-active' : ''}`} key={step.id}>
-                    <button className="method-step-copy" type="button" aria-expanded={activeMethodIndex === i} onClick={() => setActiveMethodIndex(i)}>
-                      <span className="method-step-number">{step.num}</span>
-                      <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
-                      <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
-                    </button>
-                    {media && <figure className="method-step-visual">{media.video ? <video ref={(el) => { if (el) el.muted = true; }} src={media.video} poster={media.poster} width={media.width} height={media.height} autoPlay muted loop playsInline preload="metadata" aria-label="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: `${media.width} / ${media.height}`, objectFit: 'contain', background: '#07090c' }}/> : <img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/>}<span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
-                  </article>;
-                })}
-              </div>
-
-              <div className="method-closing-panel"><p>MUCHO MÁS QUE ENTRENAR</p><h3>No solo entrenas. <span>Entiendes qué estás desarrollando.</span></h3><small>Aprende, comprende tu movimiento y construye tu propia evolución.</small></div>
-
-              <section className="method-booking" aria-label="Reserva de evaluación inicial">
-                <div className="method-booking-copy"><span>{evaluacionInicial.kickerMetodo}</span><h3>EVALUACIÓN<br/>INICIAL</h3><p>{spatialEvaluationText}</p></div>
-                <div className="method-booking-details"><strong>Primera sesión privada · {evaluacionInicial.precio}</strong><ul><li>Valoración de tu nivel y experiencia</li><li>Observación técnica y objetivos</li><li>{evaluacionInicial.nota}</li></ul><p>No necesitas comprar material. Si no tienes, lo llevo yo.</p></div>
-                <div className="method-booking-action"><a className="primary-cta" href={site.calendly} target="_blank" rel="noopener noreferrer"><span>RESERVAR EVALUACIÓN · 30 € ↗</span></a><small>Sin permanencia · Primera sesión privada</small></div>
-              </section>
-              <span className="method-coordinate">SML / METHOD — {String(activeMethodIndex + 1).padStart(2, '0')} : 04</span>
-            </div>
-          </div>
-        </Chapter>
-      <Threshold from="asesoria-lab" to="slot" />
-      <Chapter id="slot" className="spatial-chapter spatial-chapter--pricing">
-      <div id="entrenamiento" className="journey-section content-section pricing-section">
-        <div className="section-meta"><span>05 / 08</span><span>ENTRENAMIENTO · FORMATOS Y PLANES</span></div>
-        <p className="eyebrow">TU SIGUIENTE NIVEL</p><h2 className="pricing-title">Tu entrenamiento. Tu siguiente nivel.</h2>
-        <p className="pricing-social" aria-label="Valoración en Google: 5,0 estrellas y 18 reseñas">{site.rating.valor.replace('.', ',')} ★ · {site.rating.resenas} reseñas</p>
-        <p className="lead">Muay Thai, boxeo, kickboxing y K1 en Madrid. Entrenamiento 1:1, en pareja o en grupos de hasta cuatro personas.</p>
-        <div className="pricing-format-chooser">
-          <div className="pricing-format-intro"><span className="eyebrow">ELIGE TU FORMATO</span><h3>¿Cómo quieres entrenar?</h3><p>Selecciona una opción para ver qué incluye y cuánto cuesta.</p></div>
-          <nav className="pricing-tabs pricing-format-cards" role="tablist" aria-label="Tipo de entrenamiento">
-            <button type="button" id="tab-grupos" role="tab" aria-selected={activeService === 'grupos'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'grupos' ? 'is-active' : ''}`} onClick={() => chooseService('grupos')}>
-              <span className="pricing-format-image"><img src="/Grupo_parejas_poster.jpg" alt="" loading="lazy"/><span className="pricing-format-play" aria-hidden="true">▶</span></span><span className="pricing-format-copy"><strong>Grupos reducidos</strong><small>Hasta 4 personas</small></span>
-            </button>
-            <button type="button" id="tab-parejas" role="tab" aria-selected={activeService === 'parejas'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'parejas' ? 'is-active' : ''}`} onClick={() => chooseService('parejas')}>
-              <span className="pricing-format-image"><img src={fotosSesion.parejas[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>Parejas</strong><small>Entrena junto a otra persona</small></span>
-            </button>
-            <button type="button" id="tab-individual" role="tab" aria-selected={activeService === 'individual'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'individual' ? 'is-active' : ''}`} onClick={() => chooseService('individual')}>
-              <span className="pricing-format-image"><img src={fotosSesion.individual[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>1:1</strong><small>Atención individual</small></span>
-            </button>
-          </nav>
-        </div>
-        <div id="service-pricing-panel" className="pricing-tab-panel" role="tabpanel" aria-labelledby={`tab-${activeService}`}>
-          {activeService === 'individual' && <>
-            <div className="format-detail-media"><img src={fotosSesion.individual[0].src} alt="Sesión individual de entrenamiento en Striking Motion Lab" loading="lazy"/><span>SESIÓN INDIVIDUAL · ATENCIÓN PERSONALIZADA</span></div>
-            <div className="plan-cards-heading">
-              <div><p className="eyebrow">PLANES MENSUALES · 1:1</p><h3 className="subsection-title">Elige tu plan de entrenamiento.</h3></div>
-              <p>Cada plan incluye el anterior y añade más frecuencia y trabajo específico.</p>
-            </div>
-            <div className="training-grid monthly-grid plan-grid">
-              {monthlyPlans.map((plan) => {
-                const card = monthlyPlanCopy[plan.id];
-                const monthlySessions = plan.sesionesSemana * 4;
-                const perSession = (plan.precio / monthlySessions).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                return <article className={`training-card monthly-card plan-card plan-card-${plan.id} ${card.popular ? 'is-popular' : ''}`} key={plan.id}>
-                  <div className="plan-card-top"><span>{card.descriptor}</span>{card.popular && <strong className="plan-popular-badge">MÁS POPULAR</strong>}</div>
-                  <h3>{plan.nombre}</h3>
-                  <p className="plan-card-identity">{card.identity}</p>
-                  <div className="plan-skill-panel">
-                    <div className="plan-skill-visual"><span className="plan-skill-emblem">{plan.id === 'arsenal' ? 'A' : plan.id === 'striker' ? 'S' : 'IQ'}</span><span className="plan-skill-rank">{plan.id === 'arsenal' ? 'RANGO 01' : plan.id === 'striker' ? 'RANGO 02' : 'RANGO 03'}</span><span className="plan-skill-xp">RUTA DE DESARROLLO</span></div>
-                    <div className="plan-skill-stats">
-                      {(plan.id === 'arsenal' ? [['TÉCNICA',2],['ANÁLISIS',1],['PLANIFICACIÓN',0],['TÁCTICA',0]] : plan.id === 'striker' ? [['TÉCNICA',3],['ANÁLISIS',3],['PLANIFICACIÓN',3],['TÁCTICA',1]] : [['TÉCNICA',4],['ANÁLISIS',4],['PLANIFICACIÓN',4],['TÁCTICA',4]]).map(([label,level]) => <div className="plan-stat" key={label}><span>{label}</span><div className="plan-stat-bars" aria-label={`${label}: ${level} de 4 segmentos`}>{[1,2,3,4].map((n) => <i key={n} data-filled={n <= level} />)}</div></div>)}
-                    </div>
-                  </div>
-                  <div className="plan-card-price"><strong>{money(plan.precio)}</strong><span>/ mes</span></div>
-                  <p className="plan-card-per-session">{perSession} € / sesión</p>
-                  <p className="plan-card-frequency">{plan.sesionesSemana} {plan.sesionesSemana === 1 ? 'sesión' : 'sesiones'} / semana <span>·</span> 60 min</p>
-                  <div className="plan-card-content">
-                    <p className="plan-card-intro"><span>{card.intro}</span><span className="plan-feature-count">{card.highlights.length} HABILIDADES</span></p>
-                    <div className="plan-feature-grid">{card.highlights.map((item, index) => {
-                      const featureNames = plan.id === 'arsenal' ? ['Evaluación técnica','Análisis en vídeo','Equipo de entrenamiento'] : plan.id === 'striker' ? ['Plan personalizado','Biblioteca de ejercicios','Trabajo por objetivos'] : ['Preparación de combate','Estrategia y táctica','Estilo y sparring'];
-                      const featureMarks = plan.id === 'arsenal' ? ['◎','◫','↗'] : plan.id === 'striker' ? ['⌘','▤','◈'] : ['⚑','⌖','✳'];
-                      return <div className="plan-feature-tile" key={item}><span className="plan-feature-index">0{index + 1}</span><span className="plan-feature-mark">{featureMarks[index]}</span><div className="plan-feature-copy"><strong>{featureNames[index]}</strong><p>{item}</p></div><span className="plan-feature-unlock">UNLOCKED</span></div>;
-                    })}</div>
-                  </div>
-                  <a className="plan-card-action" href={waLink(`Hola, quiero información sobre el plan ${plan.nombre} y consultar disponibilidad.`)} target="_blank" rel="noopener noreferrer"><span>{card.cta} · {money(plan.precio)}/mes</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
-                  <p className="plan-card-footnote">Sin permanencia · cambios con 24 h y recuperación en el mismo mes según disponibilidad.</p>
-                  <p className="plan-kit-note">Kit completo opcional con tu plan mensual: <strong>{money(kitInicio.precio)}.</strong></p>
-                </article>;
-              })}
-            </div>
-            <div className="single-session-card">
-              <div><small>SESIÓN INDIVIDUAL · 60 MIN</small><h3>Sesión suelta 1:1</h3><p>{individualFormat.texto} No incluye evaluación técnica inicial ni diseño de un plan mensual.</p></div>
-              <strong>{money(individualFormat.precio)} <span>/ sesión</span></strong>
-              <a href={waLink('Hola, quiero consultar disponibilidad para una sesión individual 1:1.')} target="_blank" rel="noopener noreferrer">Consultar sesión <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
-              <p className="format-risk-note">60 min · Sin plan mensual ni permanencia · cambios con 24 h de antelación.</p>
-            </div>
-            <div className="plan-comparison-control">
-              <button type="button" className="plan-comparison-toggle" aria-expanded={showPlanComparison} aria-controls="plan-comparison" onClick={() => setShowPlanComparison((value) => !value)}>{showPlanComparison ? 'Ocultar comparación' : 'Comparar qué incluye cada plan'} <span>{showPlanComparison ? '−' : '+'}</span></button>
-            </div>
-            {showPlanComparison && <div id="plan-comparison" className="plan-comparison-panel">
-              <div className="plan-comparison-scroll">
-                <table className="plan-comparison-table">
-                  <thead><tr><th scope="col">Atributo</th><th scope="col">Arsenal</th><th scope="col">Striker</th><th scope="col">Fight IQ</th></tr></thead>
-                  <tbody>{planComparisonRows.map((row) => <tr key={row.label}><th scope="row">{row.label}</th><td>{row.arsenal}</td><td>{row.striker}</td><td>{row.fightIq}</td></tr>)}</tbody>
-                </table>
-              </div>
-            </div>}
-          </>}
-          {activeService === 'parejas' && <>
-            <article className="format-detail-card">
-              <div className="format-detail-media"><img src={fotosSesion.parejas[0].src} alt="Sesión de entrenamiento en pareja" loading="lazy"/><span>ENTRENAMIENTO COMPARTIDO · 2 PERSONAS</span></div>
-              <div className="format-detail-copy"><p className="eyebrow">ENTRENAMIENTO COMPARTIDO</p><h3>Entrenad juntos.</h3><div className="format-service-price">{money(coupleFormat.precio)} <span>/ persona / sesión</span></div><p>{coupleFormat.texto}</p><a className="format-detail-cta" href={waLink('Hola, quiero consultar disponibilidad para entrenar en pareja.')} target="_blank" rel="noopener noreferrer">Consultar disponibilidad <span>↗</span></a><small>Sin permanencia · cambios con 24 h de antelación. La evaluación inicial no se descuenta en este formato.</small></div>
-            </article>
-          </>}
-          {activeService === 'grupos' && <>
-            <article className="format-detail-card format-detail-card--group">
-              <div className="format-detail-media"><video autoPlay muted loop playsInline webkit-playsinline="true" preload="metadata" poster="/Grupo_parejas_poster.jpg" aria-label="Vídeo de entrenamiento al aire libre en grupo reducido"><source src="/Grupo_parejas_12s_safari.mp4" type="video/mp4" /></video><span>ENTRENAMIENTO EN EQUIPO · MÁXIMO 4 PERSONAS</span></div>
-              <div className="format-detail-copy"><p className="eyebrow">GRUPO REDUCIDO</p><h3>Entrena en equipo.</h3><div className="format-service-price">{money(groupFormat.precio)} <span>/ persona / sesión</span></div><p>{groupFormat.texto}</p><p className="format-bonuses">{groupFormat.desde}</p><button type="button" className="format-group-toggle" aria-expanded={showGroupFinder} onClick={() => setShowGroupFinder((value) => !value)}>{showGroupFinder ? 'Cerrar mapa de grupos' : 'Consultar grupos en mi zona'} <span aria-hidden="true">{showGroupFinder ? '−' : '+'}</span></button>{showGroupFinder && <div className="format-inline-map"><GrupoFinder onClose={() => setShowGroupFinder(false)} onPlanes={() => { setShowGroupFinder(false); chooseService('individual'); }} frecuencia={1} /></div>}<small>Sin permanencia · plazas sujetas a zona y disponibilidad. Si no existe un grupo compatible, puedes apuntarte para formarlo.</small></div>
-            </article>
-          </>}
-        </div>
-      </div>
-      </Chapter>
-      <Threshold from="slot" to="proof-chen" />
-      <Chapter id="proof-chen" className="spatial-chapter spatial-chapter--founder">
-      <div id="alex" className="journey-section content-section founder-section">
-        <div className="section-meta"><span>04 / 05</span><span>SOBRE ALEX</span></div>
-        <p className="eyebrow">COACH / COMPETIDOR</p><h2>Experiencia dentro y fuera del ring.</h2>
-        <CredentialGallery items={credentialItems} />
-        <div className="founder-human"><figure><img src={image.chenAzotea} alt="Alex, entrenador de Striking Motion Lab" loading="lazy"/><figcaption>Alex · Entrenador</figcaption></figure><figure><img src={image.chenRing} alt="Alex compitiendo en el ring" loading="lazy"/><figcaption>Experiencia en competición · FEKM / WAKO</figcaption></figure></div>
-        <div className="founder-human founder-human--portrait"><figure><img src={fotosSesion.competicion[0].src} width={fotosSesion.competicion[0].width} height={fotosSesion.competicion[0].height} alt="Competición: imagen de apoyo visual de la trayectoria deportiva" loading="lazy" decoding="async"/><figcaption>Competición · Trayectoria</figcaption></figure><figure><img src={fotosSesion.competicion[1].src} width={fotosSesion.competicion[1].width} height={fotosSesion.competicion[1].height} alt="Apoyo visual de la experiencia en competición" loading="lazy" decoding="async"/><figcaption>Apoyo visual · Competición</figcaption></figure></div>
-        {dossierItems.filter((item) => item.id !== 'metodo').map((item) => <article className="proof-card" key={item.id}><small>{item.label}</small>{item.titulo && <h3>{item.titulo}</h3>}{item.datos?.map(([a, b]) => <p key={a}><b>{a}:</b> {b}</p>)}{item.texto?.map((line, i) => <p key={i}>{line}</p>)}{item.resenas?.map((review, i) => <blockquote key={i}>“{review}”</blockquote>)}{item.enlace && <a href={item.enlace.href} target="_blank" rel="noopener noreferrer">{item.enlace.label} ↗</a>}</article>)}
-        </div>
-      </Chapter>
-
-      <Threshold from="proof-chen" to="reserva" />
-      <Chapter id="reserva" className="spatial-chapter spatial-chapter--booking">
-      <div id="reserva-content" className="journey-section content-section booking-section">
-        <div className="section-meta"><span>05 / 05</span><span>RESERVA</span></div>
-        <p className="eyebrow">{reserva.subtitulo}</p><h2>{reserva.titulo}</h2><p className="lead">{reserva.texto}</p>
-        <div className="booking-calendar" aria-label="Calendario de disponibilidad y reservas">
-          <div className="booking-calendar-heading"><span className="eyebrow">DISPONIBILIDAD EN TIEMPO REAL</span><h3>Elige día y hora.</h3><p>Consulta los huecos libres y confirma tu sesión directamente. El calendario está sincronizado con mi agenda.</p></div>
-          <Calendly url={site.calendly} fallbackHref={site.calendlyBase} />
-        </div>
-        <div className="booking-grid booking-grid--secondary"><article><h3>{reserva.caminos.dudas.titulo}</h3><p>{reserva.caminos.dudas.accion}</p><a className="secondary-cta" href={waLink(cierre.mensajeAsesoria)} target="_blank" rel="noopener noreferrer">Pedir asesoramiento ↗</a></article></div>
-        <h3 className="subsection-title">Antes, durante y después</h3><ol className="booking-steps">{reserva.despues.map((item, i) => <li key={i}>{item}</li>)}</ol>
-        <aside className="what-to-bring"><p className="eyebrow">MATERIAL OPCIONAL</p><h3>Tu propio kit de entrenamiento.</h3><p>Yo llevo el material necesario para las sesiones. Si prefieres tener el tuyo, puedes adquirir el kit completo: guantes, vendas y bucal.</p><p><strong>Kit completo: {money(kitInicio.precio)}.</strong> Con un plan mensual: <strong>{money(kitInicio.precio)}.</strong></p></aside>
-        <div className="faq"><h3>Preguntas frecuentes</h3>{faq.map((item, i) => <article key={item.q}><button type="button" aria-expanded={faqOpen === i} onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}>{item.q}<span>{faqOpen === i ? '−' : '+'}</span></button>{faqOpen === i && <p>{item.a}</p>}</article>)}</div>
-      </div>
-
-      <div id="empresas" className="journey-section content-section business-section">
-        <style>{`.business-section .b2b-intro{max-width:760px;margin-bottom:34px}.business-section .b2b-offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:28px 0 46px}.business-section .b2b-offer{border:1px solid rgba(255,255,255,.13);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));padding:24px;min-height:190px}.business-section .b2b-offer .eyebrow{margin-bottom:14px}.business-section .b2b-offer h3{font-size:clamp(20px,2.5vw,28px);margin:0 0 10px}.business-section .b2b-offer p{color:rgba(241,241,238,.72);line-height:1.65;margin:0}.business-section .b2b-case{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);gap:28px;padding:28px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);margin:24px 0 34px}.business-section .b2b-facts{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0}.business-section .b2b-fact strong{display:block;font-size:30px;color:#54d9e8}.business-section .b2b-fact span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(241,241,238,.65)}.business-section .b2b-proposals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 30px}.business-section .b2b-proposal{padding:20px;border:1px solid rgba(255,255,255,.12)}.business-section .b2b-proposal p{color:rgba(241,241,238,.7);line-height:1.6}.business-section .b2b-process{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}.business-section .b2b-process article{border-left:2px solid #54d9e8;padding:4px 14px}.business-section .b2b-process strong{display:block;margin-bottom:7px}.business-section .b2b-process span{font-size:14px;line-height:1.55;color:rgba(241,241,238,.68)}.business-section .b2b-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}@media(max-width:680px){.business-section .b2b-offers,.business-section .b2b-proposals,.business-section .b2b-case,.business-section .b2b-process{grid-template-columns:1fr}.business-section .b2b-offer{min-height:0}.business-section .b2b-case{gap:12px}.business-section .b2b-facts{gap:18px}}`}</style>
-        <div className="section-meta"><span>BUSINESS / B2B</span><span>PRIVATE EXPERIENCES · MADRID</span></div>
-        <div className="b2b-intro">
-          <p className="eyebrow">COMBAT SPORTS, DESIGNED FOR YOUR AUDIENCE</p>
-          <h2>Una experiencia que convierte el combate en algo que se vive.</h2>
-          <p className="lead">Diseño y ejecuto experiencias de Muay Thai, boxeo y kickboxing para empresas, hoteles, eventos y marcas. Llevo entrenador, material y coordinación; el espacio y la audiencia los aporta el partner.</p>
-        </div>
-        <div className="b2b-offers">
-          <article className="b2b-offer"><p className="eyebrow">01 / CORPORATE</p><h3>Empresas & equipos</h3><p>Actividades participativas para team building, bienestar y encuentros internos. Adaptadas al tamaño del grupo, al espacio y al objetivo del evento.</p></article>
-          <article className="b2b-offer"><p className="eyebrow">02 / HOSPITALITY</p><h3>Hoteles & huéspedes</h3><p>Sesiones privadas individuales, en pareja o para pequeños grupos. Una experiencia premium que el hotel puede ofrecer como actividad para sus huéspedes.</p></article>
-          <article className="b2b-offer"><p className="eyebrow">03 / LIVE EVENTS</p><h3>Eventos & activaciones</h3><p>Demostraciones, introducciones guiadas y participación del público con tatami, material y dirección técnica.</p></article>
-          <article className="b2b-offer"><p className="eyebrow">04 / BRAND PARTNERSHIPS</p><h3>Marcas & colaboraciones</h3><p>Experiencias deportivas integradas en lanzamientos, campañas y acciones de marca, diseñadas alrededor del público y del contexto.</p></article>
-        </div>
-        <div className="b2b-case">
-          <div>
-            <p className="eyebrow">PROYECTO REALIZADO</p><h3 className="subsection-title">El Corte Inglés · Experiencia Muay Thai</h3>
-            <p>Activación realizada durante dos jornadas, con ocho intervenciones programadas de 20 minutos. Un entrenador y dos peleadores realizaron demostraciones técnicas y participación guiada. SML se encargó de la dirección deportiva y del material.</p>
-            <div className="b2b-facts"><div className="b2b-fact"><strong>2</strong><span>jornadas</span></div><div className="b2b-fact"><strong>8</strong><span>intervenciones programadas</span></div><div className="b2b-fact"><strong>2026</strong><span>Madrid</span></div></div>
-            <p>Un formato que combina exhibición y participación: el público no solo observa, también puede probar la actividad con acompañamiento profesional.</p>
-          </div>
-          <div><p className="eyebrow">DEL CONCEPTO A LA EJECUCIÓN</p><p>Montaje de zona y tatami, material, demostraciones, explicación técnica y participación guiada. Cada activación se dimensiona según el espacio, los horarios y el flujo de asistentes.</p><div className="eci-proof"><img src={eci.participacion} alt="Participación guiada del público en la activación de Muay Thai de El Corte Inglés" loading="lazy"/><img src={eci.demostracionPoster} alt="Demostración técnica de Muay Thai en El Corte Inglés" loading="lazy"/></div></div>
-        </div>
-        <p className="eyebrow">HOSPITALITY / FORMATOS EN PROPUESTA</p>
-        <div className="b2b-proposals">
-          <article className="b2b-proposal"><h3>Hotel 101</h3><p>Formato propuesto para sesiones privadas individuales, en pareja o grupos de 3–4 personas. Propuesta comercial, no presentada como colaboración ejecutada.</p></article>
-          <article className="b2b-proposal"><h3>ILUNION Atrium</h3><p>Formato propuesto de entrenamiento privado para huéspedes, adaptable a la operativa y los espacios del hotel. Propuesta comercial pendiente de confirmación.</p></article>
-        </div>
-        <p className="eyebrow">A SIMPLE PARTNERSHIP MODEL</p>
-        <div className="b2b-process"><article><strong>01 · Diseñamos</strong><span>Definimos objetivo, audiencia, duración, aforo y espacio.</span></article><article><strong>02 · Producimos</strong><span>SML aporta entrenador, material y coordinación de la experiencia.</span></article><article><strong>03 · Activamos</strong><span>El partner aporta espacio y acceso al público; ejecutamos y ajustamos el formato.</span></article></div>
-        <p>{empresas.ayuda}</p>
-        <div className="b2b-actions"><a className="primary-cta" href={waLink('Hola, quiero diseñar una experiencia B2B con SML. Tipo de proyecto: empresa / hotel / evento / marca.')} target="_blank" rel="noopener noreferrer">Diseñar una experiencia ↗</a><a className="secondary-cta" href={waLink('Hola, quiero recibir información sobre formatos y colaboración B2B.')} target="_blank" rel="noopener noreferrer">Solicitar dossier ↗</a></div>
-      </div>
-      </Chapter>
-      </>
-    </main>
-
-    <footer className="footer footer-complete">
-      <div><strong>{site.nombre}</strong><p>{site.claim} · {site.ciudad}</p><p>{site.disciplinas}</p></div>
-      <div><strong>Contacto</strong><a href={waLink('Hola, quiero información sobre los entrenamientos.')} target="_blank" rel="noopener noreferrer">WhatsApp · {site.whatsappVisible}</a><a href={site.instagram.url} target="_blank" rel="noopener noreferrer">Instagram · {site.instagram.handle}</a><a href={site.maps} target="_blank" rel="noopener noreferrer">Google Maps</a></div>
-      <div><strong>Acceso</strong><a href="/academia">Academia ↗</a><a href="/mi-sml">Mi SML ↗</a><a href={RUTAS.privacidad}>Política de privacidad</a><a href={RUTAS.aviso}>Aviso legal</a></div>
-      <p className="footer-bottom">© {new Date().getFullYear()} Striking Motion Lab · Madrid, España. Los servicios se realizan con reserva previa.</p>
-    </footer>
-  </>;
+  const w = PODIUM_FIGHTER_H * aspect;
+  return (
+    <mesh ref={mesh} position={[x, PODIUM_R * 0.14 + PODIUM_FIGHTER_H / 2, z]} material={media.mat}>
+      <planeGeometry args={[w, PODIUM_FIGHTER_H]} />
+    </mesh>
+  );
 }
-export default App;
+
+export default function BridgeHall({ transitionOnly = false }) {
+  // Materiales compartidos: instancias REALES de three (no props sueltas) para poder reutilizarlas
+  // entre muchos meshes sin recrearlas cada frame — mismo patrón que Portals.jsx.
+  //
+  // CORRECCIÓN: los pilares/cerchas están a 8,3 m del eje central, donde cuelgan las luminarias — a esa
+  // distancia, con las intensidades "de interior" que usa el resto del proyecto (decaimiento físico real,
+  // decay=2), la luz que les llega es casi nula y el acero (MeshStandardMaterial, SÍ depende de luz)
+  // renderiza negro sobre negro: invisible, aunque la geometría esté ahí. Por eso cada material del acero
+  // lleva ahora un `emissive` bajo y sin saturar (autoiluminación tenue, como el rebote de luz ambiental
+  // en una nave real) que garantiza que la estructura SIEMPRE se lea, esté lo que esté iluminándola cerca;
+  // las luces de abajo siguen aportando el matiz y el relieve, ya no la visibilidad básica.
+  const steelMat = useMemo(
+    () => new MeshStandardMaterial({ color: STEEL, roughness: 0.55, metalness: 0.35, emissive: '#232a33', emissiveIntensity: 0.6 }),
+    []
+  );
+  const darkMat = useMemo(
+    () => new MeshStandardMaterial({ color: STEEL_DARK, roughness: 0.65, metalness: 0.25, emissive: '#14181e', emissiveIntensity: 0.5 }),
+    []
+  );
+  const wingFloorMat = useMemo(
+    () => new MeshStandardMaterial({ color: WING_FLOOR, roughness: 0.92, metalness: 0.12, emissive: '#0d1015', emissiveIntensity: 0.4 }),
+    []
+  );
+  const edgeMat = useMemo(
+    () => new MeshStandardMaterial({ color: EDGE, roughness: 0.6, metalness: 0.3, emissive: '#171b20', emissiveIntensity: 0.5 }),
+    []
+  );
+  const ringMat = useMemo(
+    () => new MeshStandardMaterial({ color: ACCENT_COOL, emissive: ACCENT_COOL, emissiveIntensity: 1.1, roughness: 0.4, side: DoubleSide }),
+    []
+  );
+  const podiumBodyMat = useMemo(
+    () => new MeshStandardMaterial({ color: '#2f353d', roughness: 0.5, metalness: 0.4, emissive: '#191d23', emissiveIntensity: 0.5 }),
+    []
+  );
+  const seamMat = useMemo(
+    () => new MeshStandardMaterial({ color: ACCENT_COOL, emissive: ACCENT_COOL, emissiveIntensity: 0.8, toneMapped: false }),
+    []
+  );
+
+  // BACKDROP: textura de la foto de referencia real. MeshBasicMaterial a propósito (no depende de las
+  // luces de la nave, que se apagan hacia el Cierre — ver useFrame más abajo): es un telón lejano, debe
+  // leerse siempre. `fog: true` (default de MeshBasicMaterial) hace que SÍ se funda con la niebla de la
+  // escena a esa distancia, igual que el resto de la geometría — por eso no hace falta atenuarlo a mano.
+  const backdropTexture = useLoader(TextureLoader, mediaImage.bridgeHallRef);
+  backdropTexture.colorSpace = SRGBColorSpace;
+  const backdropMat = useMemo(
+    () => new MeshBasicMaterial({ map: backdropTexture, toneMapped: true }),
+    [backdropTexture]
+  );
+
+  // Muro de fondo: mismo tono/emissive que darkMat (acero oscuro con autoiluminación tenue) para que
+  // se lea en la penumbra igual que pilares y cerchas, nunca como un plano negro plano.
+  const backWallMat = useMemo(
+    () => new MeshStandardMaterial({ color: STEEL_DARK, roughness: 0.75, metalness: 0.2, emissive: '#14181e', emissiveIntensity: 0.55 }),
+    []
+  );
+
+  // Una franja "veta de luz" por marco, con el color virando de cálido (eco del softbox 4200K de la
+  // Entrada) a frío (acento azul de Character Select) según se avanza en Z — el mismo tránsito
+  // narrativo del copy (referencia → cuerpo → ejemplos → mapa → cierre), contado con luz real.
+  const glowMats = useMemo(() => {
+    const warm = new Color(ACCENT_WARM);
+    const cool = new Color(ACCENT_COOL);
+    return FRAME_Z.map((_, i) => {
+      const c = warm.clone().lerp(cool, i / (FRAME_COUNT - 1));
+      return new MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.9, toneMapped: false });
+    });
+  }, []);
+
+  const fixtureRefs = useRef([]);
+  const podiumRefA = useRef(null);
+  const podiumRefB = useRef(null);
+  const podiumGroupA = useRef(null);
+  const podiumGroupB = useRef(null);
+  const convergeRef = useRef(null);
+  const backdropRef = useRef(null);
+  const groupRef = useRef(null);
+  // Dos estados de gain INDEPENDIENTES (antes uno solo, compartido → ese era el bug): cada PodiumFighter
+  // lee únicamente el suyo, así el vídeo de cada personaje solo gana presencia mientras el Bridge
+  // presenta SU propio instante del momento C — nunca el del otro. Ver ventanas TYSON_*/MCGREGOR_* arriba.
+  const podiumFighterGainA = useRef(0); // Tyson (tysonBridge)
+  const podiumFighterGainB = useRef(0); // McGregor (mcgregorBridge)
+  const podiumStatusA = useRef({});
+  const podiumStatusB = useRef({});
+  const debugHud = useDebugHud();
+  const { camera, size } = useThree();
+
+  // Intensidades reescaladas al mismo registro que el resto del proyecto (EntradaStudio: LIGHT.spot=110,
+  // LIGHT.fill=30; Lighting/index.jsx: FOLLOW=90) — los valores anteriores (un solo dígito) eran de un
+  // orden de magnitud equivocado para el decaimiento físico real (decay=2) a estas distancias.
+  const FIXTURE_I = 70;
+  const activeFrames = isCoarsePointer ? FRAME_Z.filter((_, i) => i % 2 === 0) : FRAME_Z;
+
+  useFrame(() => {
+    // La nave no es geometría global: permanece fuera del render durante Escena 01, Character Select
+    // y todos los capítulos posteriores. También queda fuera durante toda la salida ya completada.
+    // El corte usa REVEAL_START (no BRIDGE_OUT_END) a propósito: es EXACTAMENTE el mismo punto en el que
+    // getCharactersReveal() empieza a subir de 0 (scrollState.js), así la nave nunca se apaga antes de
+    // que arranque la luz/reveal de Character Select — sin ese hueco intermedio quedaría un instante sin
+    // ninguna de las dos escenografías activas (ver CharacterSelectLighting.jsx, atada al mismo reveal).
+    const introProgress = scrollState.segments['entrada'] ?? 0;
+    const p = scrollState.segments['entrada>character-select'] ?? 0;
+    const active = transitionOnly && introProgress >= 1 && p > 0 && p < REVEAL_START;
+    if (groupRef.current) groupRef.current.visible = active;
+    if (DEBUG && debugHud.current) {
+      debugHud.current.textContent = `[bridge] active=${active} intro=${introProgress.toFixed(2)} p=${p.toFixed(3)} REVEAL_START=${REVEAL_START.toFixed(2)}`
+        + (active ? '' : '\n(inactivo: fuera de este tramo del scroll, o "entrada" aún no llega a 1)');
+    }
+    if (!active) return;
+
+    // Mismo progreso local (0..1) que Bridge.jsx usa para su timeline de texto (rawRef ahí, aquí solo
+    // gobierna intensidades de luz — determinista, reversible, sin estado propio que pueda desincronizarse).
+    const local = Math.min(p / BRIDGE_END, 1);
+
+    // Bloque 1: dos ventanas EXCLUYENTES (Tyson termina en TYSON_OUT=0.295 antes de que McGregor suba en
+    // MCGREGOR_IN=0.30). Bloque 2: ambas presentes a la vez. Cada una gobierna solo el vídeo de SU podio. Ver comentario de las constantes TYSON_*/MCGREGOR_* más arriba.
+    const casesTyson = Math.max(
+      smoothstep(local, TYSON_IN, TYSON_PLATEAU_IN) * (1 - smoothstep(local, TYSON_PLATEAU_OUT, TYSON_OUT)),
+      smoothstep(local, TYSON2_IN, TYSON2_PLATEAU_IN) * (1 - smoothstep(local, TYSON2_PLATEAU_OUT, TYSON2_OUT)),
+    );
+    const casesMcgregor = smoothstep(local, MCGREGOR_IN, MCGREGOR_PLATEAU_IN) * (1 - smoothstep(local, MCGREGOR_PLATEAU_OUT, MCGREGOR_OUT));
+    podiumFighterGainA.current = casesTyson;
+    podiumFighterGainB.current = casesMcgregor;
+
+    // Luz cenital de cada podio: sigue el pulso de SU propio personaje (antes las dos luces compartían
+    // una única ventana `cases`) — así el podio de Tyson se enciende/apaga con Tyson y el de McGregor con
+    // McGregor, en vez de que ambos pulsen a la vez aunque solo uno de los dos tenga figura visible. Los
+    // dos podios (geometría + posiciones) siguen intactos: esto solo cambia CUÁNDO pulsa cada luz.
+    if (podiumRefA.current) podiumRefA.current.intensity = 12 + 46 * casesTyson;
+    if (podiumRefB.current) podiumRefB.current.intensity = 12 + 46 * casesMcgregor;
+
+    // Por qué PODIUM_X no puede ser un número fijo (pedido explícito: "que se vea"): con el fov vertical
+    // fijo del proyecto (LENSES.nav = 50°) y la distancia real cámara↔podio en este tramo (1-3 m, el
+    // corredor solo mide 6 m de largo), un desplazamiento lateral de PODIUM_X_BASE = 3,5 m NUNCA cabe en
+    // el encuadre — en desktop harían falta ~6 m de distancia, en móvil vertical ~23 m; no hay ningún Z ni
+    // sincronía que lo arregle si el X se queda fijo. Aquí se recalcula cada frame, con el fov/aspect/
+    // distancia REALES (mismo criterio que ya usa el propio BACKDROP de esta escena para su recorte "cover"
+    // un poco más abajo), el desplazamiento lateral máximo que sí entra en cámara con margen, y ese es el
+    // que se usa — en pantallas anchas con distancia de sobra esto no cambia nada (se queda en
+    // PODIUM_X_BASE); en vertical/de cerca, los dos podios se acercan entre sí lo justo para seguir
+    // leyéndose como dos piezas distintas (nunca menos que 2×PODIUM_R, su propio ancho) sin salirse de
+    // cámara. Se aplica sobre el GRUPO (podio + su vídeo, ver el return más abajo) para que ambos se muevan
+    // siempre juntos, nunca el podio por un lado y su vídeo por otro.
+    const distToPodium = Math.max(0.1, Math.abs(camera.position.z - PODIUM_Z));
+    const halfVFov = MathUtils.degToRad(camera.fov) / 2;
+    const aspect = size.width / size.height;
+    const halfHFov = Math.atan(Math.tan(halfVFov) * aspect);
+    const safeX = distToPodium * Math.tan(halfHFov) * 0.72; // 0.72: deja aire hasta el borde real del encuadre
+    // Antes el suelo era PODIUM_R*1.05 (~1.2 m) para que los dos podios no se solaparan — pero a la
+    // distancia real que hay en móvil vertical, ese suelo era MAYOR que lo que cabe en cámara (safeX podía
+    // ser ~0.5-0.9 m): el suelo ganaba sobre el límite de encuadre y el resultado quedaba cortado por los
+    // lados. Prioridad ya decidida explícitamente: que se vea, antes que evitar un ligero solape visual.
+    const podiumXNow = Math.max(0.35, Math.min(PODIUM_X_BASE, safeX));
+    if (podiumGroupA.current) podiumGroupA.current.position.x = -podiumXNow;
+    if (podiumGroupB.current) podiumGroupB.current.position.x = podiumXNow;
+
+    if (DEBUG && debugHud.current) {
+      const sA = podiumStatusA.current, sB = podiumStatusB.current;
+      const fmtV = (s) => `paused=${s.paused} readyState=${s.readyState} network=${s.networkState} `
+        + `gain=${(s.gain ?? 0).toFixed(2)}/${(s.target ?? 0).toFixed(2)} err=${s.error ?? '-'}\n    src=${s.src ?? '-'}`;
+      debugHud.current.textContent =
+        `[bridge] active=true local=${local.toFixed(3)} casesTyson=${casesTyson.toFixed(3)} casesMcgregor=${casesMcgregor.toFixed(3)}\n`
+        + `[camera] z=${camera.position.z.toFixed(2)} fov=${camera.fov.toFixed(1)} aspect=${aspect.toFixed(3)}\n`
+        + `[podium] Z=${PODIUM_Z.toFixed(2)} dist=${distToPodium.toFixed(2)} X=${podiumXNow.toFixed(2)} (base=${PODIUM_X_BASE})\n`
+        + `[tyson]    ${fmtV(sA)}\n`
+        + `[mcgregor] ${fmtV(sB)}`;
+    }
+
+    // Eco del "Cierre": la nave se apaga hacia un único punto de luz sobre Character Select — mismo
+    // gesto que antes hacía el spot CSS (.bridge__cierre-spot), ahora con luz física real.
+    const closing = smoothstep(local, 0.8, 1);
+    fixtureRefs.current.forEach((l) => {
+      if (l) l.intensity = MathUtils.lerp(FIXTURE_I, FIXTURE_I * 0.2, closing);
+    });
+    if (convergeRef.current) convergeRef.current.intensity = 130 * closing;
+
+    // BACKDROP — recalcula cada frame el tamaño visible del plano a su distancia real de la cámara
+    // (que avanza en Z durante el Bridge) y lo escala para cubrir TODO el encuadre, con el mismo
+    // criterio que CSS `background-size: cover` (nunca letterbox/pillarbox, nunca deformación).
+    if (backdropRef.current) {
+      const dist = Math.abs(camera.position.z - BACKDROP_Z);
+      const visibleH = 2 * Math.tan(MathUtils.degToRad(camera.fov) / 2) * dist;
+      const visibleW = visibleH * (size.width / size.height);
+      const planeW = visibleW * BACKDROP_COVER_MARGIN;
+      const planeH = visibleH * BACKDROP_COVER_MARGIN;
+      const scaleX = planeW / BACKDROP_W;
+      const scaleY = planeH / BACKDROP_H;
+      backdropRef.current.scale.set(scaleX, scaleY, 1);
+      // ancla el borde inferior a y=0 (suelo), igual que el resto de la nave — el plano crece hacia arriba.
+      backdropRef.current.position.y = (BACKDROP_H * scaleY) / 2;
+
+      // Recorta la textura (nunca la estira) al aspecto real del plano ya escalado: si el plano es
+      // relativamente más ancho que la foto se recorta arriba/abajo, si es más alto se recorta a los lados.
+      const map = backdropMat.map;
+      if (map) {
+        const planeAspect = planeW / planeH;
+        if (planeAspect > BACKDROP_IMG_ASPECT) {
+          map.repeat.set(1, BACKDROP_IMG_ASPECT / planeAspect);
+        } else {
+          map.repeat.set(planeAspect / BACKDROP_IMG_ASPECT, 1);
+        }
+        map.offset.set((1 - map.repeat.x) / 2, (1 - map.repeat.y) / 2);
+        map.needsUpdate = true;
+      }
+    }
+  });
+
+  return (
+    <group ref={groupRef} visible={false}>
+      {/* Suelo: dos alas nuevas junto al suelo original de 12 m (Corridor.jsx, intacto) — mismo plano Y,
+          sin solape de vértices con él. */}
+      {[-1, 1].map((s) => (
+        <group key={s}>
+          <mesh rotation-x={-Math.PI / 2} position={[s * WING_MID_X, 0, Z_MID]} receiveShadow material={wingFloorMat}>
+            <planeGeometry args={[WING_W, Z_SPAN]} />
+          </mesh>
+          <mesh position={[s * (WING_OUTER + 0.06), 0.05, Z_MID]} receiveShadow material={edgeMat}>
+            <boxGeometry args={[0.12, 0.1, Z_SPAN]} />
+          </mesh>
+          {/* veta de luz fría en la propia junta del suelo (borde del corredor original): continúa en
+              el suelo el mismo acento azul que llevan las cerchas — sin texto, sin panel, solo luz. */}
+          <mesh position={[s * CORRIDOR_HALF_W, 0.016, Z_MID]} material={seamMat}>
+            <boxGeometry args={[0.05, 0.012, Z_SPAN]} />
+          </mesh>
+        </group>
+      ))}
+
+      {FRAME_Z.map((z, i) => (
+        <StructuralFrame key={z} z={z} steelMat={steelMat} darkMat={darkMat} glowMat={glowMats[i]} />
+      ))}
+
+      {/* MURO DE FONDO — cierra la nave detrás de la foto, a todo el ancho visible, para que no quede
+          vacío (color de fondo de la escena) a los lados del plano de la foto. Ver BACK_WALL_* arriba. */}
+      <mesh position={[0, BACK_WALL_H / 2, BACK_WALL_Z]} receiveShadow material={backWallMat}>
+        <planeGeometry args={[BACK_WALL_W, BACK_WALL_H]} />
+      </mesh>
+
+      {/* BACKDROP — foto de referencia real, detrás de TODA la geometría (BACKDROP_Z < Z_FAR). Un único
+          plano, sin repetir ni deformar: ver constantes BACKDROP_* arriba. */}
+      <mesh ref={backdropRef} position={[0, BACKDROP_H / 2, BACKDROP_Z]} material={backdropMat}>
+        <planeGeometry args={[BACKDROP_W, BACKDROP_H]} />
+      </mesh>
+
+      {/* Luminarias colgadas de cada cercha: la fuente de luz "propia" de la nave (aparte del seguimiento
+          de cámara y el softbox de la Entrada) — blanco frío, sin color saturado. `distance` (radio de
+          corte físico) se abre hasta cubrir los 8,3 m hasta los pilares con margen, si no la ventana de
+          atenuación de three.js los deja a oscuras aunque la intensidad sea alta. */}
+      {activeFrames.map((z, i) => (
+        <pointLight
+          key={z}
+          ref={(el) => { fixtureRefs.current[i] = el; }}
+          position={[0, TOP_Y - 0.9, z]}
+          color="#cdd8ec"
+          distance={24}
+          decay={2}
+          intensity={FIXTURE_I}
+        />
+      ))}
+      {/* Lavado de luz específico sobre cada pareja de pilares (además de la luminaria central de arriba):
+          sin esto, a 8,3 m del eje reciben muy poca luz directa y solo se leen por su autoiluminación
+          base — con esto ganan además sombra/relieve real, como el resto de la nave. */}
+      {activeFrames.map((z, i) => (
+        <group key={`wash-${z}`}>
+          {[-1, 1].map((s) => (
+            <pointLight
+              key={s}
+              position={[s * PILLAR_X * 0.75, PILLAR_H * 0.6, z + 1.4]}
+              color="#cdd8ec"
+              distance={9}
+              decay={2}
+              intensity={26}
+            />
+          ))}
+        </group>
+      ))}
+
+      {/* Dos podios — cada uno con su figura en vídeo (PodiumFighter) además del podio y su luz. */}
+      <group ref={podiumGroupA} position={[-PODIUM_X_BASE, 0, 0]}>
+        <Podium x={0} z={PODIUM_Z} ringMat={ringMat} bodyMat={podiumBodyMat} lightRef={podiumRefA} />
+        <PodiumFighter x={0} z={PODIUM_Z} src={mediaVideo.tysonBridge} aspect={512 / 778} gainRef={podiumFighterGainA} statusRef={podiumStatusA} />
+      </group>
+      <group ref={podiumGroupB} position={[PODIUM_X_BASE, 0, 0]}>
+        <Podium x={0} z={PODIUM_Z} ringMat={ringMat} bodyMat={podiumBodyMat} lightRef={podiumRefB} />
+        <PodiumFighter x={0} z={PODIUM_Z} src={mediaVideo.mcgregorBridge} aspect={736 / 400} gainRef={podiumFighterGainB} statusRef={podiumStatusB} />
+      </group>
+
+      {/* Punto de convergencia del Cierre, justo delante de Character Select. */}
+      <pointLight ref={convergeRef} position={[0, 2.6, CS_Z + 1.5]} color="#e7ecf8" distance={14} decay={2} intensity={0} />
+    </group>
+  );
+}
