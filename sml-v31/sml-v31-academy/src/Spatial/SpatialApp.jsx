@@ -311,7 +311,7 @@ function App() {
           <div className="pricing-format-intro"><span className="eyebrow">ELIGE TU FORMATO</span><h3>¿Cómo quieres entrenar?</h3><p>Selecciona una opción para ver qué incluye y cuánto cuesta.</p></div>
           <nav className="pricing-tabs pricing-format-cards" role="tablist" aria-label="Tipo de entrenamiento">
             <button type="button" id="tab-grupos" role="tab" aria-selected={activeService === 'grupos'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'grupos' ? 'is-active' : ''}`} onClick={() => chooseService('grupos')}>
-              <span className="pricing-format-image"><img src="/Grupo_parejas_poster.jpg" alt="" loading="lazy"/><span className="pricing-format-play" aria-hidden="true">▶</span></span><span className="pricing-format-copy"><strong>Grupos reducidos</strong><small>Hasta 4 personas</small></span>
+              <span className="pricing-format-image"><img src="/Grupo_parejas_poster.jpg" alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>Grupos reducidos</strong><small>Hasta 4 personas</small></span>
             </button>
             <button type="button" id="tab-parejas" role="tab" aria-selected={activeService === 'parejas'} aria-controls="service-pricing-panel" className={`pricing-tab pricing-format-card ${activeService === 'parejas' ? 'is-active' : ''}`} onClick={() => chooseService('parejas')}>
               <span className="pricing-format-image"><img src={fotosSesion.parejas[0].src} alt="" loading="lazy"/></span><span className="pricing-format-copy"><strong>Parejas</strong><small>Entrena junto a otra persona</small></span>
