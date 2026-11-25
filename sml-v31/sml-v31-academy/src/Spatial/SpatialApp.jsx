@@ -356,7 +356,6 @@ function App() {
                   </div>
                   <a className="plan-card-action" href={waLink(`Hola, quiero información sobre el plan ${plan.nombre} y consultar disponibilidad.`)} target="_blank" rel="noopener noreferrer"><span>{card.cta} · {money(plan.precio)}/mes</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9" /></svg></a>
                   <p className="plan-card-footnote">Sin permanencia · cambios con 24 h y recuperación en el mismo mes según disponibilidad.</p>
-                  <p className="plan-kit-note">Kit opcional de guantes, vendas y bucal: <strong>{money(kitInicio.precio)}.</strong></p>
                 </article>;
               })}
             </div>
@@ -391,6 +390,22 @@ function App() {
             </article>
           </>}
         </div>
+        <aside className="what-to-bring kit-upsell" aria-label="Equipamiento personal opcional">
+          <div className="kit-upsell-main">
+            <p className="eyebrow">COMPLEMENTO OPCIONAL · PAGO ÚNICO</p>
+            <h3>Entrena con tu propio equipamiento.</h3>
+            <p>Si prefieres tener tu propio material, puedes añadir un kit personal. No es necesario para empezar: yo llevo el material para las sesiones.</p>
+            <div className="kit-upsell-items" aria-label="Contenido del kit">
+              <span><b>01</b> Guantes</span><span><b>02</b> Vendas</span><span><b>03</b> Protector bucal</span>
+            </div>
+          </div>
+          <div className="kit-upsell-offer">
+            <strong className="kit-upsell-price">{money(kitInicio.precio)}</strong>
+            <span>Una sola vez</span>
+            <a href={waLink('Hola, quiero información sobre el kit personal de entrenamiento de 55 €.')} target="_blank" rel="noopener noreferrer">Consultar el kit <span aria-hidden="true">↗</span></a>
+            <small>Se entrega y se abona en persona, en efectivo.</small>
+          </div>
+        </aside>
         <div className="pricing-booking-cta">
           <div><strong>¿Quieres empezar?</strong><p>Reserva tu evaluación privada inicial por 30 €. Si contratas un plan mensual, descontamos los 30 € del primer mes.</p></div>
           <a className="primary-cta" href="#reserva">Reservar evaluación · 30 € <span aria-hidden="true">↗</span></a>
@@ -420,7 +435,6 @@ function App() {
         </div>
         <div className="booking-grid booking-grid--secondary"><article><h3>{reserva.caminos.dudas.titulo}</h3><p>{reserva.caminos.dudas.accion}</p><a className="secondary-cta" href={waLink(cierre.mensajeAsesoria)} target="_blank" rel="noopener noreferrer">Pedir asesoramiento ↗</a></article></div>
         <h3 className="subsection-title">Antes, durante y después</h3><ol className="booking-steps">{reserva.despues.map((item, i) => <li key={i}>{item}</li>)}</ol>
-        <aside className="what-to-bring"><p className="eyebrow">MATERIAL OPCIONAL</p><h3>Tu propio kit de entrenamiento.</h3><p>Kit opcional de guantes, vendas y bucal: <strong>{money(kitInicio.precio)}.</strong></p></aside>
         <div className="faq"><h3>Preguntas frecuentes</h3>{faq.map((item, i) => <article key={item.q}><button type="button" aria-expanded={faqOpen === i} onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}>{item.q}<span>{faqOpen === i ? '−' : '+'}</span></button>{faqOpen === i && <p>{item.a}</p>}</article>)}</div>
       </div>
 
