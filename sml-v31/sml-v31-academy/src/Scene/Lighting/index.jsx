@@ -7,9 +7,9 @@ import EntradaStudio from './EntradaStudio.jsx';
 import CharacterSelectLighting from './CharacterSelectLighting.jsx';
 
 // Tinte por capítulo de la luz que acompaña a la cámara: UNA sola familia, neutro frío grafito (la de las salas, la máquina y los
-// portales), con el único cálido de la escena en el archivo (05, el mismo tono que los cantos luminosos de Archive/archiveSpec.js#WARM)
+// portales), con el acento frío de la escena en el archivo (05, el mismo tono que los cantos luminosos de Archive/archiveSpec.js#WARM)
 // y el filo azul del umbral en la 06 (Door/Door.jsx). 01 usa un neutro frío (la luz de estudio la aporta EntradaStudio).
-const palette = ['#b4c2d8', '#a9b8d0', '#9fb1cc', '#b4c2d8', '#d9d2c2', '#c6d4ee'].map((c) => new Color(c));
+const palette = ['#c6d8e8', '#b8d1e3', '#9fc6d8', '#c6d8e8', '#8ebdcc', '#54d9e8'].map((c) => new Color(c));
 
 const FOLLOW = 90;
 const AMBIENT = 0.15;

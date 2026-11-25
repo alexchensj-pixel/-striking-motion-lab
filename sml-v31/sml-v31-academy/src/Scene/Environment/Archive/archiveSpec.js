@@ -10,5 +10,5 @@ export const slabX = (i) => (i - 4) * ARCHIVE.spacing;
 // Los bordes se funden a transparente: fuera de la losa sigue la retícula de siempre.
 export const FLOOR = { size: [40, 32], y: 0.004 };
 
-// Luz cálida de los cantos (la única luz cálida de la escena; el resto es grafito frío).
-export const WARM = [238, 226, 204];
+// Luz cian de los cantos, coherente con la identidad de laboratorio biomecánico.
+export const WARM = [84, 217, 232];

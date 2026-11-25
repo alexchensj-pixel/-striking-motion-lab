@@ -2633,3 +2633,15 @@ nav.nav li[data-on="true"] button { font-weight: 600; text-decoration-color: var
 .gf__activeRow .gf__join{width:100%;min-height:42px;margin:0!important;padding:10px!important;border:1px solid rgba(229,32,43,.6);background:rgba(229,32,43,.1);font-size:9px!important;letter-spacing:.08em}
 .gf__activeRow .gf__join:hover{background:rgba(229,32,43,.2)}
 @media(max-width:760px){.gf__activeSection .gf__list{grid-template-columns:1fr;gap:9px}.gf__activeRow{padding:14px!important}.gf__activeRow .gf__rowMain{grid-template-columns:minmax(0,1fr) auto!important;gap:10px 12px!important}.gf__activeRow .gf__slot{grid-column:1/-1}.gf__activeRow .gf__activeStatus{grid-column:1;align-self:center}.gf__activeRow .gf__join{grid-column:2;grid-row:2;width:auto;min-width:122px;min-height:40px}.gf__activeRow .gf__slot b{font-size:1.55rem}}
+
+
+/* RESERVA · panel y selector de horas: contenido real de la app publicada (sml-v31-academy). */
+.rs__body[data-reserving="true"] { width:min(100%,58rem); max-width:min(100%,58rem); margin-inline:auto; padding:clamp(1rem,3vw,2rem); background:rgba(5,6,8,.94); border:1px solid rgba(217,221,230,.16); overflow:hidden; }
+.rs__panel,.sml-booking { min-width:0; width:100%; }
+.sml-booking__layout { grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); }
+@media(max-width:700px) {
+  .rs__body[data-reserving="true"] { width:100%; max-width:100%; padding:1rem .85rem calc(6rem + env(safe-area-inset-bottom,0px)); border-left:0; border-right:0; }
+  .sml-booking__layout { grid-template-columns:minmax(0,1fr); }
+  .sml-booking__times { border-left:0; border-top:1px solid rgba(242,239,232,.12); padding:1.1rem 0 0; }
+  .sml-booking__time-list { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}

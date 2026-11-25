@@ -17,7 +17,7 @@ const R = 3;              // radio del filo luminoso (el original)
 const TUBE = 0.06;        // grosor original del filo
 const STEEL_R = 0.16;     // sección del anillo de acero: su borde interior toca el filo
 const CLAMPS = 12;
-const EDGE = '#8fb3ff';
+const EDGE = '#aeb8c8';
 const gain = () => getFloorGain('proof-chen', 'reserva', null);
 
 // Gradientes en canvas (sin assets): velo del hueco y derrame del suelo.
@@ -79,11 +79,11 @@ export default function Door() {
     // El filo luminoso (el aro original) se enciende con la aproximación — misma trayectoria que la cámara y el contenido — y a tope con la reserva abierta.
     const near = useStore.getState().bookingState !== 'idle' ? 1 : Math.min(1, Math.max(0, scrollState.segments['reserva'] ?? 0) / 0.75);
     res.edge.color.set(EDGE).multiplyScalar(0.55 + 0.45 * near);
-    res.edge.opacity = g;
+    res.edge.opacity = 0.18 * g;
     res.steel.opacity = g;
     res.steelDark.opacity = g;
-    res.veil.opacity = g;
-    res.spill.opacity = 0.22 * g;
+    res.veil.opacity = 0.025 * g;
+    res.spill.opacity = 0.035 * g;
   });
 
   return (

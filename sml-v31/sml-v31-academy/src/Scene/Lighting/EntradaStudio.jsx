@@ -6,7 +6,7 @@ import { LIGHT, SOFTBOX } from '../Environment/Entrada/constants.js';
 
 RectAreaLightUniformsLib.init(); // necesario para que RectAreaLight ilumine materiales estándar
 
-// Iluminación de estudio industrial de la Escena 01: un softbox superior (4 m × 1 m · Y 5.5 · Z -8 · 4200 K)
+// Iluminación de estudio industrial de la Escena 01: un softbox superior (4 m × 1 m · Y 5.5 · Z -8 · 6500 K)
 // y un relleno frío frontal. Sobria: sin colores saturados, sin parpadeos, sin neón. Todo estático.
 //  - RectAreaLight → lectura de materiales y brillo suave en acero.
 //  - SpotLight     → mismo emisor, solo para sombras controladas (desactivadas en táctil por rendimiento).
