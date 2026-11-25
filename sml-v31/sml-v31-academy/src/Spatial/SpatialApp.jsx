@@ -144,7 +144,8 @@ function App() {
 
   return <>
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
-    <SpatialBoundary><LegacyWorld><EntryInterface hero={hero} site={site} activeService={activeService} chooseService={chooseService} go={go} /></LegacyWorld></SpatialBoundary>
+    <SpatialBoundary><LegacyWorld /></SpatialBoundary>
+    <div className="hero-world-overlay"><EntryInterface hero={hero} site={site} activeService={activeService} chooseService={chooseService} go={go} /></div>
     <div className="grain" aria-hidden="true" />
     <header className="topbar">
       <a className="brand" href="#inicio" onClick={(e) => { e.preventDefault(); go('inicio'); }} aria-label="Striking Motion Lab, inicio">
