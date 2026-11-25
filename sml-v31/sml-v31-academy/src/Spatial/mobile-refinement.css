@@ -437,3 +437,15 @@
   .spatial-chapter--pricing .pricing-booking-cta { grid-template-columns: minmax(0,1fr); gap: 12px; margin-top: 18px; padding: 15px; }
   .spatial-chapter--pricing .pricing-booking-cta .primary-cta { width: 100%; justify-content: center; }
 }
+
+
+/* Mobile: remove excess vertical gaps in the final booking chapter. */
+@media (max-width: 700px) {
+  .spatial-chapter--booking .booking-section > .lead { margin-bottom: 16px; }
+  .spatial-chapter--booking .booking-calendar { margin-top: 0; margin-bottom: 18px; }
+  .spatial-chapter--booking .booking-calendar-heading { margin-bottom: 10px; }
+  .spatial-chapter--booking .booking-grid--secondary { margin: 14px 0 18px; }
+  .spatial-chapter--booking .booking-steps { margin-top: 10px; margin-bottom: 18px; }
+  .spatial-chapter--booking .what-to-bring { margin-top: 14px; margin-bottom: 18px; }
+  .spatial-chapter--booking .faq { margin-top: 18px; }
+}
