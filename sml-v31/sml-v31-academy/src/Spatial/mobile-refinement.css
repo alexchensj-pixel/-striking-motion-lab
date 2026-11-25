@@ -227,10 +227,10 @@
  .spatial-chapter--pricing .pricing-format-copy strong,.spatial-chapter--pricing .pricing-format-copy small{overflow-wrap:anywhere;word-break:normal}
  .spatial-chapter--pricing .format-detail-media{aspect-ratio:16/9!important;max-height:none!important}
  .spatial-chapter--pricing .format-detail-media img,.spatial-chapter--pricing .format-detail-media video{width:100%!important;height:100%!important;max-height:none!important;min-height:0!important;object-fit:cover!important}
- .spatial-chapter--founder .credential-gallery{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .spatial-chapter--founder .credential-gallery{grid-template-columns:minmax(0,1fr)!important}
  .spatial-chapter--founder .credential-gallery__item,.spatial-chapter--founder .credential-gallery__proofhead{min-width:0}
  .spatial-chapter--founder .credential-gallery__proofhead strong{font-size:clamp(27px,9vw,42px)!important}
- .spatial-chapter--founder .credential-gallery__proofhead b,.spatial-chapter--founder .credential-gallery__proofhead small{overflow-wrap:anywhere}
+ .spatial-chapter--founder .credential-gallery__proofhead b,.spatial-chapter--founder .credential-gallery__proofhead small{min-width:0;overflow-wrap:normal;word-break:normal;white-space:normal;writing-mode:horizontal-tb}
  .spatial-chapter--founder .founder-human{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  .spatial-chapter--founder .founder-human img{height:auto!important;aspect-ratio:4/3}
  .spatial-chapter--booking .booking-section:before{width:88vw;top:50%}
