@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import LegacyWorld from './LegacyWorld.jsx';
+const LegacyWorld = React.lazy(() => import('./LegacyWorld.jsx'));
 import Chapter from '../Experience/Chapter.jsx';
 import Threshold from '../Scene/Transitions/Threshold.jsx';
 import {
@@ -87,6 +87,26 @@ function App() {
     setActiveMethodIndex((current) => current === nextStep ? current : nextStep);
   };
   const [bookingVisible, setBookingVisible] = useState(false);
+  const [worldReady, setWorldReady] = useState(false);
+
+  // Defer the Three.js chunk until the page has had a chance to paint its content.
+  useEffect(() => {
+    let cancelled = false;
+    let idleId;
+    let timeoutId;
+    const startWorld = () => { if (!cancelled) setWorldReady(true); };
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(startWorld, { timeout: mobile ? 1200 : 650 });
+    } else {
+      timeoutId = window.setTimeout(startWorld, mobile ? 700 : 300);
+    }
+    return () => {
+      cancelled = true;
+      if (idleId !== undefined) window.cancelIdleCallback?.(idleId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   useEffect(() => {
     const ids = navItems.map(([id]) => id);
@@ -143,7 +163,7 @@ function App() {
 
   return <>
     <a className="skip-link" href="#contenido">Saltar al contenido</a>
-    <SpatialBoundary><LegacyWorld /></SpatialBoundary>
+    {worldReady ? <React.Suspense fallback={<div className="world" aria-hidden="true" />}><SpatialBoundary><LegacyWorld /></SpatialBoundary></React.Suspense> : <div className="world" aria-hidden="true" />}
     <div className="grain" aria-hidden="true" />
     <header className="topbar">
       <a className="brand" href="#inicio" onClick={(e) => { e.preventDefault(); go('inicio'); }} aria-label="Striking Motion Lab, inicio">
