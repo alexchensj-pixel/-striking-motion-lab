@@ -38,7 +38,43 @@ const credentialItems = [
   { id: 'fekm', src: image.credencialFekm, width: 900, height: 683, alt: 'Licencia federativa FEKM a nombre de CHEN HAN para Kickboxing y Muay Thai, con el Consejo Superior de Deportes y el club GK-1 Team Carabanchel', caption: 'Licencia FEKM · Kickboxing y Muay Thai', eyebrow: 'ACREDITACIÓN FEDERATIVA', stat: 'FEKM', detail: 'KICKBOXING + MUAY THAI', note: 'Licencia federativa · Consejo Superior de Deportes' },
 ];
 const SessionPhoto = ({ photo, alt, caption, framing = 'portrait' }) => <figure className={`service-media service-media--portrait ${framing === 'wide' ? 'service-media--wide' : ''}`}><img src={photo.src} width={photo.width} height={photo.height} alt={alt} loading="eager" decoding="async"/><figcaption>{caption}</figcaption></figure>;
-const methodStepMedia = [null, { video: '/Striking_Motion_Lab_Analisis_Movimiento.mov', poster: '/method-movement-poster.webp', src: '/method-movement-poster.webp', width: 512, height: 848 }, null, null];
+
+function DeferredMethodVideo({ media }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    let requested = false;
+    const loadVideo = () => {
+      if (requested) return;
+      requested = true;
+      video.src = media.video;
+      video.load();
+      const playback = video.play();
+      if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      loadVideo();
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        loadVideo();
+        observer.disconnect();
+      }
+    }, { rootMargin: '240px 0px' });
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [media.video]);
+
+  return <video ref={videoRef} poster={media.poster} width={media.width} height={media.height} autoPlay muted loop playsInline preload="none" aria-label="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: `${media.width} / ${media.height}`, objectFit: 'contain', background: '#07090c' }} />;
+}
+const methodStepMedia = [null, { video: '/method-movement.mp4', poster: '/method-movement-poster.webp', src: '/method-movement-poster.webp', width: 512, height: 848 }, null, null];
 const money = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €`;
 
 const monthlyPlanCopy = {
@@ -248,7 +284,7 @@ function App() {
                       <span className="method-step-text"><strong>{step.n}</strong><span>{step.texto}</span></span>
                       <span className="method-step-mark" aria-hidden="true">{activeMethodIndex === i ? '−' : '+'}</span>
                     </button>
-                    {media && <figure className="method-step-visual">{media.video ? <video ref={(el) => { if (el) el.muted = true; }} src={media.video} poster={media.poster} width={media.width} height={media.height} autoPlay muted loop playsInline preload="metadata" aria-label="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" style={{ display: 'block', width: '100%', height: 'auto', aspectRatio: `${media.width} / ${media.height}`, objectFit: 'contain', background: '#07090c' }}/> : <img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/>}<span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
+                    {media && <figure className="method-step-visual">{media.video ? <DeferredMethodVideo media={media} /> : <img src={media.src} width={media.width} height={media.height} alt="Análisis biomecánico de un movimiento de combate con referencias articulares y mediciones técnicas" loading="lazy" decoding="async"/>}<span className="method-image-index">SML / MOVEMENT ANALYSIS</span></figure>}
                   </article>;
                 })}
               </div>
