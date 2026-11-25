@@ -117,6 +117,8 @@ function App() {
   const [showMore, setShowMore] = useState(false);
   const [showGroupFinder, setShowGroupFinder] = useState(false);
   const [activeService, setActiveService] = useState('grupos');
+  const [kitGloveColor, setKitGloveColor] = useState('black');
+  const kitGloveImages = { black: 'https://es.venum.com/cdn/shop/files/8359debe49cb85a228e8c4a3aacaf27dbb198a6d_VENUM_2049_114_16oz_1.jpg?v=1750170155&width=1200', blue: 'https://www.venum.com/cdn/shop/files/5_252F6_252Ff_252F3_252F56f38a580cd6e0b28ef2805a8a5c56ce6e7fa5d2_BOXING_GLOVES_CHALLENGER_2_0_BLUE_HD_02_256x%403x.jpg?v=1776413436' };
   const [activeMethodIndex, setActiveMethodIndex] = useState(0);
   const handleMethodProgress = (progress) => {
     const nextStep = Math.min(3, Math.floor(Math.max(0, Math.min(0.999, progress)) * 4));
@@ -391,18 +393,32 @@ function App() {
           </>}
         </div>
         <aside className="what-to-bring kit-upsell" aria-label="Equipamiento personal opcional">
-          <div className="kit-upsell-main">
+          <div className="kit-upsell-heading">
             <p className="eyebrow">COMPLEMENTO OPCIONAL · PAGO ÚNICO</p>
-            <h3>Entrena con tu propio equipamiento.</h3>
-            <p>Si prefieres tener tu propio material, puedes añadir un kit personal. No es necesario para empezar: yo llevo el material para las sesiones.</p>
-            <div className="kit-upsell-items" aria-label="Contenido del kit">
-              <span><b>01</b> Guantes</span><span><b>02</b> Vendas</span><span><b>03</b> Protector bucal</span>
+            <h3>Tu propio equipo. Tu elección.</h3>
+            <p>Elige el color de tus guantes y completa tu kit personal. No necesitas comprarlo para empezar: yo llevo el material a las sesiones.</p>
+          </div>
+          <div className="kit-product-layout">
+            <div className="kit-product-gallery">
+              <div className="kit-product-main-image">
+                <img src={kitGloveImages[kitGloveColor]} alt={`Guantes de boxeo Venum ${kitGloveColor === 'black' ? 'negros' : 'azules'}`} loading="lazy" />
+              </div>
+              <div className="kit-color-picker" role="group" aria-label="Elige el color de los guantes">
+                <span className="kit-picker-label">COLOR DE LOS GUANTES</span>
+                <button type="button" className={`kit-color-option ${kitGloveColor === 'black' ? 'is-selected' : ''}`} aria-pressed={kitGloveColor === 'black'} onClick={() => setKitGloveColor('black')}><img src={kitGloveImages.black} alt="" /><span>Negro</span></button>
+                <button type="button" className={`kit-color-option ${kitGloveColor === 'blue' ? 'is-selected' : ''}`} aria-pressed={kitGloveColor === 'blue'} onClick={() => setKitGloveColor('blue')}><img src={kitGloveImages.blue} alt="" /><span>Azul</span></button>
+              </div>
+            </div>
+            <div className="kit-included">
+              <p className="kit-picker-label">EL KIT INCLUYE</p>
+              <div className="kit-included-item"><img src="https://www.leone1947.com/cdn/shop/files/AB705_09_1_bcd646d9-64d1-4820-af5d-420e3c04d34e.jpg?v=1747732936&width=600" alt="Vendas de boxeo naranjas" loading="lazy" /><span><b>02</b> Vendas naranjas</span></div>
+              <div className="kit-included-item"><img src="https://tigrethai.com/cdn/shop/files/protege-dents-mma-217.jpg?v=1710947030" alt="Protector bucal negro con caja" loading="lazy" /><span><b>03</b> Protector bucal</span></div>
+              <div className="kit-included-note">Un par de guantes + vendas + protector bucal</div>
             </div>
           </div>
           <div className="kit-upsell-offer">
-            <strong className="kit-upsell-price">{money(kitInicio.precio)}</strong>
-            <span>Una sola vez</span>
-            <a href={waLink('Hola, quiero información sobre el kit personal de entrenamiento de 55 €.')} target="_blank" rel="noopener noreferrer">Consultar el kit <span aria-hidden="true">↗</span></a>
+            <div><strong className="kit-upsell-price">{money(kitInicio.precio)}</strong><span>Pago único · kit completo</span></div>
+            <a href={waLink(`Hola, quiero consultar el kit personal de entrenamiento de 55 €. Elijo los guantes de color ${kitGloveColor === 'black' ? 'negro' : 'azul'}.`)} target="_blank" rel="noopener noreferrer">Consultar kit {kitGloveColor === 'black' ? 'negro' : 'azul'} <span aria-hidden="true">↗</span></a>
             <small>Se entrega y se abona en persona, en efectivo.</small>
           </div>
         </aside>
