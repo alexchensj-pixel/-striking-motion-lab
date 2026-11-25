@@ -43,7 +43,7 @@ export default function HeroArchitecture(){
  const {size}=useThree(); const portrait=size.width/Math.max(1,size.height)<0.72;
  const choose=(service)=>{window.location.hash=service;window.dispatchEvent(new CustomEvent('sml:navigate',{detail:{id:'entrenamiento'}}));};
  const book=()=>window.open(site.calendly,'_blank','noopener,noreferrer');
- return <group>
+ return <group position={[0,0,10]}>
   {/* Sala de entrada: suelo continuo, muros laterales y cerchas portantes. */}
   <mesh position={[0,0.08,-11]} receiveShadow><boxGeometry args={[11.7,0.16,20]}/><meshStandardMaterial color="#252b32" metalness={0.42} roughness={0.48}/></mesh>
   {[-5.7,5.7].map(x=><group key={x} position={[x,0,-10]}><mesh position={[0,3.1,0]} castShadow receiveShadow><boxGeometry args={[0.22,6.2,20]}/><meshStandardMaterial color="#303740" metalness={0.7} roughness={0.42}/></mesh>{[-2,2].map(z=><mesh key={z} position={[-Math.sign(x)*0.18,3.1,z]}><boxGeometry args={[0.08,5.9,0.12]}/><meshStandardMaterial color="#77818d" metalness={0.8} roughness={0.3}/></mesh>)}</group>)}
@@ -59,11 +59,11 @@ export default function HeroArchitecture(){
    {[-2,2].flatMap(x=>[-1.5,1.5].map(z=><mesh key={`${x}-${z}`} position={[x,1.45,z]} castShadow><cylinderGeometry args={[0.055,0.055,1.25,12]}/><meshStandardMaterial color="#89929b" metalness={0.8} roughness={0.25}/></mesh>))}
    {[1.2,1.55,1.9].map(y=><group key={y}><mesh position={[0,y,-1.5]}><boxGeometry args={[4,0.035,0.035]}/><meshStandardMaterial color={y===1.55?ORANGE:'#d5d8dc'}/></mesh><mesh position={[0,y,1.5]}><boxGeometry args={[4,0.035,0.035]}/><meshStandardMaterial color={y===1.55?ORANGE:'#d5d8dc'}/></mesh><mesh position={[-2,y,0]}><boxGeometry args={[0.035,0.035,3]}/><meshStandardMaterial color={y===1.55?ORANGE:'#d5d8dc'}/></mesh><mesh position={[2,y,0]}><boxGeometry args={[0.035,0.035,3]}/><meshStandardMaterial color={y===1.55?ORANGE:'#d5d8dc'}/></mesh></group>)}
   </group>
-  <HeroWallSign position={portrait?[0,4.25,-20.58]:[-2.05,3.95,-20.58]} size={portrait?[5.2,2.95]:[6.4,4.0]} onClick={book}/>
+  <HeroWallSign position={portrait?[0,3.0,-20.58]:[-2.05,3.95,-20.58]} size={portrait?[3.6,2.25]:[6.4,4.0]} onClick={book}/>
   {(portrait?[
-   {x:0,y:1.48,w:4.9,title:'1:1',detail:'ENTRENAMIENTO INDIVIDUAL',service:'individual'},
-   {x:0,y:0.68,w:4.9,title:'PAREJAS',detail:'ENTRENA CON ALGUIEN MÁS',service:'parejas'},
-   {x:0,y:-0.12,w:4.9,title:'GRUPOS',detail:'MÁXIMO 4 PERSONAS',service:'grupos'},
+   {x:0,y:1.32,w:3.45,title:'1:1',detail:'ENTRENAMIENTO INDIVIDUAL',service:'individual'},
+   {x:0,y:0.52,w:3.45,title:'PAREJAS',detail:'ENTRENA CON ALGUIEN MÁS',service:'parejas'},
+   {x:0,y:-0.28,w:3.45,title:'GRUPOS',detail:'MÁXIMO 4 PERSONAS',service:'grupos'},
   ]:[
    {x:4.05,y:3.95,w:2.55,title:'1:1',detail:'INDIVIDUAL',service:'individual'},
    {x:4.05,y:3.02,w:2.55,title:'PAREJAS',detail:'DOS PERSONAS',service:'parejas'},
