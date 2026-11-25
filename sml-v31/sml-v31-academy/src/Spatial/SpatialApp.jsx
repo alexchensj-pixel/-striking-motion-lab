@@ -4,7 +4,7 @@ import {
   AdditiveBlending, Color, DoubleSide, LinearFilter, MathUtils, MeshBasicMaterial, MeshStandardMaterial,
   ShaderMaterial, SRGBColorSpace, TextureLoader, Vector3, VideoTexture,
 } from 'three';
-import { anchorZ, chapterOrder } from '../../Camera/waypoints.js';
+import { anchorZ, chapterOrder } from '../Scene/Camera/waypoints.js';
 import { ENTRADA_END_Z } from '../Entrada/constants.js';
 import { scrollState, BRIDGE_END, REVEAL_START, isCoarsePointer } from '../../Transitions/scrollState.js';
 import { smoothstep } from '../Entrada/geo.js';
