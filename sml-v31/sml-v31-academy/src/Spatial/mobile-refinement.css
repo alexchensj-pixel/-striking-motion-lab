@@ -454,7 +454,6 @@
 /* Mobile performance: preserve the dark spatial composition without costly
    fixed noise layers and backdrop-filter repaints while the page scrolls. */
 @media (max-width: 767px) {
-  .grain { display: none !important; }
   .topbar,
   .sml-detail,
   .method-evaluation,
