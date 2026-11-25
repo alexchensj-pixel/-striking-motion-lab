@@ -134,10 +134,13 @@ function App() {
     let timeoutId;
     const startWorld = () => { if (!cancelled) setWorldReady(true); };
     const mobile = window.matchMedia('(max-width: 767px)').matches;
+    // On phones keep the lightweight CSS world. Mounting the WebGL scene starts
+    // a continuous render loop and competes with native scrolling on iOS/Android.
+    if (mobile) return () => { cancelled = true; };
     if ('requestIdleCallback' in window) {
-      idleId = window.requestIdleCallback(startWorld, { timeout: mobile ? 1200 : 650 });
+      idleId = window.requestIdleCallback(startWorld, { timeout: 650 });
     } else {
-      timeoutId = window.setTimeout(startWorld, mobile ? 700 : 300);
+      timeoutId = window.setTimeout(startWorld, 300);
     }
     return () => {
       cancelled = true;

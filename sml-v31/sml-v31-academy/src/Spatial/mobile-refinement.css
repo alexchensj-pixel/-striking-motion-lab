@@ -449,3 +449,23 @@
   .spatial-chapter--booking .what-to-bring { margin-top: 14px; margin-bottom: 18px; }
   .spatial-chapter--booking .faq { margin-top: 18px; }
 }
+
+
+/* Mobile performance: preserve the dark spatial composition without costly
+   fixed noise layers and backdrop-filter repaints while the page scrolls. */
+@media (max-width: 767px) {
+  .grain { display: none !important; }
+  .topbar,
+  .sml-detail,
+  .method-evaluation,
+  .discipline-detail,
+  .spatial-chapter--pricing .training-card,
+  .spatial-chapter--pricing .format-detail-card,
+  .spatial-chapter--founder .credential-gallery__item,
+  .spatial-chapter--founder .proof-card,
+  .spatial-chapter--booking .booking-section,
+  .kit-upsell {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
