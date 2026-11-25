@@ -1,5 +1,4 @@
 import Corridor from './Corridor.jsx';
-import HeroArchitecture from './HeroArchitecture.jsx';
 import EntradaBackdrop from './EntradaBackdrop.jsx';
 import Portals from './Portals.jsx';
 import TechMarks from './TechMarks.jsx';
@@ -17,7 +16,6 @@ export default function EntradaWorld() {
   return (
     <group>
       <EntradaBackdrop />
-      <HeroArchitecture />
       <Corridor />
       <Portals />
       {/* Contraluz lateral rasante (corto alcance). Antes colgaba del título 3D; se conserva con su posición
