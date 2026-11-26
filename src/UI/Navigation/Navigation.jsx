@@ -5,14 +5,14 @@ import { goToSection, irAReservar } from '../../Scene/Transitions/navigation.js'
 // NAVEGACIÓN = «¿A qué parte de SML quiero ir?». Cada entrada lleva DIRECTAMENTE a su sección.
 //   Principal (mismo peso, escritorio y móvil): DISCIPLINAS · MÉTODO · ENTRENAMIENTO · SOBRE CHEN · EMPRESAS
 //   Acción (acento, separada del resto):        RESERVAR  → irAReservar()
+// DESCUBRIR ya no es ítem del menú, pero sigue existiendo como sección (goToSection('explore'), #descubrir) para el hero, el footer y Estudio.
 // FAQ · Contacto · Instagram · Privacidad · Aviso legal no son destinos del menú: viven en el footer / en su sección.
 // El logo / home es el SML del HUD (no se duplica aquí). ESTUDIO DE COMBATE no es sección principal: se abre desde Explore (y Método).
 // EMPRESAS pasa por goToSection('experiences'), que cierra lo que haya encima, gestiona el historial y llama a openB2B (lógica B2B intacta).
 const MAIN = [
-  { id: 'disciplinas', label: 'Disciplinas', target: 'disciplinas' },
   { id: 'method', label: 'Método', target: 'method' },
   { id: 'training', label: 'Entrenamiento', target: 'training' },
-  { id: 'founder', label: 'Sobre Alex', target: 'founder' },
+  { id: 'founder', label: 'Sobre Chen', target: 'founder' },
   { id: 'experiences', label: 'Empresas', target: 'experiences' },
 ];
 const ACTION = { id: 'book', label: 'Reservar' }; // data-id="book": conserva el acento definido en global.css
@@ -49,11 +49,12 @@ export default function Navigation() {
   const isOn = (target) => !overFaq && section === target;
 
   const go = (target) => {
-  setOpen(false);
-  goToSection(target, { direct: target !== 'explore' });
-};
-  
- return (
+    setOpen(false);
+    if (target === 'method') { window.location.assign('/metodo'); return; }
+    goToSection(target);
+  };
+
+  return (
     <nav className="nav" aria-label="Navegación principal" data-open={open}>
       <button type="button" className="nav__toggle" aria-expanded={open} aria-controls="nav-list" onClick={() => setOpen((o) => !o)}>
         {open ? 'Cerrar' : 'Menú'}
@@ -66,6 +67,16 @@ export default function Navigation() {
             </button>
           </li>
         ))}
+        <li data-id="academy">
+          <button type="button" onClick={() => { setOpen(false); window.location.assign('/academia'); }}>
+            Academy
+          </button>
+        </li>
+        <li data-id="mi-sml">
+          <button type="button" onClick={() => { setOpen(false); window.location.assign('/mi-sml'); }}>
+            Mi SML
+          </button>
+        </li>
         <li data-on={isOn('book')} data-id={ACTION.id}>
           <button type="button" aria-current={isOn('book') ? 'true' : undefined} onClick={() => { setOpen(false); irAReservar(); }}>
             {ACTION.label}
