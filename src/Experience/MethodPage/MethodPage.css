@@ -216,3 +216,5 @@
 @media (prefers-reduced-motion: reduce) {
   .method-page * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+/* Preview refresh: no visual changes. */
